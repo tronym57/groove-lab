@@ -179,6 +179,7 @@
   .arr-cell.on { background: hsl(var(--hue) 90% 60% / .5); }
   .arr-cell.now { outline: 1px solid #fff; outline-offset: 1px; }
   .arr-cell.on.now { background: var(--on); }
+  .arr-cell.tb.on { box-shadow: inset 0 -3px 0 #ffd36b; }
   .arr-grid { gap: 2px; grid-template-columns: 112px repeat(var(--cols), minmax(3px, 1fr)); }
   .arr-cell { height: 12px; border-radius: 2px; }
   .arr-cell.first { box-shadow: -2px 0 0 var(--bg); }
@@ -1726,7 +1727,7 @@ function schedule() {
     TRACKS.forEach(tr => {
       if (muted[tr.id]) return;
       if (tr.id === 'snare' && fill) { if (fill[step]) Engine.play('snare', fill[step], t, d); return; }   // build-up roll
-      const v = pages[bar % nPages][tr.id][step];
+      const v = pages[pageAt(bar)][tr.id][step];
       if (v && layerOn(tr.id, bar)) Engine.play(tr.id, v, t, d);
     });
     queue.push({ step, bar, t });
@@ -1738,7 +1739,7 @@ function draw() {
   if (!playing) return;
   while (queue.length && queue[0].t <= Engine.ctx.currentTime) {
     const q = queue.shift();
-    setHead(q.step, q.bar % nPages);
+    setHead(q.step, pageAt(q.bar));
     if (buildMode && q.step === 0) showBuild(q.bar);
   }
   requestAnimationFrame(draw);
@@ -1816,7 +1817,7 @@ function planArrangement() {
   const secs = [], bars = [];
   let prev = new Set();
   form.sections.forEach(sec => {
-    const len = shortDemo ? Math.max(2, Math.round(sec.bars / 4)) : sec.bars, start = bars.length;
+    const q = Math.max(2, nPages), len = shortDemo ? Math.max(q, Math.ceil(Math.round(sec.bars / 4) / q) * q) : sec.bars, start = bars.length;   // whole phrases per section
     let target = sec.on.filter(hasHits);
     if (!target.length) target = ['chord', 'perc', 'hat', 'kick'].filter(hasHits).slice(0, 1);
     for (let b = 0; b < len; b++) {
@@ -1832,6 +1833,9 @@ function planArrangement() {
   plan = { form, secs, bars, notes };
 }
 const totalBars = () => plan.bars.length;
+// Which page (bar of the phrase) plays in bar b. In Arrange the phrase restarts at every section,
+// so the turnaround always falls on the bar before a section change.
+const pageAt = b => buildMode && plan ? plan.bars[((b % totalBars()) + totalBars()) % totalBars()].inSec % nPages : b % nPages;
 function layerOn(id, b) { return !buildMode || plan.bars[b % totalBars()].active.has(id); }
 const FILL = [parse('x.x.x.x.x.x.x.x.'), parse('XxXxXxXxrrrrrrrr')];
 function fillAt(b) {
@@ -1849,7 +1853,7 @@ function renderArrangement() {
   plan.secs.forEach((s, i) => html += `<div class="sec${s.song === 'Chorus' ? ' peak' : s.song === 'Bridge' ? ' low' : ''}" style="grid-row:1;grid-column:${s.start + 2} / span ${s.len}" data-bar="${s.start}" title="${s.name}">${s.name}</div>`);
   rows.forEach((t, ri) => {
     html += `<div class="lbl" style="grid-row:${ri + 2};grid-column:1">${labelOf(t.id)}</div>`;
-    plan.bars.forEach((x, b) => html += `<div class="arr-cell${x.active.has(t.id) ? ' on' : ''}${t.id === 'snare' && plan.secs[x.sec].fill && plan.secs[x.sec].len - x.inSec <= 2 ? ' on fill' : ''}${x.inSec === 0 && b ? ' first' : ''}" data-bar="${b}" style="grid-row:${ri + 2};grid-column:${b + 2}"></div>`);
+    plan.bars.forEach((x, b) => html += `<div class="arr-cell${x.active.has(t.id) ? ' on' : ''}${t.id === 'snare' && plan.secs[x.sec].fill && plan.secs[x.sec].len - x.inSec <= 2 ? ' on fill' : ''}${x.inSec === 0 && b ? ' first' : ''}${nPages > 1 && x.inSec % nPages === nPages - 1 ? ' tb' : ''}" data-bar="${b}" style="grid-row:${ri + 2};grid-column:${b + 2}"></div>`);
   });
   g.innerHTML = html;
   document.getElementById('arrLen').textContent = shortDemo ? 'Short demo (¼ length)' : 'Real length';
@@ -1864,10 +1868,11 @@ function showBuild(b) {
   const real = shortDemo ? ` (in a real track: ${sec.bars} bars)` : '';
   const chips = [...added.map(id => `<span class="chg add" title="${plan.notes[id] || ''}">+ ${labelOf(id)}</span>`), ...removed.map(id => `<span class="chg rem">− ${labelOf(id)}</span>`)].join('');
   const entering = sec.build && added.length === 1 && plan.notes[added[0]] ? `<span class="enter">${plan.notes[added[0]]}</span>` : '';
-  document.getElementById('arrCap').innerHTML = `<small>${sec.name} · like ${/^[aeiou]/i.test(sec.song) ? 'an' : 'a'} ${sec.song.toLowerCase()} · bar ${pos - sec.start + 1} of ${sec.len}${real}</small>${sec.note}
+  document.getElementById('arrCap').innerHTML = `<small>${sec.name} · like ${/^[aeiou]/i.test(sec.song) ? 'an' : 'a'} ${sec.song.toLowerCase()} · bar ${pos - sec.start + 1} of ${sec.len}${real}${nPages > 1 ? ` · phrase bar ${pageAt(pos) + 1} of ${nPages}${pageAt(pos) === nPages - 1 ? ' (turnaround)' : ''}` : ''}</small>${sec.note}
     ${chips || entering ? `<div class="chgs">${chips}${entering}</div>` : ''}`;
   document.querySelectorAll('.arr-cell').forEach(c => c.classList.toggle('now', +c.dataset.bar === pos));
   document.querySelectorAll('#arrGrid .sec').forEach(c => c.classList.toggle('cur', +c.dataset.bar === sec.start));
+  if (nPages > 1 && viewPage !== pageAt(pos)) showPage(pageAt(pos), true);   // the grid shows this bar of the phrase
   const fill = fillAt(pos);
   TRACKS.forEach((tr, r) => {
     const on = layerOn(tr.id, pos) || (tr.id === 'snare' && !!fill);
@@ -1900,6 +1905,7 @@ function refreshBuild() {
   document.getElementById('arr').hidden = !buildMode;
   const btn = document.getElementById('buildBtn');
   btn.textContent = `Arrange: ${buildMode ? 'on' : 'off'}`; btn.classList.toggle('on', buildMode);
+  renderPageUI();
   if (!buildMode) { clearBuild(); return; }
   renderArrangement();
   showBuild(playing ? bar : cursorBar);
@@ -2001,7 +2007,7 @@ document.getElementById('formBody').onclick = e => {
 function setHead(s, pg = playPage) {
   if (headStep >= 0) { cells.forEach(r => r[headStep].classList.remove('head')); pkeys[headStep].classList.remove('now'); }
   headStep = s;
-  if (pg !== playPage) { playPage = pg; if (followPage && playing && pg !== viewPage) showPage(pg, true); else renderPageUI(); }
+  if (pg !== playPage) { playPage = pg; if ((followPage || buildMode) && playing && pg !== viewPage) showPage(pg, true); else renderPageUI(); }
   if (s >= 0 && pg === viewPage) { cells.forEach(r => r[s].classList.add('head')); pkeys[s].classList.add('now'); }
 }
 const playBtn = document.getElementById('play');
@@ -2013,7 +2019,7 @@ function togglePlay() {
     if (buildMode) { renderArrangement(); showBuild(bar); }
     timer = setInterval(schedule, 25); schedule(); draw();
     playBtn.textContent = '■ Stop'; playBtn.classList.add('on');
-    playPage = bar % nPages;
+    playPage = pageAt(bar);
     if (followPage && viewPage !== playPage) showPage(playPage, true); else renderPageUI();
     setTimeout(() => { if (playing && Engine.ctx.state !== 'running') say('No sound? The browser is blocking audio: tap Stop, then Play again. On iPhone, also check the volume.'); }, 600);
   } else {
@@ -2418,7 +2424,7 @@ document.getElementById('fxToggle').onclick = () => {
 function renderPageUI() {
   document.querySelectorAll('#lenSeg button').forEach(b => b.classList.toggle('on', +b.dataset.n === nPages));
   const sel = document.getElementById('pageSel');
-  sel.hidden = nPages === 1;
+  sel.hidden = nPages === 1 || buildMode;   // in Arrange the sections are the navigation; the grid follows the phrase
   sel.innerHTML = '<span class="lab">Page</span>' + pages.map((_, p) => {
     const v = pageVar[p], name = (pageInfo[p] || '').replace(/<[^>]+>/g, '').split(':')[0] || (v >= 0 ? VARIANTS[genre.id][v].name : v === -2 ? 'your version' : 'original');
     return `<button data-p="${p}" class="${p === viewPage ? 'on' : ''}${playing && p === playPage ? ' play' : ''}" title="Page ${p + 1}: ${name}" aria-label="Show page ${p + 1}">${p + 1}</button>`;
@@ -2433,6 +2439,7 @@ function setLength(n) {
   if (n === nPages) { say(`Already ${n} bar${n > 1 ? 's' : ''}.`); return; }
   const ph = buildPhrase(clonePage(pages[0]), n);   // page 1 stays; the others are rebuilt as a phrase
   pages = ph.pages; pageVar = ph.vars; pageInfo = ph.info; nPages = n;
+  if (buildMode) { refreshBuild(); say(n > 1 ? `Arrange with ${n}-bar phrases: every section plays ${n === 4 ? 'A A\u2032 A B' : 'A B'}, the turnaround lands just before the next section (yellow marks in the timeline).` : 'Arrange with a 1-bar loop in every section.'); return; }
   showPage(n > 1 ? n - 1 : 0);
   say(n === 4 ? '4 bars: A A\u2032 A B. Bar 2 answers with a few ghost notes, bar 4 is the turnaround back to bar 1. Dots mark what changed.'
     : n === 2 ? '2 bars: A B. Bar 2 is the turnaround back to bar 1. Dots mark what changed.' : '1 bar: only page 1 plays.');
