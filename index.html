@@ -53,6 +53,14 @@
   @media (max-width: 560px) { .more dl { grid-template-columns: 1fr; gap: 2px; } .more dd { margin-bottom: 10px; } }
 
   .transport { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+  /* Play, BPM, Swing and the fullscreen toggle stay pinned while the grid scrolls */
+  .tmain { position: sticky; top: env(safe-area-inset-top); z-index: 5; background: var(--panel); display: flex; align-items: center; gap: 12px 16px;
+           margin: -8px 0 0; padding: 8px 0; }
+  .sliders { display: flex; flex-wrap: wrap; gap: 6px 22px; flex: 1; min-width: 0; }
+  .sliders label.ctl { flex: 1 1 190px; max-width: 300px; } .sliders input[type=range] { flex: 1; min-width: 60px; width: auto; }
+  .ctl .lab { min-width: 40px; }
+  #fsBtn { margin-left: auto; align-self: flex-start; width: 40px; height: 40px; padding: 0; font-size: 18px; line-height: 1; }
+  .tsub { margin-top: 10px; }
   button.btn { font: inherit; color: var(--text); background: #262a31; border: 1px solid var(--line); border-radius: 8px;
                padding: 8px 12px; cursor: pointer; }
   button.btn:hover { background: #2f343c; } button.btn:active, .cell:active, .chip:active { transform: scale(.96); }
@@ -67,11 +75,23 @@
   .card.fs { position: fixed; inset: 0; z-index: 50; margin: 0; border: 0; border-radius: 0; overflow-y: auto;
              padding: max(14px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom)); }
   body.fs-on { overflow: hidden; }
-  .name2 { display: none; }
+  .card.fs { padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+  /* phone held sideways: shrink the grid so all 6 rows fit the short screen */
+  @media (orientation: landscape) and (max-height: 520px) {
+    .card.fs .vnote, .card.fs .legend { display: none; }
+    .card.fs .variants { flex-wrap: nowrap; overflow-x: auto; margin-bottom: 6px; scrollbar-width: none; }
+    .card.fs .variants button { flex: none; padding: 3px 10px; }
+    .card.fs .tsub { margin-top: 4px; } .card.fs .tsub .btn, .card.fs .tsub select { padding: 4px 10px; }
+    .card.fs .grid { grid-template-columns: 92px repeat(16, minmax(20px, 1fr)); gap: 4px; min-width: 0; }
+    .card.fs .grid .cell { aspect-ratio: auto; height: clamp(18px, calc((100dvh - 190px) / 6), 40px); }
+    .card.fs .name small { display: none; } .card.fs .name b { font-size: 12px; }
+    .card.fs .nums { font-size: 10px; }
+  }
+  .name.name2 { display: none; }
   .grid.split { grid-template-columns: 70px repeat(8, minmax(0, 1fr)); min-width: 0; gap: 6px; }
   .grid.split .cell { aspect-ratio: auto; height: 34px; }
   .grid.split .name small { display: none; }
-  .grid.split .name2 { display: flex; }
+  .grid.split .name.name2 { display: flex; }
   .grid.split .name b { font-size: 12px; }
   .grid.split .nums.half2 { padding-top: 12px; }
   .name { display: flex; flex-direction: column; justify-content: center; cursor: pointer; user-select: none; line-height: 1.2; }
@@ -188,13 +208,17 @@
   <section class="card info" id="info"></section>
 
   <section class="card" id="playCard">
-    <div class="transport">
+    <div class="tmain">
       <button class="btn" id="play">▶ Play</button>
-      <label class="ctl">BPM <input id="bpm" type="range" min="60" max="180"><output id="bpmOut"></output></label>
-      <label class="ctl">Swing <input id="swing" type="range" min="50" max="80"><output id="swingOut"></output></label>
+      <div class="sliders">
+        <label class="ctl"><span class="lab">BPM</span><input id="bpm" type="range" min="60" max="180"><output id="bpmOut"></output></label>
+        <label class="ctl"><span class="lab">Swing</span><input id="swing" type="range" min="50" max="80"><output id="swingOut"></output></label>
+      </div>
+      <button class="btn" id="fsBtn" title="Fullscreen sequencer" aria-label="Fullscreen sequencer">⛶</button>
+    </div>
+    <div class="transport tsub">
       <label class="ctl">Kit <select id="kit"></select></label>
       <button class="btn" id="buildBtn" title="Layers enter one at a time, every 2 bars">Build-up: off</button>
-      <button class="btn" id="fsBtn" title="Show only the sequencer. On a phone in portrait, steps 1–8 and 9–16 are stacked">⛶ Fullscreen</button>
     </div>
     <div style="height:16px"></div>
     <div class="arr" id="arr" hidden>
@@ -1519,7 +1543,8 @@ function layoutGrid() {
 }
 function setFs(on) {
   playCard.classList.toggle('fs', on); document.body.classList.toggle('fs-on', on);
-  fsBtn.textContent = on ? '✕ Exit fullscreen' : '⛶ Fullscreen';
+  fsBtn.textContent = on ? '✕' : '⛶';
+  fsBtn.title = on ? 'Exit fullscreen' : 'Fullscreen sequencer'; fsBtn.setAttribute('aria-label', fsBtn.title);
   try {
     if (on && !document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
     if (!on && document.fullscreenElement) document.exitFullscreen().catch(() => {});
