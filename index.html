@@ -377,10 +377,12 @@
   .fxk select { margin-top: 6px; padding: 5px 8px; }
   @media (max-width: 600px) {
     .fx-hdr { display: none; }
-    .fx-row { grid-template-columns: 1fr 1fr 40px; row-gap: 2px; column-gap: 14px; padding: 10px 8px; }
-    .fx-name { grid-column: 1 / 3; } .fx-row .hear { grid-column: 3; grid-row: 1 / 3; }
-    .snd .m { display: inline; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-    .snd { gap: 6px; }
+    .fx-row { grid-template-columns: 1fr 40px; row-gap: 0; column-gap: 12px; padding: 10px 8px; }
+    .fx-name { grid-column: 1; grid-row: 1; } .fx-row .hear { grid-column: 2; grid-row: 1; }
+    .snd { grid-column: 1 / -1; gap: 10px; }
+    .snd .m { display: inline; width: 52px; flex: none; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .fxcard input[type=range] { margin: 8px 0; }
+    #fxToggle { white-space: nowrap; }
   }
 </style>
 </head>
