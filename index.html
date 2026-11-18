@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111317">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Groove Lab</title>
+<style>
+  :root {
+    --bg: #111317; --panel: #1a1d23; --line: #2a2e36; --text: #e8eaed; --muted: #8b919c;
+    --hue: 20; --on: hsl(var(--hue) 90% 60%); --glow: hsl(var(--hue) 90% 60% / .35);
+    --beat: #23272e; --off: #1c2026;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: max(20px, env(safe-area-inset-top)) 16px 40px; }
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  h1 { font-size: 20px; margin: 0; letter-spacing: -.01em; }
+  .hint { color: var(--muted); font-size: 12px; }
+
+  .genres { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 16px; scrollbar-width: thin; }
+  .chip { flex: none; border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px;
+          padding: 7px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+  .chip.active { color: #111; background: var(--on); border-color: var(--on); }
+  .chip.fav::before { content: '●'; color: #1ed760; font-size: 8px; margin-right: 6px; vertical-align: 2px; }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+  .info h2 { margin: 0; font-size: 30px; letter-spacing: -.02em; line-height: 1.1; }
+  .meta { color: var(--on); font-weight: 600; margin: 6px 0 10px; font-size: 13px; }
+  .about { margin: 0 0 10px; max-width: 72ch; }
+  .info ul { margin: 0; padding-left: 18px; color: #c9cdd4; }
+  .info li { margin: 2px 0; }
+  .refs { color: var(--muted); font-size: 12px; margin-top: 10px; }
+  .refs.spot { color: #1ed760; margin-top: 4px; }
+  .kitline { margin-top: 10px; font-size: 13px; color: #c9cdd4; }
+  .kitline b { color: var(--on); }
+
+  .transport { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+  button.btn { font: inherit; color: var(--text); background: #262a31; border: 1px solid var(--line); border-radius: 8px;
+               padding: 8px 12px; cursor: pointer; }
+  button.btn:hover { background: #2f343c; } button.btn:active, .cell:active, .chip:active { transform: scale(.96); }
+  #play { background: var(--on); border-color: var(--on); color: #111; font-weight: 700; min-width: 92px; }
+  label.ctl { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+  label.ctl output { color: var(--text); min-width: 36px; font-variant-numeric: tabular-nums; }
+  input[type=range] { accent-color: var(--on); width: 130px; }
+  select { font: inherit; color: var(--text); background: #262a31; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+
+  .grid-scroll { overflow-x: auto; }
+  .grid { display: grid; grid-template-columns: 112px repeat(16, minmax(26px, 1fr)); gap: 5px; min-width: 600px; }
+  .name { display: flex; flex-direction: column; justify-content: center; cursor: pointer; user-select: none; line-height: 1.2; }
+  .name b { font-size: 13px; } .name small { color: var(--muted); font-size: 10px; letter-spacing: .04em; }
+  .name.muted b { color: var(--muted); text-decoration: line-through; }
+  .nums { color: var(--muted); font-size: 11px; text-align: center; }
+  .nums.q { color: var(--text); font-weight: 700; }
+  .cell { aspect-ratio: 1; border-radius: 6px; background: var(--off); border: 1px solid var(--line); cursor: pointer; padding: 0; }
+  .cell.beat { background: var(--beat); }
+  .cell.v2 { background: var(--on); border-color: var(--on); }
+  .cell.v1 { background: hsl(var(--hue) 90% 60% / .42); border-color: hsl(var(--hue) 90% 60% / .6); }
+  .cell.v3 { background: repeating-linear-gradient(90deg, var(--on) 0 3px, transparent 3px 6px); border-color: var(--on); }
+  .cell.head { outline: 2px solid #fff; outline-offset: 1px; }
+  .cell.head.v1, .cell.head.v2, .cell.head.v3 { box-shadow: 0 0 14px var(--glow); }
+  .row-muted { opacity: .35; }
+  .row-pending { opacity: .15; }
+  #buildBtn.on { background: hsl(var(--hue) 90% 60% / .18); border-color: var(--on); color: var(--on); }
+
+  .arr { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .arr-cap { font-weight: 700; font-size: 17px; margin-bottom: 10px; min-height: 1.4em; letter-spacing: -.01em; }
+  .arr-cap small { display: block; color: var(--muted); font-weight: 600; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+  .arr-grid { display: grid; gap: 3px; grid-template-columns: 112px repeat(var(--cols), minmax(8px, 1fr)); align-items: center; }
+  .arr-grid .lbl { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .arr-grid .bar { font-size: 10px; color: var(--muted); text-align: center; }
+  .arr-cell { height: 12px; border-radius: 3px; background: var(--off); }
+  .arr-cell.on { background: hsl(var(--hue) 90% 60% / .5); }
+  .arr-cell.now { outline: 1px solid #fff; outline-offset: 1px; }
+  .arr-cell.on.now { background: var(--on); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 12px; align-items: center; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; border: 1px solid var(--line); }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
+  .msg { color: var(--muted); font-size: 13px; }
+
+  .mc h3 { margin: 0 0 8px; font-size: 14px; }
+  .mc p { margin: 4px 0; color: #c9cdd4; font-size: 13px; }
+  .mc code { background: #262a31; border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+  kbd { background: #262a31; border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Groove Lab</h1>
+    <span class="hint"><kbd>Space</kbd> play/stop · tap a step: accent → soft → roll → off</span>
+  </header>
+
+  <nav class="genres" id="genres"></nav>
+
+  <section class="card info" id="info"></section>
+
+  <section class="card">
+    <div class="transport">
+      <button class="btn" id="play">▶ Play</button>
+      <label class="ctl">BPM <input id="bpm" type="range" min="60" max="180"><output id="bpmOut"></output></label>
+      <label class="ctl">Swing <input id="swing" type="range" min="50" max="80"><output id="swingOut"></output></label>
+      <label class="ctl">Kit <select id="kit"></select></label>
+      <button class="btn" id="buildBtn" title="Layers enter one at a time, every 2 bars">Build-up: off</button>
+    </div>
+    <div style="height:16px"></div>
+    <div class="arr" id="arr" hidden>
+      <div class="arr-cap" id="arrCap"></div>
+      <div class="arr-grid" id="arrGrid"></div>
+    </div>
+    <div class="grid-scroll"><div class="grid" id="grid"></div></div>
+    <div class="legend">
+      <span><i style="background:var(--on)"></i>Accent</span>
+      <span><i style="background:hsl(var(--hue) 90% 60% / .42)"></i>Soft / ghost</span>
+      <span><i style="background:repeating-linear-gradient(90deg,var(--on) 0 3px,transparent 3px 6px)"></i>Roll (3 hits)</span>
+      <span>Tap a track name to mute it</span>
+    </div>
+    <div class="actions">
+      <button class="btn" id="saveBtn">Save my version</button>
+      <button class="btn" id="resetBtn">Reset to original</button>
+      <button class="btn" id="clearBtn">Clear</button>
+      <span class="msg" id="msg"></span>
+    </div>
+  </section>
+
+  <section class="card mc">
+    <h3>Taking it to the Model:Cycles</h3>
+    <p>The 6 rows match the Cycles' 6 tracks. The machine to load is under each row name, and the 16 steps match its 16 trig keys.</p>
+    <p>Swing is shown as an Elektron-style percentage (<code>50%</code> = straight, <code>~67%</code> = triplet shuffle), so you can type the same number into the Cycles.</p>
+    <p>The kit line under each genre describes the sound to aim for (kick pitch and decay, rim vs. clap, how dark). Use it as a starting point for tweaking the Cycles' machines.</p>
+    <p>Soft hits → put a lower volume/velocity parameter lock on that trig. Rolls → use the Cycles' retrig or a short repeat at 1/32.</p>
+  </section>
+</div>
+
+<script src="genres.js"></script>
+<script src="kits.js"></script>
+<script>
+const TRACKS = [
+  { id: 'kick',  name: 'Kick',         mc: 'T1 · KICK' },
+  { id: 'snare', name: 'Snare / Clap', mc: 'T2 · SNARE' },
+  { id: 'chh',   name: 'Closed hat',   mc: 'T3 · METAL' },
+  { id: 'ohh',   name: 'Open hat',     mc: 'T4 · METAL' },
+  { id: 'perc',  name: 'Perc / Rim',   mc: 'T5 · PERC' },
+  { id: 'bass',  name: 'Bass / 808',   mc: 'T6 · TONE' },
+];
+const STEPS = 16;
+const VAL = { '.': 0, 'x': 1, 'X': 2, 'r': 3 };
+const parse = s => Array.from({ length: STEPS }, (_, i) => VAL[(s || '')[i]] || 0);
+GENRES.sort((a, b) => (b.fav ? 1 : 0) - (a.fav ? 1 : 0));
+
+// ---------- storage (guarded) ----------
+const KEY = 'groove-lab-v1';
+function store() { try { return JSON.parse(localStorage.getItem(KEY)) || { mine: {} }; } catch { return { mine: {} }; } }
+function persist(obj) { try { localStorage.setItem(KEY, JSON.stringify(obj)); return true; } catch { return false; } }
+
+// ---------- state ----------
+let genre = GENRES[0], kitId = genre.kit;
+const pattern = {}, muted = {};
+TRACKS.forEach(t => muted[t.id] = false);
+
+// ---------- scheduler ----------
+const bpmEl = document.getElementById('bpm'), swingEl = document.getElementById('swing');
+let playing = false, step = 0, bar = 0, nextTime = 0, timer = null, headStep = -1;
+const queue = [];
+const stepDur = () => 60 / +bpmEl.value / 4;
+function schedule() {
+  const ctx = Engine.ctx;
+  while (nextTime < ctx.currentTime + 0.1) {
+    const d = stepDur();
+    const t = nextTime + (step % 2 ? (2 * +swingEl.value / 100 - 1) * d : 0);
+    TRACKS.forEach(tr => { const v = pattern[tr.id][step]; if (v && !muted[tr.id] && layerOn(tr.id, bar)) Engine.play(tr.id, v, t, d); });
+    queue.push({ step, bar, t });
+    nextTime += d; step = (step + 1) % STEPS;
+    if (step === 0) bar++;
+  }
+}
+function draw() {
+  if (!playing) return;
+  while (queue.length && queue[0].t <= Engine.ctx.currentTime) {
+    const q = queue.shift();
+    setHead(q.step);
+    if (buildMode && q.step === 0) showBuild(q.bar);
+  }
+  requestAnimationFrame(draw);
+}
+
+// ---------- build-up mode: layers enter one by one ----------
+const BARS_PER_LAYER = 2, HOLD_BARS = 4;
+let buildMode = false, layers = [];
+const labelOf = id => (genre.labels && genre.labels[id]) || TRACKS.find(t => t.id === id).name;
+const hasHits = id => pattern[id] && pattern[id].some(v => v);
+function computeLayers() {
+  const list = (genre.build || []).filter(([id]) => hasHits(id)).map(([id, note]) => ({ id, note }));
+  ['kick', 'snare', 'chh', 'ohh', 'perc', 'bass'].forEach(id => {
+    if (hasHits(id) && !list.some(l => l.id === id)) list.push({ id, note: `${labelOf(id)} comes in` });
+  });
+  layers = list;
+}
+const totalBars = () => layers.length * BARS_PER_LAYER + HOLD_BARS;
+function layerOn(id, b) {
+  if (!buildMode) return true;
+  const i = layers.findIndex(l => l.id === id);
+  return i < 0 || (b % totalBars()) >= i * BARS_PER_LAYER;
+}
+function renderArrangement() {
+  computeLayers();
+  const g = document.getElementById('arrGrid'), n = totalBars();
+  g.style.setProperty('--cols', n);
+  let html = '<div></div>' + Array.from({ length: n }, (_, b) => `<div class="bar">${b % 2 === 0 ? b + 1 : ''}</div>`).join('');
+  layers.forEach((l, i) => {
+    html += `<div class="lbl">${labelOf(l.id)}</div>`;
+    for (let b = 0; b < n; b++) html += `<div class="arr-cell${b >= i * BARS_PER_LAYER ? ' on' : ''}" data-bar="${b}"></div>`;
+  });
+  g.innerHTML = html;
+}
+function showBuild(b) {
+  const n = totalBars(), pos = b % n;
+  const idx = Math.min(layers.length - 1, Math.floor(pos / BARS_PER_LAYER));
+  const cap = document.getElementById('arrCap');
+  if (pos < layers.length * BARS_PER_LAYER) {
+    const l = layers[idx];
+    cap.innerHTML = `<small>Bars ${idx * 2 + 1}–${idx * 2 + 2} · layer ${idx + 1} of ${layers.length} · ${idx === 0 ? 'starts' : '+'} ${labelOf(l.id)}</small>${l.note}`;
+  } else {
+    cap.innerHTML = `<small>Bars ${layers.length * 2 + 1}–${n} · full groove</small>Everything together, then it starts again from the first layer`;
+  }
+  document.querySelectorAll('.arr-cell').forEach(c => c.classList.toggle('now', +c.dataset.bar === pos));
+  TRACKS.forEach((tr, r) => {
+    const on = layerOn(tr.id, b);
+    nameEls[r].classList.toggle('row-pending', !on);
+    cells[r].forEach(c => c.classList.toggle('row-pending', !on));
+  });
+}
+function clearBuild() {
+  TRACKS.forEach((_, r) => { nameEls[r].classList.remove('row-pending'); cells[r].forEach(c => c.classList.remove('row-pending')); });
+  document.querySelectorAll('.arr-cell.now').forEach(c => c.classList.remove('now'));
+}
+function refreshBuild() {
+  const arr = document.getElementById('arr');
+  arr.hidden = !buildMode;
+  const btn = document.getElementById('buildBtn');
+  btn.textContent = `Build-up: ${buildMode ? 'on' : 'off'}`; btn.classList.toggle('on', buildMode);
+  if (!buildMode) { clearBuild(); return; }
+  renderArrangement();
+  if (playing) showBuild(bar);
+  else { clearBuild(); document.getElementById('arrCap').innerHTML = `<small>${layers.length} layers · a new one every ${BARS_PER_LAYER} bars</small>Press play to hear the groove build up`; }
+}
+document.getElementById('buildBtn').onclick = () => {
+  buildMode = !buildMode;
+  if (buildMode && playing) { bar = 0; step = 0; nextTime = Engine.ctx.currentTime + 0.05; queue.length = 0; }
+  refreshBuild();
+  say(buildMode ? 'Build-up on: one new layer every 2 bars.' : 'Build-up off: all tracks play.');
+};
+function setHead(s) {
+  if (headStep >= 0) cells.forEach(r => r[headStep].classList.remove('head'));
+  headStep = s;
+  if (s >= 0) cells.forEach(r => r[s].classList.add('head'));
+}
+const playBtn = document.getElementById('play');
+function togglePlay() {
+  const ctx = Engine.init();
+  playing = !playing;
+  if (playing) {
+    step = 0; bar = 0; nextTime = ctx.currentTime + 0.05; queue.length = 0;
+    if (buildMode) { renderArrangement(); showBuild(0); }
+    timer = setInterval(schedule, 25); schedule(); draw();
+    playBtn.textContent = '■ Stop';
+  } else {
+    clearInterval(timer); setHead(-1); playBtn.textContent = '▶ Play';
+    if (buildMode) refreshBuild();
+  }
+}
+
+// ---------- UI ----------
+const msg = document.getElementById('msg');
+const say = t => { msg.textContent = t; };
+
+const nav = document.getElementById('genres');
+GENRES.forEach(g => {
+  const b = document.createElement('button');
+  b.className = 'chip' + (g.fav ? ' fav' : ''); b.textContent = g.name; b.dataset.id = g.id;
+  if (g.fav) b.title = 'From your Spotify and your picks';
+  b.onclick = () => selectGenre(g.id);
+  nav.appendChild(b);
+});
+
+const kitSel = document.getElementById('kit');
+kitSel.innerHTML = Object.keys(KITS).map(k => `<option value="${k}">${k}</option>`).join('');
+kitSel.onchange = () => { setKit(kitSel.value); say(`Kit: ${kitSel.value}. Change genre to go back to its own kit.`); };
+function setKit(id) {
+  kitId = id; kitSel.value = id;
+  const k = Engine.setKit(id);
+  const line = document.getElementById('kitline');
+  if (line) line.innerHTML = `<b>Kit · ${id}:</b> ${k.desc}`;
+}
+
+const grid = document.getElementById('grid');
+const cells = [], nameEls = [];
+grid.appendChild(document.createElement('div'));
+for (let s = 0; s < STEPS; s++) {
+  const n = document.createElement('div');
+  n.className = 'nums' + (s % 4 === 0 ? ' q' : '');
+  n.textContent = s % 4 === 0 ? (s / 4 + 1) : s + 1;
+  grid.appendChild(n);
+}
+TRACKS.forEach((tr, r) => {
+  const name = document.createElement('div');
+  name.className = 'name'; name.title = 'Tap to mute / unmute';
+  name.onclick = () => {
+    muted[tr.id] = !muted[tr.id];
+    name.classList.toggle('muted', muted[tr.id]);
+    cells[r].forEach(c => c.classList.toggle('row-muted', muted[tr.id]));
+    say(`${name.querySelector('b').textContent} ${muted[tr.id] ? 'muted' : 'unmuted'}.`);
+  };
+  grid.appendChild(name); nameEls[r] = name;
+  cells[r] = [];
+  for (let s = 0; s < STEPS; s++) {
+    const c = document.createElement('button');
+    c.className = 'cell' + (Math.floor(s / 4) % 2 === 0 ? ' beat' : '');
+    c.setAttribute('aria-label', `${tr.name} step ${s + 1}`);
+    c.onclick = () => {
+      const v = (pattern[tr.id][s] + 1) % 4;
+      pattern[tr.id][s] = v; paintCell(r, s);
+      if (v && !playing) { const ctx = Engine.init(); Engine.play(tr.id, v, ctx.currentTime, stepDur()); }
+    };
+    grid.appendChild(c); cells[r].push(c);
+  }
+});
+function paintCell(r, s) {
+  const c = cells[r][s], v = pattern[TRACKS[r].id][s];
+  c.classList.remove('v1', 'v2', 'v3'); if (v) c.classList.add('v' + v);
+}
+function render() { TRACKS.forEach((_, r) => { for (let s = 0; s < STEPS; s++) paintCell(r, s); }); }
+function renderNames() {
+  TRACKS.forEach((tr, r) => {
+    const label = (genre.labels && genre.labels[tr.id]) || tr.name;
+    nameEls[r].innerHTML = `<b>${label}</b><small>${tr.mc}</small>`;
+  });
+}
+
+const bpmOut = document.getElementById('bpmOut'), swingOut = document.getElementById('swingOut');
+bpmEl.oninput = () => bpmOut.textContent = bpmEl.value;
+swingEl.oninput = () => swingOut.textContent = swingEl.value + '%';
+
+function loadOriginal() {
+  TRACKS.forEach(tr => pattern[tr.id] = parse(genre.p[tr.id]));
+  bpmEl.value = genre.bpm; swingEl.value = genre.swing;
+}
+function selectGenre(id) {
+  genre = GENRES.find(g => g.id === id) || GENRES[0];
+  document.documentElement.style.setProperty('--hue', genre.hue);
+  nav.querySelectorAll('.chip').forEach(b => b.classList.toggle('active', b.dataset.id === genre.id));
+  nav.querySelector('.chip.active')?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  const mine = store().mine[genre.id];
+  if (mine) { TRACKS.forEach(tr => pattern[tr.id] = mine.p[tr.id].slice()); bpmEl.value = mine.bpm; swingEl.value = mine.swing; }
+  else loadOriginal();
+  bpmEl.oninput(); swingEl.oninput(); render(); renderNames();
+  document.getElementById('info').innerHTML = `
+    <h2>${genre.name}</h2>
+    <div class="meta">${genre.range} BPM · swing ${genre.swing}%${mine ? ' · showing your saved version' : ''}</div>
+    <p class="about">${genre.about}</p>
+    <ul>${genre.listen.map(l => `<li>${l}</li>`).join('')}</ul>
+    ${genre.harmony ? `<div class="kitline"><b>Harmony:</b> ${genre.harmony}</div>` : ''}
+    <div class="kitline" id="kitline"></div>
+    <div class="refs">Listen to: ${genre.refs}</div>
+    ${genre.fav ? `<div class="refs spot">● Your artists: ${genre.spotify}</div>` : ''}
+    <div class="refs">Source: ${genre.src}</div>`;
+  setKit(genre.kit);
+  if (buildMode) { if (playing) { bar = 0; } refreshBuild(); }
+  const s = store(); s.last = genre.id; persist(s);
+  say('');
+}
+
+document.getElementById('saveBtn').onclick = () => {
+  const s = store();
+  s.mine[genre.id] = { bpm: +bpmEl.value, swing: +swingEl.value, p: Object.fromEntries(TRACKS.map(t => [t.id, pattern[t.id].slice()])) };
+  if (persist(s)) { selectGenre(genre.id); say(`Saved your ${genre.name} version.`); }
+  else say('Could not save: browser storage is blocked.');
+};
+document.getElementById('resetBtn').onclick = () => {
+  const s = store(); delete s.mine[genre.id]; persist(s);
+  selectGenre(genre.id); say(`Back to the original ${genre.name} pattern.`);
+};
+document.getElementById('clearBtn').onclick = () => {
+  TRACKS.forEach(t => pattern[t.id].fill(0)); render(); say('Cleared. Not saved until you tap Save.');
+};
+playBtn.onclick = togglePlay;
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && !['INPUT', 'SELECT'].includes(e.target.tagName)) { e.preventDefault(); togglePlay(); }
+});
+
+selectGenre(store().last || GENRES[0].id);
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>

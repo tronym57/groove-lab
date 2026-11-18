@@ -1,0 +1,13 @@
+{
+  "name": "Groove Lab",
+  "short_name": "Groove Lab",
+  "description": "Genre drum patterns to try out before programming them on the Model:Cycles.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111317",
+  "theme_color": "#111317",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
