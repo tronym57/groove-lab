@@ -57,7 +57,8 @@
   .tmain { position: sticky; top: env(safe-area-inset-top); z-index: 5; background: var(--panel); display: flex; align-items: center; gap: 12px 16px;
            margin: -8px 0 0; padding: 8px 0; }
   .sliders { display: flex; flex-wrap: wrap; gap: 6px 22px; flex: 1; min-width: 0; }
-  .sliders label.ctl { flex: 1 1 190px; max-width: 300px; } .sliders input[type=range] { flex: 1; min-width: 60px; width: auto; }
+  .sliders label.ctl { flex: 1 1 190px; max-width: 300px; min-width: 0; } .sliders input[type=range] { flex: 1; min-width: 0; width: 0; }
+  @media (max-width: 480px) { #play { min-width: 76px; padding: 8px 10px; } .tmain { gap: 10px; } .sliders label.ctl { gap: 6px; } }
   .ctl .lab { min-width: 40px; }
   #fsBtn { margin-left: auto; align-self: flex-start; width: 40px; height: 40px; padding: 0; font-size: 18px; line-height: 1; }
   .tsub { margin-top: 10px; }
