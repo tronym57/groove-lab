@@ -80,8 +80,7 @@ const MC = (() => {
       <rect x="92" y="18" width="118" height="62" rx="5" class="screen"/>
       <text x="151" y="53" class="scrtxt" id="mcScreen">Model:Cycles</text>
       <text x="151" y="104" class="brand">Model:Cycles</text>
-      <g class="pageleds">${[0, 1, 2, 3].map(i => `<rect x="${741 + i * 14}" y="${294}" width="10" height="7" rx="2"/>`).join('')}
-        <text x="768" y="290" class="sb">1:4 2:4 3:4 4:4</text></g>`;
+      <g class="pageleds">${[0, 1, 2, 3].map(i => `<rect x="${741 + i * 14}" y="296" width="10" height="6" rx="2"/>`).join('')}</g>`;
     for (const [id, [kind, x, y, label, sub, glyph]] of Object.entries(C)) {
       s += `<g class="ctl" data-k="${id}" tabindex="0">`;
       if (kind === 'knob' || kind === 'tknob') {
