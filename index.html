@@ -182,6 +182,10 @@
   .chg { font-size: 12px; font-weight: 700; border-radius: 6px; padding: 2px 8px; }
   .chg.add { background: hsl(140 60% 40% / .25); color: #7be39a; }
   .chg.rem { background: hsl(0 70% 50% / .22); color: #ff8f8f; }
+  .chg.fillchip { background: hsl(45 90% 50% / .22); color: #ffd36b; }
+  .cell.fill { outline: 1px dashed #ffd36b; outline-offset: -3px; }
+  .arr-cell.fill { background: repeating-linear-gradient(90deg, #ffd36b 0 2px, transparent 2px 4px); }
+  .name.filling .nm b::after { content: ' · roll'; color: #ffd36b; font-weight: 600; }
   .chgs .enter { color: var(--muted); font-size: 13px; }
   .arr-cap { font-weight: 600; font-size: 15px; }
   .views button.on, .tabs button.on { color: var(--text); }
@@ -1519,7 +1523,7 @@ function renderArrangement() {
   plan.secs.forEach((s, i) => html += `<div class="sec${s.song === 'Chorus' ? ' peak' : s.song === 'Bridge' ? ' low' : ''}" style="grid-row:1;grid-column:${s.start + 2} / span ${s.len}" data-bar="${s.start}" title="${s.name}">${s.name}</div>`);
   rows.forEach((t, ri) => {
     html += `<div class="lbl" style="grid-row:${ri + 2};grid-column:1">${labelOf(t.id)}</div>`;
-    plan.bars.forEach((x, b) => html += `<div class="arr-cell${x.active.has(t.id) ? ' on' : ''}${x.inSec === 0 && b ? ' first' : ''}" data-bar="${b}" style="grid-row:${ri + 2};grid-column:${b + 2}"></div>`);
+    plan.bars.forEach((x, b) => html += `<div class="arr-cell${x.active.has(t.id) ? ' on' : ''}${t.id === 'snare' && plan.secs[x.sec].fill && plan.secs[x.sec].len - x.inSec <= 2 ? ' on fill' : ''}${x.inSec === 0 && b ? ' first' : ''}" data-bar="${b}" style="grid-row:${ri + 2};grid-column:${b + 2}"></div>`);
   });
   g.innerHTML = html;
   document.getElementById('arrLen').textContent = shortDemo ? 'Short demo (¼ length)' : 'Real length';
@@ -1538,13 +1542,31 @@ function showBuild(b) {
     ${chips || entering ? `<div class="chgs">${chips}${entering}</div>` : ''}`;
   document.querySelectorAll('.arr-cell').forEach(c => c.classList.toggle('now', +c.dataset.bar === pos));
   document.querySelectorAll('#arrGrid .sec').forEach(c => c.classList.toggle('cur', +c.dataset.bar === sec.start));
+  const fill = fillAt(pos);
   TRACKS.forEach((tr, r) => {
-    const on = layerOn(tr.id, pos);
+    const on = layerOn(tr.id, pos) || (tr.id === 'snare' && !!fill);
     nameEls[r].classList.toggle('row-pending', !on);
     cells[r].forEach(c => c.classList.toggle('row-pending', !on));
   });
+  showFill(fill);
+  if (fill) document.getElementById('arrCap').insertAdjacentHTML('beforeend', `<div class="chgs"><span class="chg fillchip">Snare roll: ${fill === FILL[1] ? 'last bar, it speeds up into a roll' : '8th notes, getting louder next bar'}</span><span class="enter">replaces the normal snare in the last 2 bars before the drop</span></div>`);
+}
+// During a build-up roll the snare row shows the roll (dashed) instead of the stored pattern.
+let fillShown = null;
+function showFill(fill) {
+  if (fill === fillShown) return;
+  fillShown = fill;
+  const r = TRACKS.findIndex(t => t.id === 'snare');
+  for (let s = 0; s < STEPS; s++) {
+    if (!fill) { cells[r][s].classList.remove('fill'); paintCell(r, s); continue; }
+    const c = cells[r][s];
+    c.classList.remove('v1', 'v2', 'v3', 'v4', 'v5', 'diff'); if (fill[s]) c.classList.add('v' + fill[s]);
+    c.classList.add('fill');
+  }
+  nameEls[TRACKS.findIndex(t => t.id === 'snare')].classList.toggle('filling', !!fill);
 }
 function clearBuild() {
+  showFill(null);
   TRACKS.forEach((_, r) => { nameEls[r].classList.remove('row-pending'); cells[r].forEach(c => c.classList.remove('row-pending')); });
   document.querySelectorAll('.arr-cell.now').forEach(c => c.classList.remove('now'));
 }
@@ -1768,7 +1790,7 @@ function paintCell(r, s) {
   c.classList.remove('v1', 'v2', 'v3', 'v4', 'v5'); if (v) c.classList.add('v' + v);
   c.classList.toggle('diff', !!orig[TRACKS[r].id] && orig[TRACKS[r].id][s] !== v);
 }
-function render() { TRACKS.forEach((_, r) => { for (let s = 0; s < STEPS; s++) paintCell(r, s); }); }
+function render() { TRACKS.forEach((_, r) => { for (let s = 0; s < STEPS; s++) paintCell(r, s); }); if (fillShown) { const f = fillShown; fillShown = null; showFill(f); } }
 function renderNames() {
   TRACKS.forEach((tr, r) => {
     const label = labelOf(tr.id), m = MC.recipe(kitId, tr.id).machine, swap = m !== MC.DEFAULT[r];
