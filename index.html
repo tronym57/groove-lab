@@ -119,7 +119,7 @@
   .variants button.on { color: #111; background: var(--on); border-color: var(--on); font-weight: 600; }
   .vnote { color: #c9cdd4; font-size: 13px; margin: 0 0 14px; min-height: 1.4em; max-width: 75ch; }
   .vnote b { color: var(--on); }
-  .vnote:empty { display: none; }
+  .vnote:empty, [hidden] { display: none !important; }
   .steptext .lead { font-size: 15px; line-height: 1.5; margin-bottom: 10px; }
   .steptext dl.sm { font-size: 13px; padding-top: 10px; border-top: 1px solid var(--line); }
   .steptext .tips { margin-top: 10px; font-size: 13px; color: #c9cdd4; }
