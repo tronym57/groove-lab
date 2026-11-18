@@ -349,8 +349,8 @@
   .fx-name { all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; min-width: 0; }
   .fx-name b { font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .fx-name:focus-visible { outline: 2px solid var(--on); outline-offset: 3px; border-radius: 4px; }
-  .tag { flex: none; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; background: #262a31; color: var(--muted); }
-  .tag.hot { color: var(--on); background: hsl(var(--hue) 90% 60% / .15); }
+  .fxtag { flex: none; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; background: #262a31; color: var(--muted); }
+  .fxtag.hot { color: var(--on); background: hsl(var(--hue) 90% 60% / .15); }
   .snd { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .snd .m { display: none; }
   .snd output { width: 26px; text-align: right; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--muted); }
@@ -2360,7 +2360,7 @@ function renderFx() {
   document.getElementById('fxRows').innerHTML = `<div class="fx-hdr"><span></span><span>Delay send</span><span>Reverb send</span><span></span></div>` + TRACKS.map(tr => {
     const [d, r] = f.s[tr.id] || [0, 0], [tag, hot] = fxTag(d, r), n = labelOf(tr.id);
     return `<div class="fx-row${!d && !r ? ' dry' : ''}" data-t="${tr.id}">
-      <button class="fx-name" aria-label="Why ${n} gets this setting"><b>${n}</b><span class="tag ${hot}">${tag}</span></button>
+      <button class="fx-name" aria-label="Why ${n} gets this setting"><b>${n}</b><span class="fxtag ${hot}">${tag}</span></button>
       <label class="snd"><span class="m">Delay</span>${slider(d, 0, 127, `data-k="0" aria-label="${n} delay send"`)}<output>${d}</output></label>
       <label class="snd"><span class="m">Reverb</span>${slider(r, 0, 127, `data-k="1" aria-label="${n} reverb send"`)}<output>${r}</output></label>
       <button class="btn ghost hear" aria-label="Hear ${n} with its effects" title="Hear one hit with its effects">▶</button>
@@ -2385,8 +2385,8 @@ document.getElementById('fxRows').oninput = e => {
   const id = row.dataset.t, v = +e.target.value;
   fxState.s[id] = fxState.s[id] || [0, 0]; fxState.s[id][+e.target.dataset.k] = v;
   setFill(e.target); e.target.nextElementSibling.textContent = v;
-  const [d, r] = fxState.s[id], [tag, hot] = fxTag(d, r), t = row.querySelector('.tag');
-  t.textContent = tag; t.className = `tag ${hot}`; row.classList.toggle('dry', !d && !r);
+  const [d, r] = fxState.s[id], [tag, hot] = fxTag(d, r), t = row.querySelector('.fxtag');
+  t.textContent = tag; t.className = `fxtag ${hot}`; row.classList.toggle('dry', !d && !r);
   fxSel = id; showFxWhy(); fxApply();
 };
 document.getElementById('fxRows').onclick = e => {
