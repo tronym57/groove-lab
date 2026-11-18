@@ -227,16 +227,35 @@
 </div>
 
 <script>
-// Never fail silently: show script errors on the page.
-window.addEventListener('error', e => {
+// Never fail silently: show every script error and failed file load on the page.
+function showErr(text) {
   const d = document.getElementById('err') || document.body.insertBefore(Object.assign(document.createElement('div'), { id: 'err' }), document.body.firstChild);
-  d.style.cssText = 'background:#5a1d1d;color:#fff;padding:10px 16px;font:13px system-ui';
-  d.textContent = `Something broke: ${e.message} (${(e.filename || '').split('/').pop()}:${e.lineno}). Try a hard reload (Cmd+Shift+R).`;
-});
+  d.style.cssText = 'background:#5a1d1d;color:#fff;padding:10px 16px;font:13px system-ui;white-space:pre-line';
+  d.textContent += (d.textContent ? '\n' : '') + text;
+}
+window.addEventListener('error', e => {
+  const src = e.target && e.target.src;
+  showErr(src ? `Could not load ${src.split('/').pop()}.` : `Something broke: ${e.message} (${(e.filename || '').split('/').pop()}:${e.lineno}).`);
+}, true);
 </script>
 <script src="genres.js"></script>
 <script src="kits.js"></script>
 <script src="cycles.js"></script>
+<script>
+// If a data file is missing, a stale offline cache is the usual cause: clear it and reload once.
+if (typeof GENRES === 'undefined' || typeof KITS === 'undefined' || typeof MC === 'undefined') {
+  let healed = false;
+  try { healed = sessionStorage.getItem('gl-healed') === '1'; sessionStorage.setItem('gl-healed', '1'); } catch {}
+  if (!healed) {
+    showErr('Some files were missing. Clearing the offline cache and reloading…');
+    Promise.all([
+      navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(rs => Promise.all(rs.map(r => r.unregister()))) : 0,
+      window.caches ? caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k)))) : 0,
+    ]).catch(() => {}).then(() => location.reload());
+  } else showErr('Files are still missing after clearing the cache. Check your connection or content blockers for tronym57.github.io.');
+  throw new Error('Groove Lab data files did not load');
+}
+</script>
 <script>
 const TRACKS = [
   { id: 'kick',  name: 'Kick' },

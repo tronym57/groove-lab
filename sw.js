@@ -1,4 +1,4 @@
-const CACHE = 'groove-lab-v7';
+const CACHE = 'groove-lab-v8';
 const SAMPLES = ['conga', 'tumba', 'bongo_hi', 'bongo_lo', 'shaker_dn', 'shaker_up', 'clap1', 'clap2',
   'clave', 'wood', 'hat_closed', 'hat_open', 'tamb'].map(n => `samples/${n}.wav`);
 const FILES = ['./', 'index.html', 'genres.js', 'kits.js', 'cycles.js', 'manifest.webmanifest', 'icon.svg', 'icon-180.png', 'icon-512.png', ...SAMPLES];
@@ -13,7 +13,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-cache' })
       .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return res; })
       .catch(() => caches.match(e.request))
   );
