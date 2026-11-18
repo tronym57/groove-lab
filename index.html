@@ -340,6 +340,7 @@
   .fx-head h3 { margin: 0 0 4px; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
   .fx-focus { margin: 0; color: #c9cdd4; font-size: 15px; max-width: 62ch; }
   #fxToggle.off { color: var(--muted); }
+  .fx-btns { display: flex; gap: 6px; flex: none; }
   #fxToggle:not(.off) { background: hsl(var(--hue) 90% 60% / .18); border-color: var(--on); color: var(--on); }
   .fx-hdr, .fx-row { display: grid; grid-template-columns: minmax(150px, 220px) 1fr 1fr 40px; column-gap: 22px; align-items: center; }
   .fx-hdr { padding: 0 10px 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
@@ -516,7 +517,7 @@
   <section class="card fxcard" id="fxCard">
     <div class="fx-head">
       <div><h3>Effects</h3><p class="fx-focus" id="fxFocus"></p></div>
-      <button class="btn" id="fxToggle" aria-pressed="true">Effects: on</button>
+      <div class="fx-btns"><button class="btn ghost" id="fxReset" title="Back to this genre's effect settings">Reset</button><button class="btn" id="fxToggle" aria-pressed="true">Effects: on</button></div>
     </div>
     <div class="fx-table" id="fxRows"></div>
     <div class="fx-why" id="fxWhy" aria-live="polite"></div>
@@ -2399,6 +2400,11 @@ document.getElementById('fxRows').onclick = e => {
   b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 200);
   fxSel = id; showFxWhy();
   if (!fxEnabled) say('Effects are off: you hear the dry hit.');
+};
+document.getElementById('fxReset').onclick = () => {
+  const changed = JSON.stringify(fxState) !== JSON.stringify(fxOf(genre.id));
+  loadFx(); mcRefresh();
+  say(changed ? `Effects back to the ${genre.name} defaults.` : `Already the ${genre.name} defaults.`);
 };
 document.getElementById('fxToggle').onclick = () => {
   fxEnabled = !fxEnabled; Engine.setFxOn(fxEnabled);
