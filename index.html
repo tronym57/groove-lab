@@ -54,13 +54,26 @@
 
   .transport { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
   /* Play, BPM, Swing and the fullscreen toggle stay pinned while the grid scrolls */
-  .tmain { position: sticky; top: env(safe-area-inset-top); z-index: 5; background: var(--panel); display: flex; align-items: center; gap: 12px 16px;
-           margin: -8px 0 0; padding: 8px 0; }
-  .sliders { display: flex; flex-wrap: wrap; gap: 6px 22px; flex: 1; min-width: 0; }
-  .sliders label.ctl { flex: 1 1 190px; max-width: 300px; min-width: 0; } .sliders input[type=range] { flex: 1; min-width: 0; width: 0; }
-  @media (max-width: 480px) { #play { min-width: 76px; padding: 8px 10px; } .tmain { gap: 10px; } .sliders label.ctl { gap: 6px; } }
+  .tmain { position: sticky; top: env(safe-area-inset-top); z-index: 5; background: var(--panel); display: grid; align-items: center; gap: 10px 16px;
+           grid-template-columns: auto 1fr auto; grid-template-areas: "bar sl fs"; margin: -8px 0 0; padding: 8px 0; }
+  .tbar { grid-area: bar; display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .sliders { grid-area: sl; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; min-width: 0; }
+  @media (max-width: 700px) { .tmain { grid-template-columns: 1fr auto; grid-template-areas: "bar fs" "sl sl"; } }
+  .gsw { display: flex; align-items: center; gap: 4px; min-width: 0; background: #0d0f12; border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+  .gsw .btn { padding: 5px 9px; border: 0; background: none; color: var(--muted); }
+  .gsw .btn:hover { color: var(--text); }
+  #gName { min-width: 0; width: 150px; text-align: center; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .btn.icon { width: 40px; height: 40px; padding: 0; display: grid; place-items: center; color: var(--muted); }
+  .btn.icon.ok { color: #7be39a; border-color: #7be39a; }
+  .stepper { display: flex; align-items: center; gap: 6px; flex: none; }
+  .stepper .btn { width: 34px; height: 34px; padding: 0; font-size: 18px; line-height: 1; font-weight: 700; color: var(--on); }
+  .lcd { background: #0b0c0f; border: 1px solid #000; border-radius: 6px; color: var(--on); font: 700 19px/1 ui-monospace, 'SF Mono', Menlo, monospace;
+         min-width: 58px; padding: 7px 8px; text-align: center; font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+  .sliders label.ctl output { min-width: 40px; }
+  .sliders label.ctl { flex: 1 1 170px; max-width: 300px; min-width: 0; } .sliders input[type=range] { flex: 1; min-width: 0; width: 0; }
+  @media (max-width: 480px) { #play { min-width: 70px; padding: 8px 10px; } .tmain { gap: 10px; } .sliders label.ctl { gap: 6px; } #gName { width: auto; flex: 1; } .gsw { flex: 1; } }
   .ctl .lab { min-width: 40px; }
-  #fsBtn { margin-left: auto; align-self: flex-start; width: 40px; height: 40px; padding: 0; font-size: 18px; line-height: 1; }
+  #fsBtn { grid-area: fs; justify-self: end; width: 40px; height: 40px; padding: 0; font-size: 18px; line-height: 1; }
   .tsub { margin-top: 10px; }
   button.btn { font: inherit; color: var(--text); background: #262a31; border: 1px solid var(--line); border-radius: 8px;
                padding: 8px 12px; cursor: pointer; }
@@ -72,7 +85,7 @@
   select { font: inherit; color: var(--text); background: #262a31; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
 
   .grid-scroll { overflow-x: auto; }
-  .grid { display: grid; grid-template-columns: 112px repeat(16, minmax(26px, 1fr)); gap: 5px; min-width: 600px; }
+  .grid { display: grid; grid-template-columns: 140px repeat(16, minmax(26px, 1fr)); gap: 5px; min-width: 640px; }
   .card.fs { position: fixed; inset: 0; z-index: 50; margin: 0; border: 0; border-radius: 0; overflow-y: auto;
              padding: max(14px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom)); }
   body.fs-on { overflow: hidden; }
@@ -83,19 +96,27 @@
     .card.fs .variants { flex-wrap: nowrap; overflow-x: auto; margin-bottom: 6px; scrollbar-width: none; }
     .card.fs .variants button { flex: none; padding: 3px 10px; }
     .card.fs .tsub { margin-top: 4px; } .card.fs .tsub .btn, .card.fs .tsub select { padding: 4px 10px; }
-    .card.fs .grid { grid-template-columns: 92px repeat(16, minmax(20px, 1fr)); gap: 4px; min-width: 0; }
-    .card.fs .grid .cell { aspect-ratio: auto; height: clamp(18px, calc((100dvh - 190px) / 6), 40px); }
+    .card.fs .grid { grid-template-columns: 116px repeat(16, minmax(20px, 1fr)); gap: 4px; min-width: 0; }
+    .card.fs .grid .cell { aspect-ratio: auto; height: clamp(18px, calc((100dvh - 196px) / 6), 40px); }
     .card.fs .name small { display: none; } .card.fs .name b { font-size: 12px; }
-    .card.fs .nums { font-size: 10px; }
+    .card.fs .nums { display: none; } .card.fs .grid > .spacer0 { display: none; }
+    .card.fs .pkey { height: 22px; font-size: 11px; }
   }
   .name.name2 { display: none; }
-  .grid.split { grid-template-columns: 70px repeat(8, minmax(0, 1fr)); min-width: 0; gap: 6px; }
+  .grid.split { grid-template-columns: 92px repeat(8, minmax(0, 1fr)); min-width: 0; gap: 6px; }
   .grid.split .cell { aspect-ratio: auto; height: 34px; }
   .grid.split .name small { display: none; }
   .grid.split .name.name2 { display: flex; }
   .grid.split .name b { font-size: 12px; }
   .grid.split .nums.half2 { padding-top: 12px; }
-  .name { display: flex; flex-direction: column; justify-content: center; cursor: pointer; user-select: none; line-height: 1.2; }
+  .name { display: flex; align-items: center; gap: 7px; user-select: none; line-height: 1.2; min-width: 0; }
+  .name .nm { display: flex; flex-direction: column; justify-content: center; min-width: 0; flex: 1; cursor: pointer; border-radius: 6px; padding: 3px 4px; margin: -3px -4px; }
+  .name .nm:hover { background: #23272e; } .name .nm.hit { background: hsl(var(--hue) 90% 60% / .25); }
+  .name .nm b, .name .nm small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mute { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); background: #262a31; color: var(--on); padding: 0; cursor: pointer; display: grid; place-items: center; }
+  .mute svg { width: 13px; height: 13px; }
+  .mute:active { transform: scale(.9); }
+  .name.muted .mute { color: var(--muted); background: #15171b; }
   .name b { font-size: 13px; } .name small { color: var(--muted); font-size: 10px; letter-spacing: .04em; }
   .name small.swap { color: #ffc27a; }
   .name.muted b { color: var(--muted); text-decoration: line-through; }
@@ -103,6 +124,11 @@
   .nums.q { color: var(--text); font-weight: 700; }
   .cell { aspect-ratio: 1; border-radius: 6px; background: var(--off); border: 1px solid var(--line); cursor: pointer; padding: 0; }
   .cell.beat { background: var(--beat); }
+  .cell.q { background: #2e333c; border-color: #3a404a; }
+  .pkey { font: inherit; font-size: 12px; font-weight: 700; color: var(--muted); background: #20242a; border: 1px solid var(--line); border-radius: 6px; height: 30px; padding: 0; cursor: pointer; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .pkey.q { background: #2e333c; color: var(--text); }
+  .pkey.now { background: var(--on); border-color: var(--on); color: #111; box-shadow: 0 0 12px var(--glow); }
+  .pkey:active { transform: scale(.94); }
   .cell.v2 { background: var(--on); border-color: var(--on); }
   .cell.v1 { background: hsl(var(--hue) 90% 60% / .42); border-color: hsl(var(--hue) 90% 60% / .6); }
   .cell.v4 { background: transparent; border: 2px solid var(--on); box-shadow: inset 0 0 0 3px hsl(var(--hue) 90% 60% / .35); }
@@ -272,9 +298,17 @@
 
   <section class="card" id="playCard">
     <div class="tmain">
-      <button class="btn" id="play">▶ Play</button>
+      <div class="tbar">
+        <button class="btn" id="play">▶ Play</button>
+        <div class="gsw">
+          <button class="btn" id="gPrev" aria-label="Previous genre">◀</button>
+          <span id="gName"></span>
+          <button class="btn" id="gNext" aria-label="Next genre">▶</button>
+        </div>
+        <button class="btn icon" id="saveIcon" title="Save my version" aria-label="Save my version"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8V3M7 21v-7h10v7"/></svg></button>
+      </div>
       <div class="sliders">
-        <label class="ctl"><span class="lab">BPM</span><input id="bpm" type="range" min="60" max="180"><output id="bpmOut"></output></label>
+        <div class="ctl stepper"><span class="lab">BPM</span><button class="btn" id="bpmDown" aria-label="Slower">−</button><output id="bpmOut" class="lcd"></output><button class="btn" id="bpmUp" aria-label="Faster">+</button><input id="bpm" type="range" min="60" max="180" hidden></div>
         <label class="ctl"><span class="lab">Swing</span><input id="swing" type="range" min="50" max="80"><output id="swingOut"></output></label>
       </div>
       <button class="btn" id="fsBtn" title="Fullscreen sequencer" aria-label="Fullscreen sequencer">⛶</button>
@@ -303,7 +337,7 @@
       <span><i style="background:repeating-linear-gradient(90deg,var(--on) 0 3px,transparent 3px 6px)"></i>Roll (3 hits)</span>
       <span><i style="background:transparent;border:2px solid var(--on)"></i>Open hat (Hats row)</span>
       <span><i class="dotkey"></i>Changed from the original</span>
-      <span>Tap a track name to mute it</span>
+      <span>⏻ mutes a track · tap a track name to hear it · tap a step number to hear that step</span>
     </div>
     <div class="actions">
       <button class="btn" id="saveBtn">Save my version</button>
@@ -1614,9 +1648,9 @@ document.getElementById('formBody').onclick = e => {
 };
 
 function setHead(s) {
-  if (headStep >= 0) cells.forEach(r => r[headStep].classList.remove('head'));
+  if (headStep >= 0) { cells.forEach(r => r[headStep].classList.remove('head')); pkeys[headStep].classList.remove('now'); }
   headStep = s;
-  if (s >= 0) cells.forEach(r => r[s].classList.add('head'));
+  if (s >= 0) { cells.forEach(r => r[s].classList.add('head')); pkeys[s].classList.add('now'); }
 }
 const playBtn = document.getElementById('play');
 function togglePlay() {
@@ -1660,27 +1694,41 @@ function setKit(id) {
 
 const grid = document.getElementById('grid');
 const cells = [], nameEls = [], name2Els = [], numEls = [];
-grid.appendChild(document.createElement('div'));
+grid.appendChild(Object.assign(document.createElement('div'), { className: 'spacer0' }));
 for (let s = 0; s < STEPS; s++) {
   const n = document.createElement('div'); numEls.push(n);
   n.className = 'nums' + (s % 4 === 0 ? ' q' : '');
   n.textContent = s % 4 === 0 ? (s / 4 + 1) : s + 1;
   grid.appendChild(n);
 }
-TRACKS.forEach((tr, r) => {
-  const name = document.createElement('div');
-  name.className = 'name'; name.title = 'Tap to mute / unmute';
-  name.onclick = () => {
-    muted[tr.id] = !muted[tr.id];
-    name.classList.toggle('muted', muted[tr.id]); name2Els[r].classList.toggle('muted', muted[tr.id]);
-    cells[r].forEach(c => c.classList.toggle('row-muted', muted[tr.id]));
-    say(`${name.querySelector('b').textContent} ${muted[tr.id] ? 'muted' : 'unmuted'}.`);
+const POWER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 7.2a8 8 0 1 0 11.4 0"/></svg>';
+function toggleMute(r) {
+  const id = TRACKS[r].id;
+  muted[id] = !muted[id];
+  [nameEls[r], name2Els[r]].forEach(n => { n.classList.toggle('muted', muted[id]); n.querySelector('.mute').setAttribute('aria-pressed', muted[id]); });
+  cells[r].forEach(c => c.classList.toggle('row-muted', muted[id]));
+  say(`${labelOf(id)} ${muted[id] ? 'muted' : 'unmuted'}.`);
+}
+// Row header: power button mutes, the name plays the sound once.
+function makeName(r, cls) {
+  const tr = TRACKS[r], el = document.createElement('div');
+  el.className = cls;
+  el.innerHTML = `<button class="mute" aria-label="Mute ${tr.name}" aria-pressed="false" title="Mute / unmute">${POWER}</button><div class="nm" role="button" title="Tap to hear the sound"></div>`;
+  el.querySelector('.mute').onclick = () => toggleMute(r);
+  const nm = el.querySelector('.nm');
+  nm.onclick = () => {
+    const ctx = Engine.init(); Engine.play(tr.id, 2, ctx.currentTime, stepDur());
+    nm.classList.add('hit'); setTimeout(() => nm.classList.remove('hit'), 160);
   };
+  return el;
+}
+TRACKS.forEach((tr, r) => {
+  const name = makeName(r, 'name');
   grid.appendChild(name); nameEls[r] = name;
   cells[r] = [];
   for (let s = 0; s < STEPS; s++) {
     const c = document.createElement('button');
-    c.className = 'cell' + (Math.floor(s / 4) % 2 === 0 ? ' beat' : '');
+    c.className = 'cell' + (s % 4 === 0 ? ' q' : Math.floor(s / 4) % 2 === 0 ? ' beat' : '');
     c.setAttribute('aria-label', `${tr.name} step ${s + 1}`);
     c.onclick = () => {
       const cur = pattern[tr.id][s];
@@ -1694,10 +1742,24 @@ TRACKS.forEach((tr, r) => {
 });
 // Second set of row labels, only shown when the grid is split into steps 1–8 / 9–16.
 TRACKS.forEach((tr, r) => {
-  const n = document.createElement('div');
-  n.className = 'name name2'; n.onclick = () => nameEls[r].click();
+  const n = makeName(r, 'name name2');
   grid.appendChild(n); name2Els[r] = n;
 });
+// Step keys under the grid: the lit key follows the playhead; tap one to hear that step.
+const pkeys = [];
+grid.appendChild(document.createElement('div'));
+for (let s = 0; s < STEPS; s++) {
+  const k = document.createElement('button');
+  k.className = 'pkey' + (s % 4 === 0 ? ' q' : ''); k.textContent = s + 1;
+  k.setAttribute('aria-label', `Hear step ${s + 1}`);
+  k.onclick = () => {
+    const ctx = Engine.init(), hits = TRACKS.filter(tr => pattern[tr.id][s] && !muted[tr.id]);
+    hits.forEach(tr => Engine.play(tr.id, pattern[tr.id][s], ctx.currentTime, stepDur()));
+    if (!playing) { k.classList.add('now'); setTimeout(() => k.classList.remove('now'), 160); }
+    say(hits.length ? `Step ${s + 1}: ${hits.map(tr => labelOf(tr.id)).join(', ')}.` : `Step ${s + 1} is empty.`);
+  };
+  grid.appendChild(k); pkeys.push(k);
+}
 function paintCell(r, s) {
   const c = cells[r][s], v = pattern[TRACKS[r].id][s];
   c.classList.remove('v1', 'v2', 'v3', 'v4', 'v5'); if (v) c.classList.add('v' + v);
@@ -1707,13 +1769,30 @@ function render() { TRACKS.forEach((_, r) => { for (let s = 0; s < STEPS; s++) p
 function renderNames() {
   TRACKS.forEach((tr, r) => {
     const label = labelOf(tr.id), m = MC.recipe(kitId, tr.id).machine, swap = m !== MC.DEFAULT[r];
-    nameEls[r].innerHTML = `<b>${label}</b><small${swap ? ' class="swap" title="Differs from the Cycles default ' + MC.DEFAULT[r] + '"' : ''}>T${r + 1} · ${m}${swap ? ' ⇄' : ''}</small>`;
-    name2Els[r].innerHTML = `<b>${label}</b><small>T${r + 1}</small>`;
+    nameEls[r].querySelector('.nm').innerHTML = `<b>${label}</b><small${swap ? ' class="swap" title="Differs from the Cycles default ' + MC.DEFAULT[r] + '"' : ''}>T${r + 1} · ${m}${swap ? ' ⇄' : ''}</small>`;
+    name2Els[r].querySelector('.nm').innerHTML = `<b>${label}</b><small>T${r + 1}</small>`;
+    [nameEls[r], name2Els[r]].forEach(n => n.querySelector('.mute').setAttribute('aria-label', `Mute ${label}`));
   });
 }
 
 const bpmOut = document.getElementById('bpmOut'), swingOut = document.getElementById('swingOut');
 bpmEl.oninput = () => { bpmOut.textContent = bpmEl.value; mcRefresh(); };
+// −/+ change the tempo by 1; hold to keep going.
+[['bpmDown', -1], ['bpmUp', 1]].forEach(([id, d]) => {
+  const b = document.getElementById(id); let t1, t2;
+  const nudge = () => { const v = Math.max(60, Math.min(180, +bpmEl.value + d)); if (v !== +bpmEl.value) { bpmEl.value = v; bpmEl.oninput(); } else say(`Tempo range is 60–180 BPM.`); };
+  const stop = () => { clearTimeout(t1); clearInterval(t2); };
+  b.onpointerdown = e => { e.preventDefault(); nudge(); t1 = setTimeout(() => t2 = setInterval(nudge, 60), 400); };
+  b.onpointerup = b.onpointerleave = b.onpointercancel = stop;
+  b.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); nudge(); } };
+});
+const stepGenre = d => { const i = GENRES.findIndex(g => g.id === genre.id); selectGenre(GENRES[(i + d + GENRES.length) % GENRES.length].id); say(`${genre.name}, ${genre.bpm} BPM.`); };
+document.getElementById('gPrev').onclick = () => stepGenre(-1);
+document.getElementById('gNext').onclick = () => stepGenre(1);
+document.getElementById('saveIcon').onclick = () => {
+  document.getElementById('saveBtn').click();
+  const b = document.getElementById('saveIcon'); b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 1200);
+};
 swingEl.oninput = () => { swingOut.textContent = swingEl.value + '%'; mcRefresh(); };
 
 const orig = {};          // the genre's original pattern, to mark what a variant or your edits changed
@@ -1747,6 +1826,7 @@ function selectGenre(id) {
   genre = GENRES.find(g => g.id === id) || GENRES[0];
   document.documentElement.style.setProperty('--hue', genre.hue);
   nav.querySelectorAll('.chip').forEach(b => b.classList.toggle('active', b.dataset.id === genre.id));
+  document.getElementById('gName').textContent = genre.name;
   nav.querySelector('.chip.active')?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   const mine = store().mine[genre.id];
   Object.assign(orig, norm(genre.p));
@@ -1896,6 +1976,8 @@ function layoutGrid() {
   nameEls.forEach((n, r) => place(n, 2 + r, 1));
   name2Els.forEach((n, r) => place(n, 9 + r, 1));
   cells.forEach((row, r) => row.forEach((c, s) => place(c, 2 + r + (s < 8 ? 0 : 7), 2 + s % 8)));
+  place(pkeys[0].previousSibling, 15, 1);
+  pkeys.forEach((k, s) => place(k, s < 8 ? 15 : 16, 2 + s % 8));
 }
 function setFs(on) {
   playCard.classList.toggle('fs', on); document.body.classList.toggle('fs-on', on);
