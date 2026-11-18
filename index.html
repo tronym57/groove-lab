@@ -1497,7 +1497,7 @@ function showBuild(b) {
   const real = shortDemo ? ` (in a real track: ${sec.bars} bars)` : '';
   const chips = [...added.map(id => `<span class="chg add" title="${plan.notes[id] || ''}">+ ${labelOf(id)}</span>`), ...removed.map(id => `<span class="chg rem">− ${labelOf(id)}</span>`)].join('');
   const entering = sec.build && added.length === 1 && plan.notes[added[0]] ? `<span class="enter">${plan.notes[added[0]]}</span>` : '';
-  document.getElementById('arrCap').innerHTML = `<small>${sec.name} · like a ${sec.song.toLowerCase()} · bar ${pos - sec.start + 1} of ${sec.len}${real}</small>${sec.note}
+  document.getElementById('arrCap').innerHTML = `<small>${sec.name} · like ${/^[aeiou]/i.test(sec.song) ? 'an' : 'a'} ${sec.song.toLowerCase()} · bar ${pos - sec.start + 1} of ${sec.len}${real}</small>${sec.note}
     ${chips || entering ? `<div class="chgs">${chips}${entering}</div>` : ''}`;
   document.querySelectorAll('.arr-cell').forEach(c => c.classList.toggle('now', +c.dataset.bar === pos));
   document.querySelectorAll('#arrGrid .sec').forEach(c => c.classList.toggle('cur', +c.dataset.bar === sec.start));
@@ -1583,7 +1583,7 @@ function renderStructure() {
     prev = s.on;
     const nm = id => TRACKS.find(t => t.id === id).name;
     const chips = [...add.map(id => `<span class="chg add">+ ${nm(id)}</span>`), ...rem.map(id => `<span class="chg rem">− ${nm(id)}</span>`)].join('');
-    return `<tr><td class="n">${s.name}<div class="hint">like a ${s.song.toLowerCase()}</div></td><td class="b">${s.bars} bars</td>
+    return `<tr><td class="n">${s.name}<div class="hint">like ${/^[aeiou]/i.test(s.song) ? 'an' : 'a'} ${s.song.toLowerCase()}</div></td><td class="b">${s.bars} bars</td>
       <td>${chips}${s.fill ? '<span class="chg add">+ snare roll</span>' : ''}<div class="why">${s.note}</div></td>
       <td><button class="btn" data-sec="${i}" aria-label="Play ${s.name}">▶</button></td></tr>`;
   }).join('');
