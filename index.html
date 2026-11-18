@@ -1641,9 +1641,37 @@ let pages = [], nPages = 1, viewPage = 0, playPage = 0, pageVar = [];
 const clonePage = pg => Object.fromEntries(TRACKS.map(t => [t.id, pg[t.id].slice()]));
 function bindPage() { TRACKS.forEach(t => pattern[t.id] = pages[viewPage][t.id]); }
 // After loading a whole pattern: page 1 is it, the other pages are copies (the Cycles copies trigs when you extend a pattern).
+let pageInfo = [];   // what each page does in the phrase (shown above the grid)
 function pagesFromPattern() {
-  const base = clonePage(pattern);
-  pages = Array.from({ length: nPages }, () => clonePage(base)); pageVar = Array(nPages).fill(variant); viewPage = 0; bindPage();
+  const ph = buildPhrase(clonePage(pattern), nPages);
+  pages = ph.pages; pageVar = ph.vars; pageInfo = ph.info; viewPage = 0; bindPage();
+}
+// Longer patterns as a musical phrase instead of plain copies:
+// 2 bars = A B (call and turnaround) · 4 bars = A A' A B (repeat, small answer, repeat, turnaround into bar 1).
+const has = pg => id => pg[id] && pg[id].some(v => v);
+function ghostVariation(base) {   // A': one or two soft extra hits late in the bar, on the busiest light part
+  const pg = clonePage(base), id = ['perc', 'hat', 'snare'].find(has(pg)) || 'hat', added = [];
+  for (const s of [11, 14, 7, 3]) { if (added.length === 2) break; if (!pg[id][s]) { pg[id][s] = 1; added.push(s + 1); } }
+  return { pg, info: `<b>Bar 2 · small answer:</b> soft extra ${labelOf(id)} hits on ${added.join(' and ')}. The ear notices a change without losing the loop.` };
+}
+function turnaround(base) {   // B: the genre's own fill variant if it has one, otherwise a generic last-beat fill
+  const vs = VARIANTS[genre.id] || [], i = vs.findIndex(v => /fill|roll|run/i.test(v.name));
+  const pg = clonePage(base);
+  if (i >= 0) {
+    const src = norm({ ...genre.p, ...vs[i].p });
+    new Set(Object.keys(vs[i].p).map(k => k === 'chh' || k === 'ohh' ? 'hat' : k)).forEach(id => pg[id] = src[id].slice());
+    return { pg, v: i, info: `<b>Last bar · turnaround:</b> ${vs[i].name}. ${vs[i].note}` };
+  }
+  const id = has(pg)('snare') ? 'snare' : 'perc';
+  pg[id][13] = 1; pg[id][14] = 2; pg[id][15] = 3;
+  if (has(pg)('hat') && !pg.hat[14]) pg.hat[14] = 4;
+  return { pg, v: -3, info: `<b>Last bar · turnaround:</b> a ${labelOf(id)} fill on the last beat (14, 15, roll on 16)${pg.hat[14] === 4 ? ' and an open hat' : ''}. It tells the listener the phrase starts again.` };
+}
+function buildPhrase(base, n) {
+  const A = { pg: base, v: variant, info: n > 1 ? '<b>Bar 1 · the groove:</b> the pattern as it is.' : '' };
+  if (n === 1) return { pages: [base], vars: [variant], info: [''] };
+  const B = turnaround(base), list = n === 2 ? [A, B] : [A, ghostVariation(base), { ...A, pg: clonePage(base), info: '<b>Bar 3 · back to the groove:</b> the same as bar 1, so the turnaround stands out.' }, B];
+  return { pages: list.map(x => x.pg), vars: list.map(x => x.v ?? -3), info: list.map(x => x.info) };
 }
 TRACKS.forEach(t => muted[t.id] = false);
 
@@ -2102,7 +2130,7 @@ function applyVariant(i) {
   if (nPages > 1) {   // longer pattern: a variant only changes the page on screen (A A A B phrases)
     const src = norm(v ? { ...genre.p, ...v.p } : genre.p);
     TRACKS.forEach(t => pages[viewPage][t.id] = src[t.id]);
-    pageVar[viewPage] = i; bindPage();
+    pageVar[viewPage] = i; pageInfo[viewPage] = ''; bindPage();
     if (v && v.swing) swingEl.value = v.swing;
   } else {
     loadOriginal();
@@ -2134,7 +2162,7 @@ function selectGenre(id) {
     if (mp.chh) { mp.hat = mergeHats(mp.chh, mp.ohh || blank()); }   // versions saved before the hat rows were merged
     TRACKS.forEach(tr => pattern[tr.id] = (mp[tr.id] || blank()).slice());
     bpmEl.value = mine.bpm; swingEl.value = mine.swing;
-    if (mine.pages) { nPages = mine.pages.length; pages = mine.pages.map(clonePage); pageVar = Array(nPages).fill(-2); viewPage = 0; bindPage(); }
+    if (mine.pages) { nPages = mine.pages.length; pages = mine.pages.map(clonePage); pageVar = Array(nPages).fill(-2); pageInfo = Array(nPages).fill(''); viewPage = 0; bindPage(); }
     else pagesFromPattern();
   }
   else loadOriginal();
@@ -2326,21 +2354,22 @@ function renderPageUI() {
   const sel = document.getElementById('pageSel');
   sel.hidden = nPages === 1;
   sel.innerHTML = '<span class="lab">Page</span>' + pages.map((_, p) => {
-    const v = pageVar[p], name = v >= 0 ? VARIANTS[genre.id][v].name : v === -2 ? 'your version' : 'original';
+    const v = pageVar[p], name = (pageInfo[p] || '').replace(/<[^>]+>/g, '').split(':')[0] || (v >= 0 ? VARIANTS[genre.id][v].name : v === -2 ? 'your version' : 'original');
     return `<button data-p="${p}" class="${p === viewPage ? 'on' : ''}${playing && p === playPage ? ' play' : ''}" title="Page ${p + 1}: ${name}" aria-label="Show page ${p + 1}">${p + 1}</button>`;
   }).join('');
 }
 function showPage(p) {
   viewPage = p; variant = pageVar[p]; bindPage();
   if (headStep >= 0) setHead(headStep);
-  render(); renderVariants(); renderPageUI(); mcRefresh();
+  render(); renderVariants(pageInfo[p] || undefined); renderPageUI(); mcRefresh();
 }
 function setLength(n) {
   if (n === nPages) { say(`Already ${n} bar${n > 1 ? 's' : ''}.`); return; }
-  for (let p = nPages; p < n; p++) { pages[p] = clonePage(pages[p % nPages]); pageVar[p] = pageVar[p % nPages]; }
-  pages.length = n; pageVar.length = n; nPages = n;
+  const ph = buildPhrase(clonePage(pages[0]), n);   // page 1 stays; the others are rebuilt as a phrase
+  pages = ph.pages; pageVar = ph.vars; pageInfo = ph.info; nPages = n;
   showPage(n > 1 ? n - 1 : 0);
-  say(n > 1 ? `${n} bars (${n * 16} steps). Pages 2–${n} are copies of page 1, as on the Cycles. Now on page ${n}: pick a variant or tap steps to make it the turnaround.` : '1 bar: only page 1 plays.');
+  say(n === 4 ? '4 bars: A A\u2032 A B. Bar 2 answers with a few ghost notes, bar 4 is the turnaround back to bar 1. Dots mark what changed.'
+    : n === 2 ? '2 bars: A B. Bar 2 is the turnaround back to bar 1. Dots mark what changed.' : '1 bar: only page 1 plays.');
 }
 document.getElementById('lenSeg').onclick = e => { const b = e.target.closest('[data-n]'); if (b) setLength(+b.dataset.n); };
 document.getElementById('pageSel').onclick = e => { const b = e.target.closest('[data-p]'); if (b) { showPage(+b.dataset.p); say(`Page ${+b.dataset.p + 1} of ${nPages}${playing && +b.dataset.p !== playPage ? ' (the playhead shows when this page plays)' : ''}.`); } };
