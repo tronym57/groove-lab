@@ -6,6 +6,9 @@
 <meta name="theme-color" content="#111317">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -15,9 +18,11 @@
     --bg: #111317; --panel: #1a1d23; --line: #2a2e36; --text: #e8eaed; --muted: #8b919c;
     --hue: 20; --on: hsl(var(--hue) 90% 60%); --glow: hsl(var(--hue) 90% 60% / .35);
     --beat: #23272e; --off: #1c2026;
+    --font: 'Open Sans', system-ui, -apple-system, sans-serif;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, sans-serif; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 var(--font); }
+  button, input, select, textarea, kbd, output, svg text { font-family: var(--font); }
   .wrap { max-width: 980px; margin: 0 auto; padding: max(20px, env(safe-area-inset-top)) 16px 40px; }
   header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
   h1 { font-size: 20px; margin: 0; letter-spacing: -.01em; }
@@ -27,6 +32,7 @@
   .chip { flex: none; border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px;
           padding: 7px 14px; font: inherit; font-weight: 600; cursor: pointer; }
   .chip.active { color: #111; background: var(--on); border-color: var(--on); }
+  .genres .sep { flex: none; align-self: center; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 0 4px 0 10px; border-left: 1px solid var(--line); }
   .chip.fav::before { content: '●'; color: #1ed760; font-size: 8px; margin-right: 6px; vertical-align: 2px; }
 
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
@@ -68,7 +74,7 @@
   .btn.icon.ok { color: #7be39a; border-color: #7be39a; }
   .stepper { display: flex; align-items: center; gap: 6px; flex: none; }
   .stepper .btn { width: 34px; height: 34px; padding: 0; font-size: 18px; line-height: 1; font-weight: 700; color: var(--on); }
-  .lcd { background: #0b0c0f; border: 1px solid #000; border-radius: 6px; color: var(--on); font: 700 19px/1 ui-monospace, 'SF Mono', Menlo, monospace;
+  .lcd { background: #0b0c0f; border: 1px solid #000; border-radius: 6px; color: var(--on); font: 700 19px/1 var(--font);
          min-width: 58px; padding: 7px 8px; text-align: center; font-variant-numeric: tabular-nums; letter-spacing: .04em; }
   .sliders label.ctl output { min-width: 40px; }
   .sliders label.ctl { flex: 1 1 170px; max-width: 300px; min-width: 0; } .sliders input[type=range] { flex: 1; min-width: 0; width: 0; }
@@ -238,16 +244,16 @@
   .secs button.on { color: #111; background: var(--on); border-color: var(--on); }
   .mcsvg { width: 100%; height: auto; display: block; user-select: none; }
   .mcsvg .body { fill: #d9dbde; } .mcsvg .well { fill: none; stroke: #b9bcc1; }
-  .mcsvg .screen { fill: #22262c; } .mcsvg .scrtxt { fill: #f2a35a; font: 700 11px ui-monospace, monospace; text-anchor: middle; }
-  .mcsvg .brand { fill: #3a3f47; font: 700 11px system-ui; text-anchor: middle; }
+  .mcsvg .screen { fill: #22262c; } .mcsvg .scrtxt { fill: #f2a35a; font: 700 11px var(--font); text-anchor: middle; }
+  .mcsvg .brand { fill: #3a3f47; font: 700 11px var(--font); text-anchor: middle; }
   .mcsvg .face { fill: #c4c7cc; stroke: #8e939b; stroke-width: 1.2; transition: fill .15s; }
   .mcsvg .ptr { stroke: #2b2f36; stroke-width: 3; stroke-linecap: round; }
   .mcsvg .led, .mcsvg .pageleds rect { fill: #b3b6bb; stroke: #8e939b; }
   .mcsvg text { pointer-events: none; }
-  .mcsvg .lb { fill: #2b2f36; font: 700 8px system-ui; text-anchor: middle; letter-spacing: .02em; }
+  .mcsvg .lb { fill: #2b2f36; font: 700 8px var(--font); text-anchor: middle; letter-spacing: .02em; }
   .mcsvg .lb.big { font-size: 13px; } .mcsvg .lb.u { text-decoration: underline; }
-  .mcsvg .sb { fill: #7c818a; font: 600 6.5px system-ui; text-anchor: middle; }
-  .mcsvg .gl { fill: #2b2f36; font: 15px system-ui; text-anchor: middle; }
+  .mcsvg .sb { fill: #7c818a; font: 600 6.5px var(--font); text-anchor: middle; }
+  .mcsvg .gl { fill: #2b2f36; font: 15px var(--font); text-anchor: middle; }
   .mcsvg .ctl { cursor: pointer; outline: none; }
   .mcsvg .ctl:hover .face, .mcsvg .ctl:focus .face { fill: #b3b7bd; }
   .mcsvg .ctl.hl .face { fill: hsl(var(--hue) 90% 72%); stroke: hsl(var(--hue) 90% 35%); stroke-width: 2.5; animation: pulse 1.4s ease-in-out infinite; }
@@ -262,8 +268,8 @@
   .steptext .mline { margin: 0 0 8px; color: var(--muted); font-size: 13px; } .steptext .mline b { color: var(--text); }
   .mcsvg .ctl.active .face { stroke: #e0372b; stroke-width: 3; }
   .mcsvg .ctl.sel .face { stroke: #111; stroke-width: 2.5; }
-  .mcsvg .badge circle { fill: #111317; } .mcsvg .badge text { fill: #fff; font: 700 10px system-ui; text-anchor: middle; }
-  .mcsvg .val rect { fill: #111317; } .mcsvg .val text { fill: hsl(var(--hue) 90% 65%); font: 700 9px ui-monospace, monospace; text-anchor: middle; }
+  .mcsvg .badge circle { fill: #111317; } .mcsvg .badge text { fill: #fff; font: 700 10px var(--font); text-anchor: middle; }
+  .mcsvg .val rect { fill: #111317; } .mcsvg .val text { fill: hsl(var(--hue) 90% 65%); font: 700 9px var(--font); text-anchor: middle; }
   @keyframes pulse { 50% { opacity: .65; } }
   @media (prefers-reduced-motion: reduce) { .mcsvg .ctl.hl .face { animation: none; } }
   .ctlinfo { min-height: 1.4em; color: var(--muted); font-size: 12px; margin: 8px 0 0; }
@@ -443,7 +449,7 @@
 // Never fail silently: show every script error and failed file load on the page.
 function showErr(text) {
   const d = document.getElementById('err') || document.body.insertBefore(Object.assign(document.createElement('div'), { id: 'err' }), document.body.firstChild);
-  d.style.cssText = 'background:#5a1d1d;color:#fff;padding:10px 16px;font:13px system-ui;white-space:pre-line';
+  d.style.cssText = 'background:#5a1d1d;color:#fff;padding:10px 16px;font:13px Open Sans,system-ui,sans-serif;white-space:pre-line';
   d.textContent += (d.textContent ? '\n' : '') + text;
 }
 window.addEventListener('error', e => {
@@ -460,45 +466,69 @@ window.addEventListener('error', e => {
 
 const GENRES = [
   { id: 'organic', name: 'Organic House', hue: 95, bpm: 120, range: '115–125', swing: 61, fav: true, kit: 'organic',
-    spotify: 'Stavroz, Satori, Viken Arman, Jacob Groening, Nico Stojan',
+    spotify: 'Stavroz, Satori, Viken Arman, Jacob Groening, Nico Stojan, Nixe, Malü & Kalypsoul, Hame, Alma Linda, Re.You, Los Amigos, Orly Maya, Sarah Wild',
     labels: { chh: 'Shaker', perc: 'Congas' },
     about: 'Warm, slower house built from acoustic hits. The kick is still four-on-the-floor, but a live open hat on every offbeat and a 16th shaker with lots of velocity variation do the swinging. Congas and bongos carry the groove.',
     listen: ['Soft four-on-the-floor kick (acoustic kick layered with a 909)', 'Open hat on every offbeat, plus quieter ghost hats', 'Shaker on all 16ths with uneven velocities; heavy swing of 60–65%', 'Clap on 2 and 4, with the beat-4 clap nudged a little early'],
-    refs: 'Stavroz, Satori, Viken Arman',
+    refs: 'Nixe, Malü & Kalypsoul, Hame, Stavroz, Satori',
     src: 'Attack Magazine: Organic House (122–125 BPM, 60–65% swing)',
     build: [['kick', 'Soft four-on-the-floor kick'], ['ohh', 'Live open hat on every offbeat'], ['chh', '16th shaker with uneven velocity: this is where the swing lives'], ['snare', 'Clap on 2 and 4'], ['perc', 'Congas: open on accents, low tumba on soft hits'], ['bass', 'Bass sits between the kicks']],
     p: { kick: 'X...X...X...X...', snare: '....X.......X...', chh: 'xXxxxXxxxXxXxXxx', ohh: '..X...X...X...X.', perc: '...X..x...X.x..x', bass: 'X..x..X...X..x..' } },
 
+  { id: 'minimal', name: 'Berlin Minimal', hue: 255, bpm: 124, range: '120–128', swing: 57, fav: true, kit: 'dusty',
+    spotify: 'Ricardo Villalobos, Acid Pauli, Niconé, Dirty Doering, Britta Arnold, Cioz, Mimi Love, Haensen&Gretel, Alma Linda, Chris Schwarzwälder, Margaret Dygas, Jane Fitz, Sub Basics, DJ Fart in the Club',
+    labels: { snare: 'Clap / Rim', perc: 'Clicks' },
+    bg: 'Villalobos took it furthest: tracks that drift for 15 minutes on percussion alone.',
+    about: 'The Bar25 / Kater Blau sound: long, rolling minimal house that lives on shuffle and small surprises. A dry kick and a short bass lock together while claps, rims and clicks play figures that move around every few bars.',
+    listen: ['Dry, short kick on every beat, a rolling bass in the gaps', 'Clap on 2 and 4, small click figures that keep shifting', 'Shuffle around 56–58% and patient changes every 16–32 bars'],
+    refs: 'Ricardo Villalobos, Acid Pauli, Niconé & Dirty Doering, Britta Arnold, Margaret Dygas',
+    src: 'Genre convention (Berlin minimal, Kater / Bar25 house); pattern is a genre-level sketch',
+    build: [['kick', 'A dry kick on every beat'], ['bass', 'A short, rolling bass between the kicks'], ['chh', 'Hats leaning on the offbeats'], ['snare', 'Clap on 2 and 4'], ['perc', 'Clicks that dodge the beat'], ['ohh', 'A short open hat on two offbeats']],
+    p: { kick: 'X...X...X...X...', snare: '....X.......X...', chh: 'x.X.x.Xxx.X.x.Xx', ohh: '..x.......x.....', perc: '..x..x....x..x.x', bass: '..Xx..X...Xx..x.' } },
+
+  { id: 'anatolian', name: 'Anatolian House', hue: 15, bpm: 116, range: '105–122', swing: 54, fav: true, kit: 'organic',
+    spotify: 'Insanlar, Kaan Düzarat, Ipek Ipekcioglu, Mohammad Reza Mortazavi',
+    labels: { chh: 'Shaker', perc: 'Darbuka (congas)' },
+    bg: 'Persian tombak player Mohammad Reza Mortazavi working with Ricardo Villalobos (Swamp) shows how far hand drums alone can carry a club track.',
+    about: 'Turkish and Middle-Eastern rhythms inside a house groove: the Istanbul psychedelic scene around Insanlar and Kaan Düzarat. The kick keeps four-on-the-floor, a darbuka plays the maqsum (dum, tek, tek, dum, tek) and saz or oud lines in the Hijaz scale sit on top.',
+    listen: ['A slower, heavy four-on-the-floor kick', 'The hand drum plays the maqsum: low "dum" on 1 and 3, high "tek" on the and of 1, the and of 2 and on 4', 'Hijaz melodies: the "oriental" sound of the step from the flat 2nd to the 3rd'],
+    harmony: 'Hijaz on D: D, Eb, F#, G, A, Bb, C. T6 CHORD holds a D–F#–A drone with the Eb as tension.',
+    refs: 'Insanlar, Kaan Düzarat, Baba Zula, Ipek Ipekcioglu',
+    src: 'Maqsum is the standard Middle-Eastern 4/4 rhythm (D T . T D . T .); pattern is a genre-level sketch',
+    build: [['perc', 'Darbuka maqsum: dum, tek, tek, dum, tek'], ['kick', 'A heavy four-on-the-floor kick'], ['chh', 'Shaker on the 16ths'], ['snare', 'Clap on 2 and 4'], ['bass', 'Bass doubles the dums'], ['chord', 'A Hijaz drone']],
+    chordNotes: [50, 54, 57, 63],
+    p: { kick: 'X...X...X...X...', snare: '....X.......X...', chh: 'xxXxxxXxxxXxxxXx', ohh: '', perc: 'x.X...X.x...X.X.', bass: 'X......xX.....x.', chord: 'X.......x.......' } },
+
   { id: 'downtempo', name: 'Organic Downtempo', hue: 60, bpm: 108, range: '100–115', swing: 58, fav: true, kit: 'downtempo',
-    spotify: 'Ninze, Niju, MONKYMAN, Ninze & Okaxy',
+    spotify: 'Ninze, Niju, MONKYMAN, Ninze & Okaxy, Acid Pauli, sol.stc, Denis Stritar',
     labels: { chh: 'Shaker', ohh: 'Open hat', perc: 'Bongos' },
     bg: 'Hand percussion (bongos, shakers, sometimes a marimba) leaves room for long melodic builds.',
     about: 'Organic house slowed below 115 BPM. The kick gets sparser and rounder and the backbeat is a soft rim or clap. Hand percussion (bongos, shakers, sometimes a marimba) gives the forward motion, leaving room for long melodic builds.',
     listen: ['Slower and softer: the kick can drop beats or skip', 'Rim or soft clap instead of a snare', 'Hand percussion carries the rhythm, with gentle swing'],
-    refs: 'Ninze & Niju (Magic Roads), MONKYMAN, Ninze & Okaxy',
+    refs: 'Ninze & Niju (Magic Roads), MONKYMAN, Acid Pauli (Planet without a plan), sol.stc',
     src: 'Native Instruments / Attack organic-house guides (tempo can drop to about 100 BPM); pattern is a genre-level sketch',
     build: [['perc', 'Bongos alone set the groove'], ['chh', 'The shaker adds motion'], ['kick', 'A sparse, round kick (it skips beats 2 and 4)'], ['snare', 'Soft clave on 2, stronger on 4'], ['bass', 'Bass follows the kick'], ['ohh', 'A soft open hat late in each half-bar']],
     p: { kick: 'X.......X.x.....', snare: '....x.......X...', chh: 'xXxxxXxxxXxxxXxx', ohh: '......x.......x.', perc: '..X.x..X..x.X..x', bass: 'X......x..X.....' } },
 
   { id: 'giegling', name: 'Giegling / Dusty', hue: 35, bpm: 118, range: '110–124', swing: 62, fav: true, kit: 'dusty',
-    spotify: 'Konstantin, Leafar Legov, Kettenkarussell, Edwards, Margaux Gazur',
+    spotify: 'Konstantin, Leafar Legov, Kettenkarussell, Edward, Margaux Gazur, DJ Dustin, Dragana, Traumprinz, Map.ache, Oskar Offermann, Taksu, ALiNA, Cosmo, Schaaly',
     labels: { snare: 'Rim / Snare', perc: 'Clicks' },
     bg: 'Jazz snippets and drum breaks make it more human and bittersweet than clean minimal; Kettenkarussell drift into jazzy downtempo breaks.',
     about: 'The Weimar collective\'s sound: sample-based deep house and micro-house with dub-techno space. Jazz snippets and drum breaks give it a more human, bittersweet feel than clean minimal. The drums are dusty and soft-edged; Kettenkarussell drift into jazzy downtempo breaks.',
     listen: ['Muted, rounded kick with a ghost kick before beat 3', 'Rim instead of a clap; small clicks and ticks in the gaps', 'Low-passed, slightly saturated sound, as if it came off a record'],
-    refs: 'Kettenkarussell (Easy Listening), Leafar Legov (Talk EP), Konstantin',
+    refs: 'Leafar Legov (RA.514), DJ Dustin (Finest Morning), Traumprinz, Kettenkarussell, Map.ache, Konstantin',
     src: 'Igloo / Juno / RA on Giegling (jazz samples, micro-house, dub techno); Attack: Dusted Deep House',
     build: [['kick', 'A muted kick with a ghost before beat 3'], ['perc', 'Woodblock clicks fill the gaps'], ['chh', 'Dusty closed hats'], ['snare', 'Rim on 2 and 4, plus a pickup'], ['bass', 'A low, short bass'], ['ohh', 'An open hat on 1-and and 3-and']],
     chordNotes: [62, 65, 69, 72],
     p: { kick: 'X...X..xX...X...', snare: '....x.......x..x', chh: 'x.x.x.xxx.x.x.x.', ohh: '..x.......x.....', perc: '.x...x.x..x...x.', bass: 'X.....X...x.....', chord: '...x.......x....' } },
 
   { id: 'deephouse', name: 'Deep House', hue: 30, bpm: 122, range: '120–125', swing: 58, fav: true, kit: 'deep',
-    spotify: 'Leon Vynehall, Nico Stojan',
+    spotify: 'Leon Vynehall, Nico Stojan, Hollis P Monroe, DJ Dave',
     labels: { chh: 'Shaker' },
     about: 'Warm and steady. A 909 kick on every beat and a clap on 2 and 4, with offbeat open hats and a swung shaker. The bass sits between the kicks, and minor-9th Rhodes chords give it the "deep" colour.',
     listen: ['A 909 kick on every beat, clap on 2 and 4', 'Offbeat open hats and a swung 16th shaker', 'The bass plays between the kicks, not on them'],
     harmony: 'Minor 9th Rhodes stabs: Am9 → Dm9 → Fmaj9 → Em7 (A minor). On the Cycles, T6 CHORD plays these.',
-    refs: 'Leon Vynehall, Larry Heard, Kerri Chandler',
+    refs: 'Hollis P Monroe, Larry Heard, Kerri Chandler, Leon Vynehall',
     src: 'Producers Classroom: Deep House (122 BPM); Attack Magazine: Dusted Deep House',
     build: [['kick', 'A 909 kick on every beat'], ['snare', 'Clap on 2 and 4'], ['ohh', 'Offbeat open hats'], ['chh', 'A swung shaker on every 16th'], ['bass', 'Bass between the kicks']],
     chordNotes: [57, 60, 67, 71],
@@ -515,11 +545,11 @@ const GENRES = [
     p: { kick: 'X...X...X...X...', snare: '....x.......x...', chh: 'xxXxxxXxxxXxxxXx', ohh: '..X...X...X...X.', perc: '...x..x......x..', bass: '.Xx..Xx..Xx..Xx.' } },
 
   { id: 'breaks', name: 'Breakbeat', hue: 300, bpm: 130, range: '125–140', swing: 52, fav: true, kit: 'breaks',
-    spotify: 'DjRUM, Floating Points',
+    spotify: 'DjRUM, Floating Points, Objekt, Ben UFO, Minor Science, Midland',
     bg: 'The modern UK take mixes it with garage and jazz.',
     about: 'Funk breaks sped up and made heavier. A broken kick and a snare with ghost notes replace four-on-the-floor. The modern UK take mixes this with garage and jazz.',
     listen: ['Kick on 1 and 3-and', 'Snare on 2 and 4 with ghost notes', 'A loop-like, sampled-break feel'],
-    refs: 'DjRUM, Floating Points, The Chemical Brothers',
+    refs: 'Objekt, Minor Science, DjRUM, Floating Points',
     src: 'Genre convention',
     p: { kick: 'X.........X.....', snare: '....X..x.x..X...', chh: 'x.x.x.x.x.x.x.x.', ohh: '', perc: '', bass: 'X.........X..X..' } },
 
@@ -539,12 +569,13 @@ const GENRES = [
     src: 'Attack Magazine: Synthwave Drums',
     p: { kick: 'X.......X.......', snare: '....X.......X...', chh: 'x.x.x.x.x.x.x.x.', ohh: '', perc: '', bass: 'XxXxXxXxXxXxXxXx' } },
 
-  { id: 'ukg', name: 'UK Garage', hue: 190, bpm: 132, range: '130–135', swing: 63, kit: 'ukg',
+  { id: 'ukg', name: 'UK Garage', hue: 190, bpm: 132, range: '130–135', swing: 63, fav: true, kit: 'ukg',
+    spotify: 'Burial',
     labels: { perc: 'Rimshot' },
     bg: 'Swing is what separates garage from house.',
     about: '2-step: the kick drops beats 2 and 4 and lands on 1 and the "and" of 3. Swing is what separates garage from house; skippy rimshots make it bounce.',
     listen: ['Kick on steps 1 and 11, never four-on-the-floor', 'Snare on 2 and 4; open hats on every offbeat', 'Closed hats on the even 16ths with 60–65% swing'],
-    refs: 'MJ Cole, Artful Dodger, Todd Edwards',
+    refs: 'Burial (Archangel), MJ Cole, Artful Dodger, Todd Edwards',
     src: 'Elektronauts UKG thread; Attack: Rolling 2-Step (60–65% swing); Producers Classroom',
     build: [['kick', '2-step kick: 1 and 3-and only'], ['snare', 'Snare on 2 and 4'], ['chh', 'Even 16th hats, heavily swung'], ['ohh', 'Offbeat open hats'], ['perc', 'Skippy rimshots'], ['bass', 'Bass']],
     chordNotes: [65, 68, 72, 75],
@@ -621,6 +652,16 @@ const GENRES = [
 <script>
 // ===== variants: three ways to spice up each genre. `p` only lists the tracks that change. =====
 const VARIANTS = {
+  minimal: [
+    { name: 'Villalobos drift', note: 'The click figure shifts around while the kick stays put. In Villalobos tracks the small percussion keeps changing so the loop never feels like a loop.', p: { perc: '.x..x.xx..x.x..x' } },
+    { name: 'Rolling bass', note: 'The bass fills almost every 16th between the kicks: the classic Kater / Bar25 roll. Keep DECAY low so it ticks rather than booms.', p: { bass: '.xXx.xXx.xXx.xXx' } },
+    { name: 'Clap shuffle', note: 'Ghost claps and more swing (60%): the playful, bouncy side of Niconé & Dirty Doering.', swing: 60, p: { snare: '....X..x....X.x.' } },
+  ],
+  anatolian: [
+    { name: 'Ayyoub trance', note: 'The ayyoub rhythm (dum, tek-dum, tek) played twice per beat-pair: the driving pulse of Sufi zikr ceremonies. Denser, but not faster.', p: { perc: 'x..Xx.X.x..Xx.X.' } },
+    { name: 'Tek rolls', note: 'Darbuka players fill with fast rolls on the tek. Rolls at the end of the bar announce the next phrase.', p: { perc: 'x.X...X.x...XrXr' } },
+    { name: 'Half-time kick', note: 'Kick on 1 and 3 only: slower and more hypnotic, closer to Insanlar\'s psychedelic side. Now the darbuka carries the pulse.', p: { kick: 'X.......X.......', bass: 'X.......X.....x.' } },
+  ],
   organic: [
     { name: 'Conga conversation', note: 'Congas answer each other across the bar instead of repeating. Accents on the offbeats pull against the steady kick.', p: { perc: '..X..x.X..X.xX.x' } },
     { name: 'Ghost-kick push', note: 'Two soft kicks (before beat 3 and on the last 8th) make the four-on-the-floor roll forward without getting busier.', p: { kick: 'X...X..xX...X.x.' } },
@@ -1374,7 +1415,10 @@ function norm(raw) {
   return { kick: parse(raw.kick), snare: parse(raw.snare), hat: mergeHats(parse(raw.chh), parse(raw.ohh)),
            perc: parse(raw.perc), bass: parse(raw.bass), chord: parse(raw.chord) };
 }
-GENRES.sort((a, b) => (b.fav ? 1 : 0) - (a.fav ? 1 : 0));
+// Your styles first (Spotify + SoundCloud likes, strongest first), then the rest.
+const ORDER = ['giegling', 'organic', 'minimal', 'anatolian', 'downtempo', 'deephouse', 'ukg', 'breaks', 'reggaeton', 'techno', 'synthwave'];
+const rank = g => { const i = ORDER.indexOf(g.id); return i < 0 ? ORDER.length : i; };
+GENRES.sort((a, b) => rank(a) - rank(b));
 
 // ---------- storage (guarded) ----------
 const KEY = 'groove-lab-v1';
@@ -1701,7 +1745,8 @@ const nav = document.getElementById('genres');
 GENRES.forEach(g => {
   const b = document.createElement('button');
   b.className = 'chip' + (g.fav ? ' fav' : ''); b.textContent = g.name; b.dataset.id = g.id;
-  if (g.fav) b.title = 'From your Spotify and your picks';
+  if (g.fav) b.title = 'In your Spotify or SoundCloud likes';
+  if (!g.fav && !nav.querySelector('.sep')) nav.insertAdjacentHTML('beforeend', '<span class="sep">More styles</span>');
   b.onclick = () => selectGenre(g.id);
   nav.appendChild(b);
 });
