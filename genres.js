@@ -17,6 +17,7 @@ const GENRES = [
   { id: 'downtempo', name: 'Organic Downtempo', hue: 60, bpm: 108, range: '100–115', swing: 58, fav: true, kit: 'downtempo',
     spotify: 'Ninze, Niju, MONKYMAN, Ninze & Okaxy',
     labels: { chh: 'Shaker', ohh: 'Open hat', perc: 'Bongos' },
+    bg: 'Hand percussion (bongos, shakers, sometimes a marimba) leaves room for long melodic builds.',
     about: 'Organic house slowed below 115 BPM. The kick gets sparser and rounder and the backbeat is a soft rim or clap. Hand percussion (bongos, shakers, sometimes a marimba) gives the forward motion, leaving room for long melodic builds.',
     listen: ['Slower and softer: the kick can drop beats or skip', 'Rim or soft clap instead of a snare', 'Hand percussion carries the rhythm, with gentle swing'],
     refs: 'Ninze & Niju (Magic Roads), MONKYMAN, Ninze & Okaxy',
@@ -27,6 +28,7 @@ const GENRES = [
   { id: 'giegling', name: 'Giegling / Dusty', hue: 35, bpm: 118, range: '110–124', swing: 62, fav: true, kit: 'dusty',
     spotify: 'Konstantin, Leafar Legov, Kettenkarussell, Edwards, Margaux Gazur',
     labels: { snare: 'Rim / Snare', perc: 'Clicks' },
+    bg: 'Jazz snippets and drum breaks make it more human and bittersweet than clean minimal; Kettenkarussell drift into jazzy downtempo breaks.',
     about: 'The Weimar collective\'s sound: sample-based deep house and micro-house with dub-techno space. Jazz snippets and drum breaks give it a more human, bittersweet feel than clean minimal. The drums are dusty and soft-edged; Kettenkarussell drift into jazzy downtempo breaks.',
     listen: ['Muted, rounded kick with a ghost kick before beat 3', 'Rim instead of a clap; small clicks and ticks in the gaps', 'Low-passed, slightly saturated sound, as if it came off a record'],
     refs: 'Kettenkarussell (Easy Listening), Leafar Legov (Talk EP), Konstantin',
@@ -47,6 +49,7 @@ const GENRES = [
 
   { id: 'techno', name: 'Techno', hue: 200, bpm: 130, range: '125–140', swing: 50, fav: true, kit: 'techno',
     spotify: 'Oliver Huntemann, Shlømo, Eva808',
+    bg: 'Small hat and perc changes build the tension over long stretches.',
     about: 'Straight, hypnotic and repetitive. The kick and the bass rumble are the track; small hat and perc changes build tension over long stretches.',
     listen: ['Straight four-on-the-floor, no swing', 'Offbeat rumble (reverb-tail bass) between the kicks', 'Driving 16th hats with an offbeat open hat'],
     refs: 'Oliver Huntemann, Shlømo, Jeff Mills',
@@ -56,6 +59,7 @@ const GENRES = [
 
   { id: 'breaks', name: 'Breakbeat', hue: 300, bpm: 130, range: '125–140', swing: 52, fav: true, kit: 'breaks',
     spotify: 'DjRUM, Floating Points',
+    bg: 'The modern UK take mixes it with garage and jazz.',
     about: 'Funk breaks sped up and made heavier. A broken kick and a snare with ghost notes replace four-on-the-floor. The modern UK take mixes this with garage and jazz.',
     listen: ['Kick on 1 and 3-and', 'Snare on 2 and 4 with ghost notes', 'A loop-like, sampled-break feel'],
     refs: 'DjRUM, Floating Points, The Chemical Brothers',
@@ -80,6 +84,7 @@ const GENRES = [
 
   { id: 'ukg', name: 'UK Garage', hue: 190, bpm: 132, range: '130–135', swing: 63, kit: 'ukg',
     labels: { perc: 'Rimshot' },
+    bg: 'Swing is what separates garage from house.',
     about: '2-step: the kick drops beats 2 and 4 and lands on 1 and the "and" of 3. Swing is what separates garage from house; skippy rimshots make it bounce.',
     listen: ['Kick on steps 1 and 11, never four-on-the-floor', 'Snare on 2 and 4; open hats on every offbeat', 'Closed hats on the even 16ths with 60–65% swing'],
     refs: 'MJ Cole, Artful Dodger, Todd Edwards',

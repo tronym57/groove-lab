@@ -31,14 +31,26 @@
 
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
   .info h2 { margin: 0; font-size: 30px; letter-spacing: -.02em; line-height: 1.1; }
-  .meta { color: var(--on); font-weight: 600; margin: 6px 0 10px; font-size: 13px; }
-  .about { margin: 0 0 10px; max-width: 72ch; }
-  .info ul { margin: 0; padding-left: 18px; color: #c9cdd4; }
-  .info li { margin: 2px 0; }
-  .refs { color: var(--muted); font-size: 12px; margin-top: 10px; }
-  .refs.spot { color: #1ed760; margin-top: 4px; }
-  .kitline { margin-top: 10px; font-size: 13px; color: #c9cdd4; }
-  .kitline b { color: var(--on); }
+  .tag { margin: 6px 0 12px; font-size: 16px; color: #c9cdd4; max-width: 60ch; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fact { border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; color: var(--muted); }
+  .fact b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .fact.you { color: #1ed760; border-color: #1ed76055; }
+  .fact.saved { color: var(--on); border-color: var(--on); }
+  a.fact { text-decoration: none; color: var(--on); border-color: hsl(var(--hue) 90% 60% / .5); }
+  details.more { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px; }
+  details.more summary { cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 600; list-style: none; }
+  details.more summary::before { content: '▸ '; } details.more[open] summary::before { content: '▾ '; }
+  details.more summary:hover { color: var(--text); }
+  .more dl { display: grid; grid-template-columns: 110px 1fr; gap: 12px 16px; margin: 12px 0 0; }
+  .more dt { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+  .more dd { margin: 0; color: #c9cdd4; font-size: 13px; max-width: 68ch; }
+  .more dd ul { margin: 0; padding-left: 16px; } .more dd li { margin: 2px 0; }
+  .more dd p { margin: 0 0 4px; }
+  .artists { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .artists .you::before { content: '● '; color: #1ed760; font-size: 9px; vertical-align: 1px; }
+  .src { color: var(--muted); font-size: 12px; }
+  @media (max-width: 560px) { .more dl { grid-template-columns: 1fr; gap: 2px; } .more dd { margin-bottom: 10px; } }
 
   .transport { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
   button.btn { font: inherit; color: var(--text); background: #262a31; border: 1px solid var(--line); border-radius: 8px;
@@ -88,9 +100,59 @@
   .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
   .msg { color: var(--muted); font-size: 13px; }
 
-  .mc h3 { margin: 0 0 8px; font-size: 14px; }
-  .mc p { margin: 4px 0; color: #c9cdd4; font-size: 13px; }
-  .mc code { background: #262a31; border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+  .mc-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .mc-head h3 { margin: 0; font-size: 18px; letter-spacing: -.01em; }
+  .tabs { display: inline-flex; background: #262a31; border-radius: 9px; padding: 3px; }
+  .tabs button { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: 0; border-radius: 7px; padding: 6px 12px; cursor: pointer; }
+  .tabs button.on { background: var(--panel); color: var(--text); }
+  .secs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 10px; scrollbar-width: thin; }
+  .secs button { flex: none; font: inherit; font-size: 12px; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+  .secs button.on { color: #111; background: var(--on); border-color: var(--on); }
+  .mcsvg { width: 100%; height: auto; display: block; user-select: none; }
+  .mcsvg .body { fill: #d9dbde; } .mcsvg .well { fill: none; stroke: #b9bcc1; }
+  .mcsvg .screen { fill: #22262c; } .mcsvg .scrtxt { fill: #f2a35a; font: 700 11px ui-monospace, monospace; text-anchor: middle; }
+  .mcsvg .brand { fill: #3a3f47; font: 700 11px system-ui; text-anchor: middle; }
+  .mcsvg .face { fill: #c4c7cc; stroke: #8e939b; stroke-width: 1.2; transition: fill .15s; }
+  .mcsvg .ptr { stroke: #2b2f36; stroke-width: 3; stroke-linecap: round; }
+  .mcsvg .led, .mcsvg .pageleds rect { fill: #b3b6bb; stroke: #8e939b; }
+  .mcsvg text { pointer-events: none; }
+  .mcsvg .lb { fill: #2b2f36; font: 700 8px system-ui; text-anchor: middle; letter-spacing: .02em; }
+  .mcsvg .lb.big { font-size: 13px; } .mcsvg .lb.u { text-decoration: underline; }
+  .mcsvg .sb { fill: #7c818a; font: 600 6.5px system-ui; text-anchor: middle; }
+  .mcsvg .gl { fill: #2b2f36; font: 15px system-ui; text-anchor: middle; }
+  .mcsvg .ctl { cursor: pointer; outline: none; }
+  .mcsvg .ctl:hover .face, .mcsvg .ctl:focus .face { fill: #b3b7bd; }
+  .mcsvg .ctl.hl .face { fill: hsl(var(--hue) 90% 72%); stroke: hsl(var(--hue) 90% 35%); stroke-width: 2.5; animation: pulse 1.4s ease-in-out infinite; }
+  .mcsvg .ctl.hl .led { fill: #ff4b3a; }
+  .mcsvg .ctl.t2 .face { fill: hsl(var(--hue) 90% 55%); stroke: hsl(var(--hue) 90% 30%); }
+  .mcsvg .ctl.t1 .face { fill: hsl(var(--hue) 90% 80%); stroke: hsl(var(--hue) 90% 40%); }
+  .mcsvg .ctl.t3 .face { fill: url(#mcRoll); stroke: hsl(var(--hue) 90% 30%); }
+  .mcsvg .rollf { fill: hsl(var(--hue) 90% 55%); }
+  .mcsvg .ctl.active .face { stroke: #e0372b; stroke-width: 3; }
+  .mcsvg .ctl.sel .face { stroke: #111; stroke-width: 2.5; }
+  .mcsvg .badge circle { fill: #111317; } .mcsvg .badge text { fill: #fff; font: 700 10px system-ui; text-anchor: middle; }
+  .mcsvg .val rect { fill: #111317; } .mcsvg .val text { fill: hsl(var(--hue) 90% 65%); font: 700 9px ui-monospace, monospace; text-anchor: middle; }
+  @keyframes pulse { 50% { opacity: .65; } }
+  @media (prefers-reduced-motion: reduce) { .mcsvg .ctl.hl .face { animation: none; } }
+  .ctlinfo { min-height: 1.4em; color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+  .ctlinfo b { color: var(--text); }
+  .stepcard { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .stepcard small { color: var(--muted); font-weight: 700; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+  .stepcard h4 { margin: 2px 0 10px; font-size: 18px; letter-spacing: -.01em; }
+  .seq { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .seq .arrow { color: var(--muted); } .seq .plus { color: var(--muted); font-size: 12px; }
+  .seq kbd { font-size: 12px; padding: 3px 8px; color: var(--text); }
+  .seq kbd.knob { border-radius: 999px; }
+  .seq kbd.hold::before { content: 'hold '; color: var(--muted); font-weight: 400; }
+  .seq kbd.knob::before { content: 'turn '; color: var(--muted); font-weight: 400; }
+  .steptext { color: #c9cdd4; font-size: 14px; max-width: 70ch; }
+  .steptext p { margin: 6px 0 0; }
+  .steptext ul.knobs { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0 0 6px; }
+  .steptext ul.knobs li { background: #262a31; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-variant-numeric: tabular-nums; }
+  .steptext ul.knobs b { color: var(--muted); font-size: 11px; margin-right: 6px; }
+  .stepnav { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+  .stepnav .count { color: var(--muted); font-size: 12px; margin-left: auto; font-variant-numeric: tabular-nums; }
+  .note { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
   kbd { background: #262a31; border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
 </style>
 </head>
@@ -138,25 +200,43 @@
     </div>
   </section>
 
-  <section class="card mc">
-    <h3>Taking it to the Model:Cycles</h3>
-    <p>The 6 rows match the Cycles' 6 tracks. The machine to load is under each row name, and the 16 steps match its 16 trig keys.</p>
-    <p>Swing is shown as an Elektron-style percentage (<code>50%</code> = straight, <code>~67%</code> = triplet shuffle), so you can type the same number into the Cycles.</p>
-    <p>The kit line under each genre describes the sound to aim for (kick pitch and decay, rim vs. clap, how dark). Use it as a starting point for tweaking the Cycles' machines.</p>
-    <p>Soft hits → put a lower volume/velocity parameter lock on that trig. Rolls → use the Cycles' retrig or a short repeat at 1/32.</p>
+  <section class="card mc" id="mc">
+    <div class="mc-head">
+      <h3>On the Model:Cycles</h3>
+      <div class="tabs" role="tablist">
+        <button id="tabGenre" class="on" role="tab">Program this groove</button>
+        <button id="tabBasics" role="tab">Basics</button>
+      </div>
+    </div>
+    <div class="secs" id="mcSecs"></div>
+    <div id="mcPanel"></div>
+    <p class="ctlinfo" id="mcInfo">Tap any key or knob on the panel to see what it does.</p>
+    <div class="stepcard">
+      <small id="mcKicker"></small>
+      <h4 id="mcTitle"></h4>
+      <div class="seq" id="mcSeq"></div>
+      <div class="steptext" id="mcText"></div>
+      <div class="stepnav">
+        <button class="btn" id="mcPrev">◀ Back</button>
+        <button class="btn" id="mcNext">Next ▶</button>
+        <span class="count" id="mcCount"></span>
+      </div>
+    </div>
+    <p class="note">Panel drawn after the official manual (OS 1.13). Knob values are starting points that match this app's kit, not factory presets: tweak by ear.</p>
   </section>
 </div>
 
 <script src="genres.js"></script>
 <script src="kits.js"></script>
+<script src="cycles.js"></script>
 <script>
 const TRACKS = [
-  { id: 'kick',  name: 'Kick',         mc: 'T1 · KICK' },
-  { id: 'snare', name: 'Snare / Clap', mc: 'T2 · SNARE' },
-  { id: 'chh',   name: 'Closed hat',   mc: 'T3 · METAL' },
-  { id: 'ohh',   name: 'Open hat',     mc: 'T4 · METAL' },
-  { id: 'perc',  name: 'Perc / Rim',   mc: 'T5 · PERC' },
-  { id: 'bass',  name: 'Bass / 808',   mc: 'T6 · TONE' },
+  { id: 'kick',  name: 'Kick' },
+  { id: 'snare', name: 'Snare / Clap' },
+  { id: 'chh',   name: 'Closed hat' },
+  { id: 'ohh',   name: 'Open hat' },
+  { id: 'perc',  name: 'Perc / Rim' },
+  { id: 'bass',  name: 'Bass / 808' },
 ];
 const STEPS = 16;
 const VAL = { '.': 0, 'x': 1, 'X': 2, 'r': 3 };
@@ -322,7 +402,8 @@ function setKit(id) {
   kitId = id; kitSel.value = id;
   const k = Engine.setKit(id);
   const line = document.getElementById('kitline');
-  if (line) line.innerHTML = `<b>Kit · ${id}:</b> ${k.desc}`;
+  if (line) line.textContent = k.desc;
+  renderNames(); mcRefresh();
 }
 
 const grid = document.getElementById('grid');
@@ -353,6 +434,7 @@ TRACKS.forEach((tr, r) => {
       const v = (pattern[tr.id][s] + 1) % 4;
       pattern[tr.id][s] = v; paintCell(r, s);
       if (v && !playing) { const ctx = Engine.init(); Engine.play(tr.id, v, ctx.currentTime, stepDur()); }
+      mcRefresh();
     };
     grid.appendChild(c); cells[r].push(c);
   }
@@ -365,13 +447,13 @@ function render() { TRACKS.forEach((_, r) => { for (let s = 0; s < STEPS; s++) p
 function renderNames() {
   TRACKS.forEach((tr, r) => {
     const label = (genre.labels && genre.labels[tr.id]) || tr.name;
-    nameEls[r].innerHTML = `<b>${label}</b><small>${tr.mc}</small>`;
+    nameEls[r].innerHTML = `<b>${label}</b><small>T${r + 1} · ${MC.recipe(kitId, tr.id).machine}</small>`;
   });
 }
 
 const bpmOut = document.getElementById('bpmOut'), swingOut = document.getElementById('swingOut');
-bpmEl.oninput = () => bpmOut.textContent = bpmEl.value;
-swingEl.oninput = () => swingOut.textContent = swingEl.value + '%';
+bpmEl.oninput = () => { bpmOut.textContent = bpmEl.value; mcRefresh(); };
+swingEl.oninput = () => { swingOut.textContent = swingEl.value + '%'; mcRefresh(); };
 
 function loadOriginal() {
   TRACKS.forEach(tr => pattern[tr.id] = parse(genre.p[tr.id]));
@@ -385,22 +467,108 @@ function selectGenre(id) {
   const mine = store().mine[genre.id];
   if (mine) { TRACKS.forEach(tr => pattern[tr.id] = mine.p[tr.id].slice()); bpmEl.value = mine.bpm; swingEl.value = mine.swing; }
   else loadOriginal();
-  bpmEl.oninput(); swingEl.oninput(); render(); renderNames();
-  document.getElementById('info').innerHTML = `
-    <h2>${genre.name}</h2>
-    <div class="meta">${genre.range} BPM · swing ${genre.swing}%${mine ? ' · showing your saved version' : ''}</div>
-    <p class="about">${genre.about}</p>
-    <ul>${genre.listen.map(l => `<li>${l}</li>`).join('')}</ul>
-    ${genre.harmony ? `<div class="kitline"><b>Harmony:</b> ${genre.harmony}</div>` : ''}
-    <div class="kitline" id="kitline"></div>
-    <div class="refs">Listen to: ${genre.refs}</div>
-    ${genre.fav ? `<div class="refs spot">● Your artists: ${genre.spotify}</div>` : ''}
-    <div class="refs">Source: ${genre.src}</div>`;
+  mcIdx = 0;
+  bpmEl.oninput(); swingEl.oninput(); render();
+  document.getElementById('info').innerHTML = infoHTML(genre, !!mine);
   setKit(genre.kit);
   if (buildMode) { cursorBar = 0; if (playing) { bar = 0; } refreshBuild(); }
   const s = store(); s.last = genre.id; persist(s);
   say('');
 }
+
+// Genre header: name + one-line summary visible; details on demand. Each fact appears once.
+function infoHTML(g, mine) {
+  const spot = g.fav ? (g.spotify || '').split(',').map(x => x.trim()).filter(Boolean) : [];
+  const artists = g.refs.split(',').map(x => x.trim()).map(n => ({ n, you: spot.some(sp => n.includes(sp)) }));
+  spot.forEach(sp => { if (!artists.some(a => a.n.includes(sp))) artists.push({ n: sp, you: true }); });
+  return `
+    <h2>${g.name}</h2>
+    <p class="tag">${g.about.split(/(?<=\.)\s/)[0]}</p>
+    <div class="facts">
+      <span class="fact">Typical <b>${g.range}</b> BPM</span>
+      ${g.fav ? '<span class="fact you" title="From your Spotify and your picks">● In your listening</span>' : ''}
+      ${mine ? '<span class="fact saved">Your saved version</span>' : ''}
+      <a class="fact" href="#mc">Program it on the Model:Cycles ↓</a>
+    </div>
+    <details class="more">
+      <summary>What to listen for, sound, artists</summary>
+      <dl>
+        <dt>Listen for</dt><dd><ul>${g.listen.map(l => `<li>${l}</li>`).join('')}</ul></dd>
+        ${g.bg ? `<dt>Background</dt><dd>${g.bg}</dd>` : ''}
+        <dt>Sound</dt><dd><p id="kitline"></p>${g.harmony ? `<p><b>Harmony:</b> ${g.harmony}</p>` : ''}</dd>
+        <dt>Artists</dt><dd class="artists">${artists.map(a => `<span class="${a.you ? 'you' : ''}">${a.n}</span>`).join('')}</dd>
+        <dt>Source</dt><dd class="src">${g.src}</dd>
+      </dl>
+    </details>`;
+}
+
+// ---------- Model:Cycles tutorial ----------
+let mcMode = 'genre', mcIdx = 0, mcSteps = [];
+document.getElementById('mcPanel').innerHTML = MC.svg();
+const mcSvg = document.querySelector('#mcPanel svg'), mcCtl = {};
+mcSvg.querySelectorAll('.ctl').forEach(g => mcCtl[g.dataset.k] = g);
+const mcInfo = document.getElementById('mcInfo');
+mcSvg.addEventListener('click', e => {
+  const g = e.target.closest('.ctl'); if (!g) return;
+  mcSvg.querySelectorAll('.ctl.sel').forEach(x => x.classList.remove('sel'));
+  g.classList.add('sel');
+  mcInfo.innerHTML = `<b>${MC.NAME(g.dataset.k)}</b> · ${MC.INFO[g.dataset.k]}`;
+});
+function mcRefresh() {
+  if (!mcSvg) return;
+  mcSteps = mcMode === 'genre' ? MC.genreSteps(genre, pattern, labelOf, TRACKS, kitId, +bpmEl.value, +swingEl.value) : MC.BASICS;
+  mcIdx = Math.max(0, Math.min(mcIdx, mcSteps.length - 1));
+  mcShow();
+}
+function mcShow() {
+  const st = mcSteps[mcIdx], NS = 'http://www.w3.org/2000/svg';
+  Object.values(mcCtl).forEach(g => { g.classList.remove('hl', 't1', 't2', 't3', 'active', 'sel'); g.querySelector('.badge').innerHTML = ''; });
+  mcSvg.querySelectorAll('.val').forEach(v => v.remove());
+  const trigs = st.trigs ? (typeof st.trigs === 'string' ? parse(st.trigs) : st.trigs) : [];
+  trigs.forEach((v, i) => v && mcCtl['trig' + (i + 1)].classList.add('t' + v));
+  MC.hlOf(st.seq).forEach(id => { if (!(id.startsWith('trig') && trigs[+id.slice(4) - 1])) mcCtl[id].classList.add('hl'); });
+  if (st.seq.length > 1) st.seq.forEach((grp, gi) => grp.forEach(tok => {
+    const id = tok.replace(/^hold:/, ''), [, x, y] = MC.C[id];
+    mcCtl[id].querySelector('.badge').innerHTML = `<circle cx="${x + 18}" cy="${y - 18}" r="8"/><text x="${x + 18}" y="${y - 14.5}">${gi + 1}</text>`;
+  }));
+  Object.entries(st.values || {}).forEach(([id, v]) => {
+    const [, x, y] = MC.C[id], g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'val');
+    g.innerHTML = `<rect x="${x - 22}" y="${y - 40}" width="44" height="15" rx="4"/><text x="${x}" y="${y - 29}">${v}</text>`;
+    mcSvg.appendChild(g);
+  });
+  if (st.track) mcCtl[st.track].classList.add('active');
+  mcSvg.getElementById('mcScreen').textContent = st.screen || 'Model:Cycles';
+  const tok = t => {
+    const hold = t.startsWith('hold:'), id = t.replace(/^hold:/, '');
+    return `<kbd class="${MC.isKnob(id) ? 'knob' : ''}${hold ? ' hold' : ''}">${MC.NAME(id)}</kbd>`;
+  };
+  document.getElementById('mcSeq').innerHTML = st.seq.map(grp =>
+    grp.length > 3 && grp.every(t => t.startsWith('trig')) ? `<kbd>TRIG ${grp.map(t => t.slice(4)).join(' · ')}</kbd>`
+      : grp.map(tok).join('<span class="plus">+</span>')).join('<span class="arrow">→</span>');
+  document.getElementById('mcKicker').textContent = mcMode === 'genre' ? `${genre.name} · ${st.sec}` : 'Basics';
+  document.getElementById('mcTitle').textContent = st.title;
+  document.getElementById('mcText').innerHTML = st.text;
+  document.getElementById('mcCount').textContent = `Step ${mcIdx + 1} of ${mcSteps.length}`;
+  document.getElementById('mcPrev').disabled = mcIdx === 0;
+  document.getElementById('mcNext').disabled = mcIdx === mcSteps.length - 1;
+  const secs = mcMode === 'genre' ? [...new Set(mcSteps.map(s => s.sec))] : [];
+  document.getElementById('mcSecs').innerHTML = secs.map(s => `<button class="${s === st.sec ? 'on' : ''}">${s}</button>`).join('');
+}
+document.getElementById('mcSecs').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  mcIdx = mcSteps.findIndex(s => s.sec === b.textContent); mcShow();
+};
+document.getElementById('mcPrev').onclick = () => { if (mcIdx > 0) { mcIdx--; mcShow(); } };
+document.getElementById('mcNext').onclick = () => { if (mcIdx < mcSteps.length - 1) { mcIdx++; mcShow(); } };
+function mcTab(mode) {
+  mcMode = mode; mcIdx = 0;
+  document.getElementById('tabGenre').classList.toggle('on', mode === 'genre');
+  document.getElementById('tabBasics').classList.toggle('on', mode === 'basics');
+  mcRefresh();
+}
+document.getElementById('tabGenre').onclick = () => mcTab('genre');
+document.getElementById('tabBasics').onclick = () => mcTab('basics');
 
 document.getElementById('saveBtn').onclick = () => {
   const s = store();
