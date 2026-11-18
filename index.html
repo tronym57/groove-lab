@@ -327,6 +327,9 @@
   .seg button.on { background: #2f343c; color: var(--text); border-color: #4a505b; }
   .pagesel button { width: 34px; padding: 6px 0; border-radius: 8px; margin-left: 2px; position: relative; }
   .pagesel button.on { background: hsl(var(--hue) 90% 60% / .18); color: var(--on); border-color: var(--on); }
+  .pagesel button.follow { width: auto; padding: 6px 10px; margin-left: 8px; font-size: 12px; }
+  .pagesel button.follow.on { color: var(--text); border-color: #4a505b; background: #2f343c; }
+  .pagesel button.follow:not(.on) { color: #ffd36b; border-color: #ffd36b66; }
   .pagesel button.play::after { content: ''; position: absolute; top: 3px; right: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--on); box-shadow: 0 0 6px var(--glow); }
   .seg button:active, .pagesel button:active { transform: scale(.95); }
 
@@ -1637,7 +1640,7 @@ function persist(obj) { try { localStorage.setItem(KEY, JSON.stringify(obj)); re
 let genre = GENRES[0], kitId = genre.kit;
 const pattern = {}, muted = {};
 // Pattern pages, like the Cycles' [PAGE]: 1, 2 or 4 bars of 16 steps. `pattern` always points at the page on screen.
-let pages = [], nPages = 1, viewPage = 0, playPage = 0, pageVar = [];
+let pages = [], nPages = 1, viewPage = 0, playPage = 0, pageVar = [], followPage = true;   // followPage: the grid jumps to the page that is playing
 const clonePage = pg => Object.fromEntries(TRACKS.map(t => [t.id, pg[t.id].slice()]));
 function bindPage() { TRACKS.forEach(t => pattern[t.id] = pages[viewPage][t.id]); }
 // After loading a whole pattern: page 1 is it, the other pages are copies (the Cycles copies trigs when you extend a pattern).
@@ -1965,7 +1968,7 @@ document.getElementById('formBody').onclick = e => {
 function setHead(s, pg = playPage) {
   if (headStep >= 0) { cells.forEach(r => r[headStep].classList.remove('head')); pkeys[headStep].classList.remove('now'); }
   headStep = s;
-  if (pg !== playPage) { playPage = pg; renderPageUI(); }
+  if (pg !== playPage) { playPage = pg; if (followPage && playing && pg !== viewPage) showPage(pg, true); else renderPageUI(); }
   if (s >= 0 && pg === viewPage) { cells.forEach(r => r[s].classList.add('head')); pkeys[s].classList.add('now'); }
 }
 const playBtn = document.getElementById('play');
@@ -1976,7 +1979,9 @@ function togglePlay() {
     step = 0; bar = buildMode ? cursorBar : 0; nextTime = ctx.currentTime + 0.05; queue.length = 0;
     if (buildMode) { renderArrangement(); showBuild(bar); }
     timer = setInterval(schedule, 25); schedule(); draw();
-    playBtn.textContent = '■ Stop'; playBtn.classList.add('on'); renderPageUI();
+    playBtn.textContent = '■ Stop'; playBtn.classList.add('on');
+    playPage = bar % nPages;
+    if (followPage && viewPage !== playPage) showPage(playPage, true); else renderPageUI();
     setTimeout(() => { if (playing && Engine.ctx.state !== 'running') say('No sound? The browser is blocking audio: tap Stop, then Play again. On iPhone, also check the volume.'); }, 600);
   } else {
     clearInterval(timer); setHead(-1, 0); renderPageUI(); playBtn.textContent = '▶ Play'; playBtn.classList.remove('on');
@@ -2357,12 +2362,12 @@ function renderPageUI() {
   sel.innerHTML = '<span class="lab">Page</span>' + pages.map((_, p) => {
     const v = pageVar[p], name = (pageInfo[p] || '').replace(/<[^>]+>/g, '').split(':')[0] || (v >= 0 ? VARIANTS[genre.id][v].name : v === -2 ? 'your version' : 'original');
     return `<button data-p="${p}" class="${p === viewPage ? 'on' : ''}${playing && p === playPage ? ' play' : ''}" title="Page ${p + 1}: ${name}" aria-label="Show page ${p + 1}">${p + 1}</button>`;
-  }).join('');
+  }).join('') + `<button class="follow${followPage ? ' on' : ''}" data-follow aria-pressed="${followPage}" title="${followPage ? 'Following the playing page. Tap a page number to stay on it.' : 'Pinned. Tap to follow the playing page again.'}">${followPage ? 'Auto' : 'Pinned · Auto ↻'}</button>`;
 }
-function showPage(p) {
+function showPage(p, auto = false) {   // auto = followed the playhead: skip the tutorial refresh (it always programs from page 1)
   viewPage = p; variant = pageVar[p]; bindPage();
   if (headStep >= 0) setHead(headStep);
-  render(); renderVariants(pageInfo[p] || undefined); renderPageUI(); mcRefresh();
+  render(); renderVariants(pageInfo[p] || undefined); renderPageUI(); if (!auto) mcRefresh();
 }
 function setLength(n) {
   if (n === nPages) { say(`Already ${n} bar${n > 1 ? 's' : ''}.`); return; }
@@ -2373,7 +2378,19 @@ function setLength(n) {
     : n === 2 ? '2 bars: A B. Bar 2 is the turnaround back to bar 1. Dots mark what changed.' : '1 bar: only page 1 plays.');
 }
 document.getElementById('lenSeg').onclick = e => { const b = e.target.closest('[data-n]'); if (b) setLength(+b.dataset.n); };
-document.getElementById('pageSel').onclick = e => { const b = e.target.closest('[data-p]'); if (b) { showPage(+b.dataset.p); say(`Page ${+b.dataset.p + 1} of ${nPages}${playing && +b.dataset.p !== playPage ? ' (the playhead shows when this page plays)' : ''}.`); } };
+document.getElementById('pageSel').onclick = e => {
+  if (e.target.closest('[data-follow]')) {
+    followPage = !followPage;
+    if (followPage && playing && viewPage !== playPage) showPage(playPage, true); else renderPageUI();
+    say(followPage ? 'Auto: the grid follows the page that is playing.' : `Pinned to page ${viewPage + 1}.`);
+    return;
+  }
+  const b = e.target.closest('[data-p]'); if (!b) return;
+  const p = +b.dataset.p;
+  if (playing) followPage = false;   // checking a page while playing pins it; Auto resumes following
+  showPage(p);
+  say(playing ? `Pinned to page ${p + 1}${p !== playPage ? ': the playhead shows when this page plays' : ''}. Tap Auto to follow again.` : `Page ${p + 1} of ${nPages}.`);
+};
 
 // ---------- fullscreen sequencer ----------
 const playCard = document.getElementById('playCard'), fsBtn = document.getElementById('fsBtn');
