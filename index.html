@@ -1650,8 +1650,9 @@ function pagesFromPattern() {
 // 2 bars = A B (call and turnaround) · 4 bars = A A' A B (repeat, small answer, repeat, turnaround into bar 1).
 const has = pg => id => pg[id] && pg[id].some(v => v);
 function ghostVariation(base) {   // A': one or two soft extra hits late in the bar, on the busiest light part
-  const pg = clonePage(base), id = ['perc', 'hat', 'snare'].find(has(pg)) || 'hat', added = [];
-  for (const s of [11, 14, 7, 3]) { if (added.length === 2) break; if (!pg[id][s]) { pg[id][s] = 1; added.push(s + 1); } }
+  const pg = clonePage(base), spots = [11, 14, 7, 3, 10, 6];
+  const id = ['perc', 'hat', 'snare', 'kick'].find(t => has(pg)(t) && spots.some(s => !pg[t][s])) || 'perc', added = [];
+  for (const s of spots) { if (added.length === 2) break; if (!pg[id][s]) { pg[id][s] = 1; added.push(s + 1); } }
   return { pg, info: `<b>Bar 2 · small answer:</b> soft extra ${labelOf(id)} hits on ${added.join(' and ')}. The ear notices a change without losing the loop.` };
 }
 function turnaround(base) {   // B: the genre's own fill variant if it has one, otherwise a generic last-beat fill
