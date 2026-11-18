@@ -24,7 +24,7 @@
   body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 var(--font); }
   button, input, select, textarea, kbd, output, svg text { font-family: var(--font); }
   .wrap { max-width: 980px; margin: 0 auto; padding: max(20px, env(safe-area-inset-top)) 16px 40px; }
-  header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  header { display: flex; align-items: baseline; justify-content: flex-start; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
   h1 { font-size: 20px; margin: 0; letter-spacing: -.01em; }
   .hint { color: var(--muted); font-size: 12px; }
 
@@ -218,6 +218,12 @@
   .fstrip button { font: inherit; font-size: 11px; font-weight: 700; color: var(--muted); background: #23272e; border: 0; border-radius: 4px; padding: 10px 4px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   .fstrip button.peak { background: hsl(var(--hue) 90% 60% / .3); color: var(--text); }
   .fstrip button.low { background: #1b1e24; outline: 1px dashed var(--line); outline-offset: -1px; }
+  header > .hint { margin-left: auto; }
+  .fstrip button.now { box-shadow: inset 0 -3px 0 hsl(var(--hue) 90% 60%); color: var(--text); }
+  .ftable tr.now td { background: hsl(var(--hue) 90% 60% / .08); }
+  .ftable tr.now td.n { box-shadow: inset 3px 0 0 hsl(var(--hue) 90% 60%); padding-left: 8px; }
+  .fnow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; min-height: 36px; font-size: 13px; }
+  .fnow[hidden] { display: flex !important; visibility: hidden; }
   .fstrip button:hover { color: var(--text); } .fstrip button:active { transform: scale(.96); }
   .fmeta { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
   .ftable { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -1873,6 +1879,7 @@ function showBuild(b) {
   document.querySelectorAll('.arr-cell').forEach(c => c.classList.toggle('now', +c.dataset.bar === pos));
   document.querySelectorAll('#arrGrid .sec').forEach(c => c.classList.toggle('cur', +c.dataset.bar === sec.start));
   if (nPages > 1 && viewPage !== pageAt(pos)) showPage(pageAt(pos), true);   // the grid shows this bar of the phrase
+  markStructure();
   const fill = fillAt(pos);
   TRACKS.forEach((tr, r) => {
     const on = layerOn(tr.id, pos) || (tr.id === 'snare' && !!fill);
@@ -1978,10 +1985,12 @@ function renderStructure() {
       <td>${chips}${s.fill ? '<span class="chg add">+ snare roll</span>' : ''}<div class="why">${s.note}</div></td>
       <td><button class="btn" data-sec="${i}" aria-label="Play ${s.name}">▶</button></td></tr>`;
   }).join('');
+  setTimeout(markStructure);
   const cls = s => s.song === 'Chorus' ? ' peak' : s.song === 'Bridge' ? ' low' : '';
   el.innerHTML = `
     <p class="hint" style="margin:0 0 6px">${form.who}</p>
     <div class="fstrip">${form.sections.map((s, i) => `<button class="${cls(s).trim()}" style="flex:${s.bars}" data-sec="${i}" title="${s.name}, ${s.bars} bars">${s.name}</button>`).join('')}</div>
+    <div class="fnow" id="fnow" hidden></div>
     <div class="fmeta">${total} bars · about ${Math.floor(mins)}:${String(Math.round((mins % 1) * 60)).padStart(2, '0')} min at ${g.bpm} BPM</div>
     <table class="ftable"><tbody>${rows}</tbody></table>
     <div class="fhear">Hear it with
@@ -1995,14 +2004,30 @@ document.getElementById('formBody').onchange = e => { if (e.target.id === 'hearS
 document.getElementById('formBody').onclick = e => {
   const b = e.target.closest('[data-sec]'); if (!b) return;
   const key = formShown, i = +b.dataset.sec, id = hearWith[key];
-  setView('grooves');
+  if (b.dataset.sec === 'stop') { if (playing) togglePlay(); markStructure(); return; }
+  if (b.dataset.sec === 'open') { setView('grooves'); document.getElementById('playCard').scrollIntoView({ block: 'start' }); return; }
+  if (playing && structSec() === i) { togglePlay(); markStructure(); return; }   // tap the playing section again = stop
   if (genre.id !== id) selectGenre(id);
   if (!buildMode) setArrange(true);
   jumpTo(plan.secs[i].start);
   if (!playing) togglePlay();
-  say(`Playing the ${FORMS[key].sections[i].name.toLowerCase()} of ${genre.name} as a ${FORMS[key].name.toLowerCase()}.`);
-  document.getElementById('playCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  markStructure();
 };
+// Song structure plays in place: highlight the section that is playing, right here.
+const structSec = () => buildMode && plan && formKey(genre.id) === formShown && hearWith[formShown] === genre.id ? plan.bars[cursorBar].sec : -1;
+function markStructure() {
+  const st = document.getElementById('structure'), nowEl = document.getElementById('fnow');
+  if (!nowEl || st.hidden) return;
+  const i = playing ? structSec() : -1;
+  st.querySelectorAll('.fstrip button, .ftable tr').forEach(el => el.classList.remove('now'));
+  st.querySelectorAll('.ftable button[data-sec]').forEach(btn => btn.textContent = +btn.dataset.sec === i ? '■' : '▶');
+  nowEl.hidden = i < 0;
+  if (i < 0) return;
+  st.querySelector(`.fstrip button[data-sec="${i}"]`)?.classList.add('now');
+  st.querySelectorAll('.ftable tr')[i]?.classList.add('now');
+  const sec = plan.secs[i];
+  nowEl.innerHTML = `<button class="btn primary" data-sec="stop">■ Stop</button><span><b>${sec.name}</b> · ${genre.name} · bar ${cursorBar - sec.start + 1} of ${sec.len}</span><button class="btn ghost" data-sec="open">See it in the step sequencer →</button>`;
+}
 
 function setHead(s, pg = playPage) {
   if (headStep >= 0) { cells.forEach(r => r[headStep].classList.remove('head')); pkeys[headStep].classList.remove('now'); }
@@ -2025,6 +2050,7 @@ function togglePlay() {
   } else {
     clearInterval(timer); setHead(-1, 0); renderPageUI(); playBtn.textContent = '▶ Play'; playBtn.classList.remove('on');
     if (buildMode) refreshBuild();
+    markStructure();
   }
 }
 
