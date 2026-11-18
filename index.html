@@ -1282,7 +1282,7 @@ const Engine = (() => {
     init,
     setKit(id) { kit = mergeKit(id); applyMaster(); return kit; },
     setChord(notes) { chordNotes = notes || [57, 60, 64, 67]; },
-    setFx(f) { fx = JSON.parse(JSON.stringify(f)); applyFx(); },
+    setFx(f) { fx = { size: f.rev[0], tone: f.rev[1], time: f.del[0], fb: f.del[1], sends: JSON.parse(JSON.stringify(f.s)) }; applyFx(); },   // genre format → engine
     setTempo(b) { bpm = b; applyFx(); },
     setFxOn(on) { fxOn = on; applyFx(); },
     play(track, val, t, stepDur) {
