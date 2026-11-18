@@ -445,7 +445,7 @@ const VARIANTS = {
     { name: 'Click storm', note: 'Dense, very quiet clicks fill every gap. In micro-house the texture is the groove; keep them low in the mix.', p: { perc: 'x.xx.x.xx.x.x.xx' } },
   ],
   deephouse: [
-    { name: 'Rim shuffle', note: 'Quiet rimshots on the offbeat 16ths, Kerri Chandler style. T5 is free on the Cycles, so put a short PERC there.', p: { perc: '...x..x....x..x.' } },
+    { name: 'Snap shuffle', note: 'Quiet snaps (or rimshots) on the offbeat 16ths, Kerri Chandler style. T5 is free on the Cycles, so put a short PERC there.', p: { perc: '...x..x....x..x.' } },
     { name: 'Clap pickup', note: 'An extra soft clap just before beat 3 gives the backbeat a little skip without losing the steadiness.', p: { snare: '....X..x....X...' } },
     { name: 'Walking bass', note: 'A busier, syncopated bassline. Lock different NOTEs per trig (hold trig + LEVEL/DATA) to walk A → C → D under the chords.', p: { bass: '..XX..X...X..x.x' } },
   ],
@@ -524,13 +524,16 @@ const VARIANTS = {
 <script>
 // ===== kits.js =====
 // Drum kits. Kick and bass are always synthesised. Other voices can use a sample instead:
-// `smp` = sample names from samples/ (CC0, Versilian Community Sample Library),
+// `smp` = sample names from samples/ (all CC0: Versilian Community Sample Library and Sonic Pi's freesound set),
 // `rule` = 'alt' (alternate per hit) or 'vel' (accent → first, soft → second), plus `rate`, `cut` (seconds).
 // If a sample can't load (e.g. opened as file://), the synth version plays instead.
 // Every kit overrides parts of BASE. Voices: kick, snare, chh, ohh, perc, bass, plus master tone.
 
 const SAMPLE_NAMES = ['conga', 'tumba', 'bongo_hi', 'bongo_lo', 'shaker_dn', 'shaker_up', 'clap1', 'clap2',
-  'clave', 'wood', 'hat_closed', 'hat_open', 'tamb'];
+  'clave', 'wood', 'hat_closed', 'hat_open', 'tamb',
+  // CC0 samples from Sonic Pi (freesound.org, public domain), see samples/LICENSE-SonicPi-CC0.txt
+  ...['drum_snare_hard', 'drum_snare_soft', 'sn_dolf', 'sn_dub', 'sn_zome', 'elec_hi_snare', 'elec_mid_snare',
+  'hat_tap', 'hat_snap', 'hat_zild', 'hat_raw', 'hat_cats', 'hat_gump', 'drum_cymbal_open', 'ride_via', 'perc_snap', 'elec_fuzz_tom']];
 
 const BASE = {
   kick:  { f0: 150, f1: 45, pd: 0.12, dec: 0.45, click: 0, vol: 1 },
@@ -562,119 +565,120 @@ const KITS = {
     bass: { f: 44, dec: 0.6, vol: 0.55 },
     master: { lp: 7000, drive: 0.2 } },
   dusty: {
-    desc: 'Muted kick, pitched-down clave as a rim, real hi-hats, woodblock clicks, low-passed and saturated like a sampled record',
+    desc: 'Muted kick, pitched-down clave as a rim, real hi-hats, a dusty jazz ride, woodblock clicks, low-passed like a sampled record',
     kick: { f0: 100, f1: 46, pd: 0.07, dec: 0.32, vol: 0.9 },
     snare: { mode: 'rim', vol: 0.4, smp: ['clave'], rate: 0.7 },
     chh: { hp: 6000, dec: 0.035, vol: 0.35, smp: ['hat_closed'], rate: 0.9 },
-    ohh: { hp: 5500, dec: 0.18, vol: 0.25, smp: ['hat_open'], cut: 0.25, rate: 0.85 },
+    ohh: { hp: 5500, dec: 0.18, vol: 0.22, smp: ['ride_via'], cut: 0.6, rate: 0.9 },
     perc: { mode: 'click', f: 2400, dec: 0.012, vol: 0.35, smp: ['wood'], rate: 1.3 },
     bass: { f: 41, dec: 0.4, vol: 0.55 },
     master: { lp: 4800, drive: 0.45 } },
   deep: {
-    desc: '909-style kick, compressed clap, short 808 open hat, a real swung shaker, dusty top end',
+    desc: '909-style kick, real claps, short open hat, a swung shaker, finger snaps, dusty top end',
     kick: { f0: 160, f1: 50, pd: 0.1, dec: 0.42, click: 0.2 },
-    snare: { mode: 'clap', vol: 0.65 },
+    snare: { mode: 'clap', vol: 0.6, smp: ['clap1', 'clap2'], rule: 'alt' },
     chh: { mode: 'shaker', hp: 5000, dec: 0.06, vol: 0.42, smp: ['shaker_dn', 'shaker_up'], rule: 'alt' },
-    ohh: { mode: 'metal', dec: 0.16, vol: 0.2 },
-    perc: { mode: 'tom', f: 150, dec: 0.3, vol: 0.45 },
+    ohh: { mode: 'metal', dec: 0.16, vol: 0.28, smp: ['hat_cats'], cut: 0.25 },
+    perc: { mode: 'rim', f: 900, dec: 0.06, vol: 0.45, smp: ['perc_snap'] },
     master: { lp: 8000, drive: 0.2 } },
   techno: {
-    desc: 'Driven 909 kick with click, metallic hats, rumbling sub',
+    desc: 'Driven 909 kick with click, tight real hats, clap, rumbling sub',
     kick: { f0: 190, f1: 46, pd: 0.09, dec: 0.5, click: 0.6 },
-    snare: { mode: 'clap', vol: 0.55 },
-    chh: { mode: 'metal', dec: 0.035, vol: 0.25 },
-    ohh: { mode: 'metal', dec: 0.25, vol: 0.22 },
+    snare: { mode: 'clap', vol: 0.5, smp: ['clap1', 'clap2'], rule: 'alt' },
+    chh: { mode: 'metal', dec: 0.035, vol: 0.35, smp: ['hat_tap'] },
+    ohh: { mode: 'metal', dec: 0.25, vol: 0.28, smp: ['hat_gump'], cut: 0.3 },
     perc: { mode: 'rim', f: 700, dec: 0.08, vol: 0.4 },
     bass: { f: 41, dec: 0.22, lp: 180, wave: 'sawtooth', vol: 0.75 },
     master: { lp: 14000, drive: 0.5 } },
   breaks: {
-    desc: 'Punchy acoustic-style kick, fat snare, real hi-hat and tambourine, crunchy sampled-break feel',
+    desc: 'Punchy kick, real acoustic snare (hard on accents, soft ghosts), real hats, open cymbal and tambourine',
     kick: { f0: 130, f1: 55, pd: 0.05, dec: 0.25, click: 0.3 },
-    snare: { tone: 210, toneDec: 0.08, hp: 1500, dec: 0.18, vol: 0.85 },
+    snare: { tone: 210, toneDec: 0.08, hp: 1500, dec: 0.18, vol: 0.75, smp: ['drum_snare_hard', 'drum_snare_soft'], rule: 'vel' },
     chh: { hp: 8000, dec: 0.05, vol: 0.35, smp: ['hat_closed'] },
     perc: { mode: 'tamb', vol: 0.4, smp: ['tamb'] },
     bass: { f: 46, dec: 0.4 },
+    ohh: { hp: 7000, dec: 0.3, vol: 0.25, smp: ['drum_cymbal_open'], cut: 0.4 },
     master: { lp: 10000, drive: 0.4 } },
   reggaeton: {
     desc: 'Soft 808 kick, snappy dembow snare, airy hats, dreamy low end',
     kick: { f0: 110, f1: 45, pd: 0.1, dec: 0.4 },
-    snare: { tone: 230, toneDec: 0.06, hp: 2500, dec: 0.12, vol: 0.55 },
-    chh: { dec: 0.03, vol: 0.2 },
+    snare: { tone: 230, toneDec: 0.06, hp: 2500, dec: 0.12, vol: 0.55, smp: ['sn_dolf'] },
+    chh: { dec: 0.03, vol: 0.25, smp: ['hat_tap'] },
     perc: { mode: 'rim', f: 1100, dec: 0.05, vol: 0.35 },
     bass: { f: 44, dec: 0.5, vol: 0.6 },
     master: { lp: 8000, drive: 0.1 } },
   synthwave: {
     desc: 'LinnDrum-style punchy kick, huge gated snare, saw bass arp',
     kick: { f0: 140, f1: 50, pd: 0.06, dec: 0.3, click: 0.2 },
-    snare: { tone: 180, toneDec: 0.12, hp: 900, dec: 0.38, vol: 0.85 },
-    chh: { hp: 9000, dec: 0.04, vol: 0.25 },
+    snare: { tone: 180, toneDec: 0.12, hp: 900, dec: 0.38, vol: 0.8, smp: ['sn_dub'] },
+    chh: { hp: 9000, dec: 0.04, vol: 0.3, smp: ['hat_raw'] },
     bass: { wave: 'sawtooth', f: 55, dec: 0.12, lp: 900, vol: 0.45 },
     master: { lp: 12000, drive: 0.15 } },
   ukg: {
     desc: 'Short punchy kick, high snappy snare, crisp hats, woody rimshot',
     kick: { f0: 170, f1: 52, pd: 0.06, dec: 0.28, click: 0.3 },
-    snare: { tone: 260, toneDec: 0.05, hp: 2500, dec: 0.12, vol: 0.7 },
-    chh: { mode: 'metal', dec: 0.03, vol: 0.25 },
-    ohh: { mode: 'metal', dec: 0.14, vol: 0.2 },
+    snare: { tone: 260, toneDec: 0.05, hp: 2500, dec: 0.12, vol: 0.65, smp: ['elec_hi_snare'] },
+    chh: { mode: 'metal', dec: 0.03, vol: 0.3, smp: ['hat_zild'] },
+    ohh: { mode: 'metal', dec: 0.14, vol: 0.25, smp: ['hat_cats'], cut: 0.2 },
     perc: { mode: 'rim', f: 1000, dec: 0.05, vol: 0.5 },
     bass: { f: 49, dec: 0.5 },
     master: { lp: 13000, drive: 0.15 } },
   funky: {
     desc: 'Tight kick, clap, bright hats, real congas',
     kick: { f0: 160, f1: 52, pd: 0.07, dec: 0.3, click: 0.2 },
-    snare: { mode: 'clap', vol: 0.6 },
-    chh: { mode: 'metal', dec: 0.035, vol: 0.22 },
+    snare: { mode: 'clap', vol: 0.6, smp: ['clap1', 'clap2'], rule: 'alt' },
+    chh: { mode: 'metal', dec: 0.035, vol: 0.3, smp: ['hat_snap'] },
     perc: { mode: 'tom', f: 190, dec: 0.2, vol: 0.7, smp: ['conga', 'tumba'], rule: 'vel' },
     master: { lp: 12000, drive: 0.15 } },
   gqom: {
     desc: 'Heavy, distorted low kick, big dark toms, lots of grit',
     kick: { f0: 120, f1: 40, pd: 0.12, dec: 0.55, click: 0.3 },
-    snare: { mode: 'clap', vol: 0.55 },
+    snare: { mode: 'clap', vol: 0.5, smp: ['clap2'] },
     chh: { dec: 0.04, vol: 0.2 },
-    perc: { mode: 'tom', f: 110, dec: 0.35, vol: 0.7 },
+    perc: { mode: 'tom', f: 110, dec: 0.35, vol: 0.7, smp: ['elec_fuzz_tom'] },
     master: { lp: 7000, drive: 0.7 } },
   dubstep: {
     desc: 'Deep kick, huge snare on 3, wobbling saw sub',
     kick: { f0: 140, f1: 42, pd: 0.1, dec: 0.45, click: 0.3 },
-    snare: { tone: 190, toneDec: 0.12, hp: 1200, dec: 0.3, vol: 0.9 },
-    chh: { dec: 0.035, vol: 0.22 },
+    snare: { tone: 190, toneDec: 0.12, hp: 1200, dec: 0.3, vol: 0.85, smp: ['elec_mid_snare'] },
+    chh: { dec: 0.035, vol: 0.3, smp: ['hat_snap'] },
     perc: { mode: 'rim', vol: 0.35 },
     bass: { wave: 'sawtooth', f: 41, dec: 0.4, lp: 600, wobble: 8, vol: 0.6 },
     master: { lp: 14000, drive: 0.3 } },
   dnb: {
     desc: 'Tight, clicky kick, loud bright snare, crisp hats, sub bass',
     kick: { f0: 180, f1: 55, pd: 0.04, dec: 0.22, click: 0.5 },
-    snare: { tone: 240, toneDec: 0.07, hp: 2000, dec: 0.16, vol: 0.9 },
-    chh: { hp: 9000, dec: 0.03, vol: 0.28 },
-    ohh: { hp: 8000, dec: 0.2, vol: 0.22 },
+    snare: { tone: 240, toneDec: 0.07, hp: 2000, dec: 0.16, vol: 0.85, smp: ['sn_zome'] },
+    chh: { hp: 9000, dec: 0.03, vol: 0.3, smp: ['hat_zild'] },
+    ohh: { hp: 8000, dec: 0.2, vol: 0.25, smp: ['hat_gump'], cut: 0.3 },
     perc: { mode: 'rim', f: 1200, dec: 0.04, vol: 0.35 },
     bass: { f: 44, dec: 0.45 },
     master: { lp: 15000, drive: 0.25 } },
   footwork: {
     desc: 'Boomy 808 kick, 808 clap, clicky rim, sparse',
     kick: { f0: 110, f1: 45, pd: 0.12, dec: 0.6 },
-    snare: { mode: 'clap', vol: 0.6 },
+    snare: { mode: 'clap', vol: 0.6, smp: ['clap1'] },
     perc: { mode: 'rim', f: 1500, dec: 0.035, vol: 0.4 },
     bass: { f: 46, dec: 0.5 },
     master: { lp: 12000, drive: 0.25 } },
   trap: {
     desc: 'Short kick, 808 clap, metallic hats with rolls, long 808 bass',
     kick: { f0: 160, f1: 50, pd: 0.05, dec: 0.25, click: 0.3 },
-    snare: { mode: 'clap', vol: 0.75 },
-    chh: { mode: 'metal', dec: 0.03, vol: 0.22 },
+    snare: { mode: 'clap', vol: 0.7, smp: ['clap2', 'clap1'], rule: 'alt' },
+    chh: { mode: 'metal', dec: 0.03, vol: 0.3, smp: ['hat_raw'] },
     bass: { f: 44, dec: 1.2, vol: 0.75 },
     master: { lp: 15000, drive: 0.3 } },
   drill: {
     desc: 'Short kick, snappy snare, metallic hats, sliding 808',
     kick: { f0: 160, f1: 50, pd: 0.05, dec: 0.25, click: 0.3 },
-    snare: { tone: 220, toneDec: 0.05, hp: 2500, dec: 0.12, vol: 0.7 },
-    chh: { mode: 'metal', dec: 0.03, vol: 0.22 },
+    snare: { tone: 220, toneDec: 0.05, hp: 2500, dec: 0.12, vol: 0.7, smp: ['sn_dolf'] },
+    chh: { mode: 'metal', dec: 0.03, vol: 0.3, smp: ['hat_tap'] },
     bass: { f: 44, dec: 1.0, glide: 7, vol: 0.75 },
     master: { lp: 13000, drive: 0.35 } },
   boombap: {
     desc: 'Thick kick, fat cracking snare, real hi-hats, dusty and low-passed',
     kick: { f0: 120, f1: 50, pd: 0.06, dec: 0.3, click: 0.4 },
-    snare: { tone: 200, toneDec: 0.1, hp: 1200, dec: 0.22, vol: 0.9 },
+    snare: { tone: 200, toneDec: 0.1, hp: 1200, dec: 0.22, vol: 0.85, smp: ['drum_snare_hard', 'drum_snare_soft'], rule: 'vel' },
     chh: { hp: 6500, dec: 0.04, vol: 0.35, smp: ['hat_closed'] },
     ohh: { hp: 6000, dec: 0.25, vol: 0.28, smp: ['hat_open'], cut: 0.3 },
     bass: { f: 46, dec: 0.4 },
@@ -718,7 +722,7 @@ const Engine = (() => {
     return out;
   }
   function curve(amount) {
-    const n = 1024, c = new Float32Array(n), k = amount * 40;
+    const n = 1024, c = new Float32Array(n), k = amount * 6;   // gentle saturation, no hard clipping
     for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; c[i] = k ? (1 + k) * x / (1 + k * Math.abs(x)) : x; }
     return c;
   }
@@ -731,9 +735,10 @@ const Engine = (() => {
     if (!ctx) {
       ctx = new (window.AudioContext || window.webkitAudioContext)();
       bus = ctx.createGain(); bus.gain.value = 0.75;
-      shaper = ctx.createWaveShaper(); shaper.oversample = '2x';
+      shaper = ctx.createWaveShaper(); shaper.oversample = '4x';
       lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 0.5;
-      const out = ctx.createDynamicsCompressor(); out.threshold.value = -6; out.ratio.value = 4;
+      const out = ctx.createDynamicsCompressor();   // peak catcher only, so it doesn't pump
+      out.threshold.value = -3; out.ratio.value = 2.5; out.knee.value = 10; out.attack.value = 0.003; out.release.value = 0.2;
       bus.connect(shaper).connect(lp).connect(out).connect(ctx.destination);
       noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
       const d = noiseBuf.getChannelData(0);

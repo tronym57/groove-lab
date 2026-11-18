@@ -1,0 +1,15 @@
+These samples come from Sonic Pi (https://github.com/sonic-pi-net/sonic-pi/tree/main/etc/samples).
+Per Sonic Pi's samples README, they are from freesound.org and were placed in the public domain
+under Creative Commons 0 (https://creativecommons.org/publicdomain/zero/1.0/).
+They were converted to mono 16-bit WAV, trimmed, faded and normalised for Groove Lab.
+
+drum_snare_hard, drum_snare_soft, drum_cymbal_open  - freesound.org/people/menegass (100058, 100059, 100055)
+sn_dolf (57534), sn_zome (55232)                     - freesound.org/people/Dolfeus
+sn_dub                                               - freesound.org/people/Adriak909/sounds/173142
+elec_hi_snare (13125), elec_mid_snare (13132), elec_fuzz_tom (13140) - freesound.org/people/looppool
+hat_tap (674296), hat_snap (674294), hat_cats (674293) - freesound.org/people/TheEndOfACycle
+hat_zild                                             - freesound.org/people/pjcohen/sounds/45668
+hat_raw                                              - freesound.org/people/cabled_mess/sounds/339278
+hat_gump                                             - freesound.org/people/zgump/sounds/96144
+ride_via                                             - freesound.org/people/trivialAccapella/sounds/425448
+perc_snap                                            - freesound.org/people/SoundCollectah/sounds/109400

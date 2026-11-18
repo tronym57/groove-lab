@@ -1,6 +1,8 @@
-const CACHE = 'groove-lab-v12';
+const CACHE = 'groove-lab-v13';
 const SAMPLES = ['conga', 'tumba', 'bongo_hi', 'bongo_lo', 'shaker_dn', 'shaker_up', 'clap1', 'clap2',
-  'clave', 'wood', 'hat_closed', 'hat_open', 'tamb'].map(n => `samples/${n}.wav`);
+  'clave', 'wood', 'hat_closed', 'hat_open', 'tamb',
+  'drum_snare_hard', 'drum_snare_soft', 'sn_dolf', 'sn_dub', 'sn_zome', 'elec_hi_snare', 'elec_mid_snare',
+  'hat_tap', 'hat_snap', 'hat_zild', 'hat_raw', 'hat_cats', 'hat_gump', 'drum_cymbal_open', 'ride_via', 'perc_snap', 'elec_fuzz_tom'].map(n => `samples/${n}.wav`);
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon.svg', 'icon-180.png', 'icon-512.png', ...SAMPLES];
 
 self.addEventListener('install', e => {
