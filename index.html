@@ -153,6 +153,8 @@
   .variants button:hover { color: var(--text); }
   .variants button.on { color: #111; background: var(--on); border-color: var(--on); font-weight: 600; }
   .vnote { color: #c9cdd4; font-size: 13px; margin: 0 0 14px; min-height: 1.4em; max-width: 75ch; }
+  /* with pages the note changes every bar: fixed two-line box so the grid never moves */
+  .vnote.paged { display: -webkit-box !important; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; height: 3em; min-height: 3em; line-height: 1.5; }
   .vnote b { color: var(--on); }
   .vnote:empty, [hidden] { display: none !important; }
   .steptext .lead { font-size: 15px; line-height: 1.5; margin-bottom: 10px; }
@@ -334,29 +336,52 @@
   .seg button:active, .pagesel button:active { transform: scale(.95); }
 
   /* ---------- effects ---------- */
-  .fx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .fx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
   .fx-head h3 { margin: 0 0 4px; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
-  .fx-focus { margin: 0; color: #c9cdd4; font-size: 15px; max-width: 64ch; }
+  .fx-focus { margin: 0; color: #c9cdd4; font-size: 15px; max-width: 62ch; }
   #fxToggle.off { color: var(--muted); }
   #fxToggle:not(.off) { background: hsl(var(--hue) 90% 60% / .18); border-color: var(--on); color: var(--on); }
-  .fx-global { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 18px; padding: 12px 14px; background: #15181d; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 14px; }
-  .fxk { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .fx-hdr, .fx-row { display: grid; grid-template-columns: minmax(150px, 220px) 1fr 1fr 40px; column-gap: 22px; align-items: center; }
+  .fx-hdr { padding: 0 10px 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .fx-row { padding: 8px 10px; border-radius: 10px; }
+  .fx-row + .fx-row { margin-top: 2px; }
+  .fx-row.sel { background: #22262d; }
+  .fx-name { all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .fx-name b { font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fx-name:focus-visible { outline: 2px solid var(--on); outline-offset: 3px; border-radius: 4px; }
+  .tag { flex: none; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; background: #262a31; color: var(--muted); }
+  .tag.hot { color: var(--on); background: hsl(var(--hue) 90% 60% / .15); }
+  .snd { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .snd .m { display: none; }
+  .snd output { width: 26px; text-align: right; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .fx-row.dry .snd { opacity: .4; }
+  .fx-row .hear { width: 40px; height: 40px; padding: 0; }
+  .fx-row .hear.hit { background: hsl(var(--hue) 90% 60% / .3); color: var(--text); }
+  /* slim sliders with a filled track */
+  .fxcard input[type=range] { -webkit-appearance: none; appearance: none; flex: 1; min-width: 0; width: 100%; height: 4px; border-radius: 2px; margin: 10px 0;
+    background: linear-gradient(90deg, var(--on) var(--v), #2f343c var(--v)); }
+  .fxcard input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 1px 3px #0008; }
+  .fxcard input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 0; }
+  .fx-why { min-height: 4.6em; margin: 14px 0 0; padding: 12px 14px; border-left: 3px solid var(--on); background: #15181d; border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.55; color: #c9cdd4; }
+  .fx-why b { color: var(--text); }
+  details.fx-more { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+  details.fx-more summary { cursor: pointer; list-style: none; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  details.fx-more summary::before { content: '▸'; color: var(--muted); } details.fx-more[open] summary::before { content: '▾'; }
+  details.fx-more summary .lab { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  details.fx-more summary span:last-child { font-size: 13px; color: #c9cdd4; }
+  .fx-global { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 6px 22px; margin-top: 12px; }
+  .fxk { display: flex; flex-direction: column; min-width: 0; }
   .fxk .top { display: flex; justify-content: space-between; gap: 8px; }
   .fxk .lab { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .fxk output { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .fxk input[type=range], .fx-row input[type=range] { width: 100%; }
-  .fxk select { padding: 5px 8px; }
-  .fx-row { display: grid; grid-template-columns: 150px 1fr 1fr 40px; gap: 6px 16px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
-  .fx-row .tn b { display: block; font-size: 14px; } .fx-row .tn small { color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .06em; }
-  .fx-row .why { grid-column: 1 / -1; color: #c9cdd4; font-size: 13px; margin: 0; }
-  .fx-row.dry .why::before { content: 'DRY · '; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
-  .fx-row .snd { display: flex; flex-direction: column; gap: 2px; }
-  .fx-row .snd .top { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  .fx-row .snd output { color: var(--text); letter-spacing: 0; font-size: 13px; }
-  .fx-row .snd output.hot { color: var(--on); }
-  .fx-row .hear { width: 40px; height: 40px; padding: 0; }
-  .fx-row .hear.hit { background: hsl(var(--hue) 90% 60% / .3); }
-  @media (max-width: 560px) { .fx-row { grid-template-columns: 1fr 1fr 40px; } .fx-row .tn { grid-column: 1 / -1; } }
+  .fxk select { margin-top: 6px; padding: 5px 8px; }
+  @media (max-width: 600px) {
+    .fx-hdr { display: none; }
+    .fx-row { grid-template-columns: 1fr 1fr 40px; row-gap: 2px; column-gap: 14px; padding: 10px 8px; }
+    .fx-name { grid-column: 1 / 3; } .fx-row .hear { grid-column: 3; grid-row: 1 / 3; }
+    .snd .m { display: inline; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .snd { gap: 6px; }
+  }
 </style>
 </head>
 <body>
@@ -491,9 +516,13 @@
       <div><h3>Effects</h3><p class="fx-focus" id="fxFocus"></p></div>
       <button class="btn" id="fxToggle" aria-pressed="true">Effects: on</button>
     </div>
-    <div class="fx-global" id="fxGlobal"></div>
-    <div class="fx-rows" id="fxRows"></div>
-    <p class="note">Same model as the Model:Cycles: each track has a DELAY SEND and a REVERB SEND into one shared reverb and one shared delay. Turn effects off to hear the dry groove, and move the sends to hear where space helps and where it hurts.</p>
+    <div class="fx-table" id="fxRows"></div>
+    <div class="fx-why" id="fxWhy" aria-live="polite"></div>
+    <details class="fx-more">
+      <summary><span class="lab">Shared reverb &amp; delay</span><span id="fxSum"></span></summary>
+      <div class="fx-global" id="fxGlobal"></div>
+      <p class="note">Like on the Model:Cycles, every track sends into one shared reverb and one shared delay. These set how that space sounds.</p>
+    </details>
   </section>
 
   <section class="card mc" id="mc">
@@ -1656,7 +1685,7 @@ function ghostVariation(base) {   // A': one or two soft extra hits late in the 
   const pg = clonePage(base), spots = [11, 14, 7, 3, 10, 6];
   const id = ['perc', 'hat', 'snare', 'kick'].find(t => has(pg)(t) && spots.some(s => !pg[t][s])) || 'perc', added = [];
   for (const s of spots) { if (added.length === 2) break; if (!pg[id][s]) { pg[id][s] = 1; added.push(s + 1); } }
-  return { pg, info: `<b>Bar 2 · small answer:</b> soft extra ${labelOf(id)} hits on ${added.join(' and ')}. The ear notices a change without losing the loop.` };
+  return { pg, info: `<b>Bar 2 · small answer:</b> soft ${labelOf(id)} on ${added.join(' and ')}` };
 }
 function turnaround(base) {   // B: the genre's own fill variant if it has one, otherwise a generic last-beat fill
   const vs = VARIANTS[genre.id] || [], i = vs.findIndex(v => /fill|roll|run/i.test(v.name));
@@ -1664,17 +1693,17 @@ function turnaround(base) {   // B: the genre's own fill variant if it has one, 
   if (i >= 0) {
     const src = norm({ ...genre.p, ...vs[i].p });
     new Set(Object.keys(vs[i].p).map(k => k === 'chh' || k === 'ohh' ? 'hat' : k)).forEach(id => pg[id] = src[id].slice());
-    return { pg, v: i, info: `<b>Last bar · turnaround:</b> ${vs[i].name}. ${vs[i].note}` };
+    return { pg, v: i, info: `<b>Last bar · turnaround:</b> ${vs[i].name}` };
   }
   const id = has(pg)('snare') ? 'snare' : 'perc';
   pg[id][13] = 1; pg[id][14] = 2; pg[id][15] = 3;
   if (has(pg)('hat') && !pg.hat[14]) pg.hat[14] = 4;
-  return { pg, v: -3, info: `<b>Last bar · turnaround:</b> a ${labelOf(id)} fill on the last beat (14, 15, roll on 16)${pg.hat[14] === 4 ? ' and an open hat' : ''}. It tells the listener the phrase starts again.` };
+  return { pg, v: -3, info: `<b>Last bar · turnaround:</b> ${labelOf(id)} fill on the last beat` };
 }
 function buildPhrase(base, n) {
-  const A = { pg: base, v: variant, info: n > 1 ? '<b>Bar 1 · the groove:</b> the pattern as it is.' : '' };
+  const A = { pg: base, v: variant, info: n > 1 ? '<b>Bar 1 · the groove:</b> as programmed' : '' };
   if (n === 1) return { pages: [base], vars: [variant], info: [''] };
-  const B = turnaround(base), list = n === 2 ? [A, B] : [A, ghostVariation(base), { ...A, pg: clonePage(base), info: '<b>Bar 3 · back to the groove:</b> the same as bar 1, so the turnaround stands out.' }, B];
+  const B = turnaround(base), list = n === 2 ? [A, B] : [A, ghostVariation(base), { ...A, pg: clonePage(base), info: '<b>Bar 3 · the groove again</b>, so the turnaround stands out' }, B];
   return { pages: list.map(x => x.pg), vars: list.map(x => x.v ?? -3), info: list.map(x => x.info) };
 }
 TRACKS.forEach(t => muted[t.id] = false);
@@ -2128,7 +2157,9 @@ function renderVariants(note) {
   const vs = VARIANTS[genre.id] || [];
   document.getElementById('variants').innerHTML = '<span class="lbl">Spice it up</span>' +
     ['Original', ...vs.map(v => v.name)].map((n, i) => `<button data-i="${i - 1}" class="${i - 1 === variant ? 'on' : ''}">${n}</button>`).join('');
-  document.getElementById('vnote').innerHTML = note ?? (variant >= 0 ? vs[variant].note : '');
+  const vn = document.getElementById('vnote');
+  vn.innerHTML = note ?? (variant >= 0 ? vs[variant].note : '');
+  vn.classList.toggle('paged', nPages > 1); vn.title = nPages > 1 ? vn.textContent : '';
 }
 function applyVariant(i) {
   variant = i;
@@ -2298,54 +2329,74 @@ document.getElementById('clearBtn').onclick = () => {
 playBtn.onclick = togglePlay;
 
 // ---------- effects ----------
-let fxState = null, fxEnabled = true;
-function loadFx() { fxState = JSON.parse(JSON.stringify(fxOf(genre.id))); Engine.setFx(fxState); renderFx(); }
+let fxState = null, fxEnabled = true, fxSel = null;
+function loadFx() { fxState = JSON.parse(JSON.stringify(fxOf(genre.id))); fxSel = null; Engine.setFx(fxState); renderFx(); }
+const fxTag = (d, r) => !d && !r ? ['Dry', ''] : r >= 60 ? ['Big reverb', 'hot'] : d >= 40 && d >= r ? ['Echo', 'hot'] : r >= 25 ? ['Room', ''] : ['A touch', ''];
+const toneWord = t => t < 0 ? 'darker' : t > 0 ? 'thinner' : 'neutral';
+function fxWhyText(id) {
+  let why = (fxOf(genre.id).why || {})[id] || FX_WHY[id];
+  const [d, r] = fxState.s[id] || [0, 0];
+  if (d || r) why = why.replace(/^Dry[.:]\s*/, '');
+  return why;
+}
+function showFxWhy() {
+  const el = document.getElementById('fxWhy');
+  el.innerHTML = fxSel ? `<b>${labelOf(fxSel)}</b> · ${fxWhyText(fxSel)}` : '<span class="hint">Tap a track name to see why it gets this much space, or ▶ to hear one hit with its tail.</span>';
+  document.querySelectorAll('.fx-row').forEach(r => r.classList.toggle('sel', r.dataset.t === fxSel));
+}
+const slider = (v, min, max, attrs) => `<input type="range" min="${min}" max="${max}" value="${v}" style="--v:${(v - min) / (max - min) * 100}%" ${attrs}>`;
 function renderFx() {
-  const f = fxState, G = document.getElementById('fxGlobal');
+  const f = fxState;
   document.getElementById('fxFocus').textContent = f.focus;
+  document.getElementById('fxSum').textContent = `Reverb ${f.rev[0]} · ${toneWord(f.rev[1])} · Delay ${delayName(f.del[0])} · feedback ${f.del[1]}`;
   const times = [8, 12, 16, 24, 32, 48];
-  G.innerHTML = `
-    <label class="fxk"><span class="top"><span class="lab">Reverb size</span><output>${f.rev[0]}</output></span><input type="range" min="0" max="127" value="${f.rev[0]}" data-g="size"></label>
-    <label class="fxk"><span class="top"><span class="lab">Reverb tone</span><output>${f.rev[1] > 0 ? '+' : ''}${f.rev[1]} · ${f.rev[1] < 0 ? 'darker' : f.rev[1] > 0 ? 'thinner' : 'neutral'}</output></span><input type="range" min="-64" max="63" value="${f.rev[1]}" data-g="tone"></label>
+  document.getElementById('fxGlobal').innerHTML = `
+    <label class="fxk"><span class="top"><span class="lab">Reverb size</span><output>${f.rev[0]}</output></span>${slider(f.rev[0], 0, 127, 'data-g="size"')}</label>
+    <label class="fxk"><span class="top"><span class="lab">Reverb tone</span><output>${f.rev[1]} · ${toneWord(f.rev[1])}</output></span>${slider(f.rev[1], -64, 63, 'data-g="tone"')}</label>
     <label class="fxk"><span class="top"><span class="lab">Delay time</span></span><select data-g="time">${times.map(t => `<option value="${t}"${t === f.del[0] ? ' selected' : ''}>${t} · ${delayName(t)}</option>`).join('')}</select></label>
-    <label class="fxk"><span class="top"><span class="lab">Delay feedback</span><output>${f.del[1]}</output></span><input type="range" min="0" max="120" value="${f.del[1]}" data-g="fb"></label>`;
-  const orig = fxOf(genre.id);
-  document.getElementById('fxRows').innerHTML = TRACKS.map(tr => {
-    const [d, r] = f.s[tr.id] || [0, 0], dry = !d && !r;
-    let why = (orig.why && orig.why[tr.id]) || FX_WHY[tr.id];
-    if (dry) why = why.replace(/^Dry[.:]\s*/, ''), why = why[0].toUpperCase() + why.slice(1);
-    return `<div class="fx-row${dry ? ' dry' : ''}" data-t="${tr.id}">
-      <div class="tn"><b>${labelOf(tr.id)}</b><small>T${TRACKS.indexOf(tr) + 1}</small></div>
-      <label class="snd"><span class="top">Delay send <output class="${d > 40 ? 'hot' : ''}">${d}</output></span><input type="range" min="0" max="127" value="${d}" data-k="0" aria-label="${labelOf(tr.id)} delay send"></label>
-      <label class="snd"><span class="top">Reverb send <output class="${r > 40 ? 'hot' : ''}">${r}</output></span><input type="range" min="0" max="127" value="${r}" data-k="1" aria-label="${labelOf(tr.id)} reverb send"></label>
-      <button class="btn hear" aria-label="Hear ${labelOf(tr.id)} with its effects" title="Hear one hit with its effects">▶</button>
-      <p class="why">${why}</p></div>`;
+    <label class="fxk"><span class="top"><span class="lab">Delay feedback</span><output>${f.del[1]}</output></span>${slider(f.del[1], 0, 120, 'data-g="fb"')}</label>`;
+  document.getElementById('fxRows').innerHTML = `<div class="fx-hdr"><span></span><span>Delay send</span><span>Reverb send</span><span></span></div>` + TRACKS.map(tr => {
+    const [d, r] = f.s[tr.id] || [0, 0], [tag, hot] = fxTag(d, r), n = labelOf(tr.id);
+    return `<div class="fx-row${!d && !r ? ' dry' : ''}" data-t="${tr.id}">
+      <button class="fx-name" aria-label="Why ${n} gets this setting"><b>${n}</b><span class="tag ${hot}">${tag}</span></button>
+      <label class="snd"><span class="m">Delay</span>${slider(d, 0, 127, `data-k="0" aria-label="${n} delay send"`)}<output>${d}</output></label>
+      <label class="snd"><span class="m">Reverb</span>${slider(r, 0, 127, `data-k="1" aria-label="${n} reverb send"`)}<output>${r}</output></label>
+      <button class="btn ghost hear" aria-label="Hear ${n} with its effects" title="Hear one hit with its effects">▶</button>
+    </div>`;
   }).join('');
+  showFxWhy();
 }
 const fxApply = () => { Engine.setFx(fxState); mcRefresh(); };
+const setFill = el => el.style.setProperty('--v', `${(el.value - el.min) / (el.max - el.min) * 100}%`);
 document.getElementById('fxGlobal').oninput = e => {
   const k = e.target.dataset.g; if (!k) return;
   const v = +e.target.value, f = fxState;
   if (k === 'size') f.rev[0] = v; if (k === 'tone') f.rev[1] = v; if (k === 'time') f.del[0] = v; if (k === 'fb') f.del[1] = v;
+  if (e.target.type === 'range') setFill(e.target);
   const out = e.target.closest('.fxk').querySelector('output');
-  if (out) out.textContent = k === 'tone' ? `${v > 0 ? '+' : ''}${v} · ${v < 0 ? 'darker' : v > 0 ? 'thinner' : 'neutral'}` : v;
+  if (out) out.textContent = k === 'tone' ? `${v} · ${toneWord(v)}` : v;
+  document.getElementById('fxSum').textContent = `Reverb ${f.rev[0]} · ${toneWord(f.rev[1])} · Delay ${delayName(f.del[0])} · feedback ${f.del[1]}`;
   fxApply();
 };
 document.getElementById('fxRows').oninput = e => {
   const row = e.target.closest('.fx-row'); if (!row || e.target.dataset.k == null) return;
   const id = row.dataset.t, v = +e.target.value;
   fxState.s[id] = fxState.s[id] || [0, 0]; fxState.s[id][+e.target.dataset.k] = v;
-  const out = e.target.closest('.snd').querySelector('output'); out.textContent = v; out.classList.toggle('hot', v > 40);
-  row.classList.toggle('dry', !fxState.s[id][0] && !fxState.s[id][1]);
-  fxApply();
+  setFill(e.target); e.target.nextElementSibling.textContent = v;
+  const [d, r] = fxState.s[id], [tag, hot] = fxTag(d, r), t = row.querySelector('.tag');
+  t.textContent = tag; t.className = `tag ${hot}`; row.classList.toggle('dry', !d && !r);
+  fxSel = id; showFxWhy(); fxApply();
 };
 document.getElementById('fxRows').onclick = e => {
+  const row = e.target.closest('.fx-row'); if (!row) return;
+  const id = row.dataset.t;
+  if (e.target.closest('.fx-name')) { fxSel = fxSel === id ? null : id; showFxWhy(); return; }
   const b = e.target.closest('.hear'); if (!b) return;
-  const id = b.closest('.fx-row').dataset.t, ctx = Engine.init();
+  const ctx = Engine.init();
   Engine.play(id, 2, ctx.currentTime + 0.02, stepDur());
   b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 200);
-  const [d, r] = fxState.s[id] || [0, 0];
-  say(`${labelOf(id)}: delay ${d}, reverb ${r}${fxEnabled ? '' : ' (effects are off)'}.`);
+  fxSel = id; showFxWhy();
+  if (!fxEnabled) say('Effects are off: you hear the dry hit.');
 };
 document.getElementById('fxToggle').onclick = () => {
   fxEnabled = !fxEnabled; Engine.setFxOn(fxEnabled);
