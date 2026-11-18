@@ -74,7 +74,11 @@
   .arr-grid { display: grid; gap: 3px; grid-template-columns: 112px repeat(var(--cols), minmax(8px, 1fr)); align-items: center; }
   .arr-grid .lbl { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .arr-grid .bar { font-size: 10px; color: var(--muted); text-align: center; }
-  .arr-cell { height: 12px; border-radius: 3px; background: var(--off); }
+  .arr-cell { height: 14px; border-radius: 3px; background: var(--off); cursor: pointer; }
+  .arr-cell:hover { outline: 1px solid var(--muted); }
+  .arr-grid .bar { cursor: pointer; }
+  .arr-nav { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .arr-nav .hint { margin-left: 4px; }
   .arr-cell.on { background: hsl(var(--hue) 90% 60% / .5); }
   .arr-cell.now { outline: 1px solid #fff; outline-offset: 1px; }
   .arr-cell.on.now { background: var(--on); }
@@ -113,6 +117,11 @@
     <div class="arr" id="arr" hidden>
       <div class="arr-cap" id="arrCap"></div>
       <div class="arr-grid" id="arrGrid"></div>
+      <div class="arr-nav">
+        <button class="btn" id="prevLayer">◀ Previous layer</button>
+        <button class="btn" id="nextLayer">Next layer ▶</button>
+        <span class="hint">Click any bar in the timeline to jump there · <kbd>←</kbd> <kbd>→</kbd></span>
+      </div>
     </div>
     <div class="grid-scroll"><div class="grid" id="grid"></div></div>
     <div class="legend">
@@ -192,7 +201,7 @@ function draw() {
 
 // ---------- build-up mode: layers enter one by one ----------
 const BARS_PER_LAYER = 2, HOLD_BARS = 4;
-let buildMode = false, layers = [];
+let buildMode = false, layers = [], cursorBar = 0;   // cursorBar = bar shown in the timeline
 const labelOf = id => (genre.labels && genre.labels[id]) || TRACKS.find(t => t.id === id).name;
 const hasHits = id => pattern[id] && pattern[id].some(v => v);
 function computeLayers() {
@@ -212,7 +221,7 @@ function renderArrangement() {
   computeLayers();
   const g = document.getElementById('arrGrid'), n = totalBars();
   g.style.setProperty('--cols', n);
-  let html = '<div></div>' + Array.from({ length: n }, (_, b) => `<div class="bar">${b % 2 === 0 ? b + 1 : ''}</div>`).join('');
+  let html = '<div></div>' + Array.from({ length: n }, (_, b) => `<div class="bar" data-bar="${b}">${b % 2 === 0 ? b + 1 : ''}</div>`).join('');
   layers.forEach((l, i) => {
     html += `<div class="lbl">${labelOf(l.id)}</div>`;
     for (let b = 0; b < n; b++) html += `<div class="arr-cell${b >= i * BARS_PER_LAYER ? ' on' : ''}" data-bar="${b}"></div>`;
@@ -221,6 +230,7 @@ function renderArrangement() {
 }
 function showBuild(b) {
   const n = totalBars(), pos = b % n;
+  cursorBar = pos;
   const idx = Math.min(layers.length - 1, Math.floor(pos / BARS_PER_LAYER));
   const cap = document.getElementById('arrCap');
   if (pos < layers.length * BARS_PER_LAYER) {
@@ -247,11 +257,27 @@ function refreshBuild() {
   btn.textContent = `Build-up: ${buildMode ? 'on' : 'off'}`; btn.classList.toggle('on', buildMode);
   if (!buildMode) { clearBuild(); return; }
   renderArrangement();
-  if (playing) showBuild(bar);
-  else { clearBuild(); document.getElementById('arrCap').innerHTML = `<small>${layers.length} layers · a new one every ${BARS_PER_LAYER} bars</small>Press play to hear the groove build up`; }
+  showBuild(playing ? bar : cursorBar);
 }
+// Jump to a bar: while playing, restart from that bar's first step; while stopped, preview it.
+function jumpTo(b) {
+  const n = totalBars();
+  b = ((b % n) + n) % n;
+  if (playing) { bar = b; step = 0; queue.length = 0; nextTime = Engine.ctx.currentTime + 0.05; }
+  showBuild(b);
+}
+const layerStart = pos => Math.floor(pos / BARS_PER_LAYER) * BARS_PER_LAYER;
+document.getElementById('arrGrid').onclick = e => { const el = e.target.closest('[data-bar]'); if (el) jumpTo(+el.dataset.bar); };
+document.getElementById('nextLayer').onclick = () => jumpTo(layerStart(cursorBar) + BARS_PER_LAYER);
+document.getElementById('prevLayer').onclick = () => jumpTo(layerStart(cursorBar) - BARS_PER_LAYER);
+document.addEventListener('keydown', e => {
+  if (!buildMode || ['INPUT', 'SELECT'].includes(e.target.tagName)) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('nextLayer').click(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); document.getElementById('prevLayer').click(); }
+});
 document.getElementById('buildBtn').onclick = () => {
   buildMode = !buildMode;
+  cursorBar = 0;
   if (buildMode && playing) { bar = 0; step = 0; nextTime = Engine.ctx.currentTime + 0.05; queue.length = 0; }
   refreshBuild();
   say(buildMode ? 'Build-up on: one new layer every 2 bars.' : 'Build-up off: all tracks play.');
@@ -266,8 +292,8 @@ function togglePlay() {
   const ctx = Engine.init();
   playing = !playing;
   if (playing) {
-    step = 0; bar = 0; nextTime = ctx.currentTime + 0.05; queue.length = 0;
-    if (buildMode) { renderArrangement(); showBuild(0); }
+    step = 0; bar = buildMode ? cursorBar : 0; nextTime = ctx.currentTime + 0.05; queue.length = 0;
+    if (buildMode) { renderArrangement(); showBuild(bar); }
     timer = setInterval(schedule, 25); schedule(); draw();
     playBtn.textContent = '■ Stop';
   } else {
@@ -371,7 +397,7 @@ function selectGenre(id) {
     ${genre.fav ? `<div class="refs spot">● Your artists: ${genre.spotify}</div>` : ''}
     <div class="refs">Source: ${genre.src}</div>`;
   setKit(genre.kit);
-  if (buildMode) { if (playing) { bar = 0; } refreshBuild(); }
+  if (buildMode) { cursorBar = 0; if (playing) { bar = 0; } refreshBuild(); }
   const s = store(); s.last = genre.id; persist(s);
   say('');
 }
