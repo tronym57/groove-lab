@@ -97,6 +97,7 @@
   .grid.split .nums.half2 { padding-top: 12px; }
   .name { display: flex; flex-direction: column; justify-content: center; cursor: pointer; user-select: none; line-height: 1.2; }
   .name b { font-size: 13px; } .name small { color: var(--muted); font-size: 10px; letter-spacing: .04em; }
+  .name small.swap { color: #ffc27a; }
   .name.muted b { color: var(--muted); text-decoration: line-through; }
   .nums { color: var(--muted); font-size: 11px; text-align: center; }
   .nums.q { color: var(--text); font-weight: 700; }
@@ -104,6 +105,8 @@
   .cell.beat { background: var(--beat); }
   .cell.v2 { background: var(--on); border-color: var(--on); }
   .cell.v1 { background: hsl(var(--hue) 90% 60% / .42); border-color: hsl(var(--hue) 90% 60% / .6); }
+  .cell.v4 { background: transparent; border: 2px solid var(--on); box-shadow: inset 0 0 0 3px hsl(var(--hue) 90% 60% / .35); }
+  .cell.v5 { background: transparent; border: 2px solid hsl(var(--hue) 90% 60% / .55); }
   .cell.v3 { background: repeating-linear-gradient(90deg, var(--on) 0 3px, transparent 3px 6px); border-color: var(--on); }
   .cell.head { outline: 2px solid #fff; outline-offset: 1px; }
   .cell.head.v1, .cell.head.v2, .cell.head.v3 { box-shadow: 0 0 14px var(--glow); }
@@ -169,6 +172,10 @@
   .mcsvg .ctl.t1 .face { fill: hsl(var(--hue) 90% 80%); stroke: hsl(var(--hue) 90% 40%); }
   .mcsvg .ctl.t3 .face { fill: url(#mcRoll); stroke: hsl(var(--hue) 90% 30%); }
   .mcsvg .rollf { fill: hsl(var(--hue) 90% 55%); }
+  .mcsvg .ctl.t4 .face { fill: #f4f5f6; stroke: hsl(var(--hue) 90% 38%); stroke-width: 4; }
+  .mcsvg .ctl.t5 .face { fill: #e3e5e8; stroke: hsl(var(--hue) 90% 55%); stroke-width: 3; }
+  .steptext .flag { display: inline-block; margin: 0 0 8px; padding: 2px 8px; border-radius: 6px; background: #5a3a12; color: #ffc27a; font-size: 12px; font-weight: 700; }
+  .steptext .mline { margin: 0 0 8px; color: var(--muted); font-size: 13px; } .steptext .mline b { color: var(--text); }
   .mcsvg .ctl.active .face { stroke: #e0372b; stroke-width: 3; }
   .mcsvg .ctl.sel .face { stroke: #111; stroke-width: 2.5; }
   .mcsvg .badge circle { fill: #111317; } .mcsvg .badge text { fill: #fff; font: 700 10px system-ui; text-anchor: middle; }
@@ -201,7 +208,7 @@
 <div class="wrap">
   <header>
     <h1>Groove Lab</h1>
-    <span class="hint"><kbd>Space</kbd> play/stop · tap a step: accent → soft → roll → off</span>
+    <span class="hint"><kbd>Space</kbd> play/stop · tap a step: soft → accent → roll → off (Hats: + open)</span>
   </header>
 
   <nav class="genres" id="genres"></nav>
@@ -238,6 +245,7 @@
       <span><i style="background:var(--on)"></i>Accent</span>
       <span><i style="background:hsl(var(--hue) 90% 60% / .42)"></i>Soft / ghost</span>
       <span><i style="background:repeating-linear-gradient(90deg,var(--on) 0 3px,transparent 3px 6px)"></i>Roll (3 hits)</span>
+      <span><i style="background:transparent;border:2px solid var(--on)"></i>Open hat (Hats row)</span>
       <span><i class="dotkey"></i>Changed from the original</span>
       <span>Tap a track name to mute it</span>
     </div>
@@ -325,18 +333,20 @@ const GENRES = [
     refs: 'Kettenkarussell (Easy Listening), Leafar Legov (Talk EP), Konstantin',
     src: 'Igloo / Juno / RA on Giegling (jazz samples, micro-house, dub techno); Attack: Dusted Deep House',
     build: [['kick', 'A muted kick with a ghost before beat 3'], ['perc', 'Woodblock clicks fill the gaps'], ['chh', 'Dusty closed hats'], ['snare', 'Rim on 2 and 4, plus a pickup'], ['bass', 'A low, short bass'], ['ohh', 'An open hat on 1-and and 3-and']],
-    p: { kick: 'X...X..xX...X...', snare: '....x.......x..x', chh: 'x.x.x.xxx.x.x.x.', ohh: '..x.......x.....', perc: '.x...x.x..x...x.', bass: 'X.....X...x.....' } },
+    chordNotes: [62, 65, 69, 72],
+    p: { kick: 'X...X..xX...X...', snare: '....x.......x..x', chh: 'x.x.x.xxx.x.x.x.', ohh: '..x.......x.....', perc: '.x...x.x..x...x.', bass: 'X.....X...x.....', chord: '...x.......x....' } },
 
   { id: 'deephouse', name: 'Deep House', hue: 30, bpm: 122, range: '120–125', swing: 58, fav: true, kit: 'deep',
     spotify: 'Leon Vynehall, Nico Stojan',
     labels: { chh: 'Shaker' },
     about: 'Warm and steady. A 909 kick on every beat and a clap on 2 and 4, with offbeat open hats and a swung shaker. The bass sits between the kicks, and minor-9th Rhodes chords give it the "deep" colour.',
     listen: ['A 909 kick on every beat, clap on 2 and 4', 'Offbeat open hats and a swung 16th shaker', 'The bass plays between the kicks, not on them'],
-    harmony: 'Minor 9th Rhodes stabs: Am9 → Dm9 → Fmaj9 → Em7 (A minor). On the Cycles, the CHORD machine can play these.',
+    harmony: 'Minor 9th Rhodes stabs: Am9 → Dm9 → Fmaj9 → Em7 (A minor). On the Cycles, T6 CHORD plays these.',
     refs: 'Leon Vynehall, Larry Heard, Kerri Chandler',
     src: 'Producers Classroom: Deep House (122 BPM); Attack Magazine: Dusted Deep House',
     build: [['kick', 'A 909 kick on every beat'], ['snare', 'Clap on 2 and 4'], ['ohh', 'Offbeat open hats'], ['chh', 'A swung shaker on every 16th'], ['bass', 'Bass between the kicks']],
-    p: { kick: 'X...X...X...X...', snare: '....X.......X...', chh: 'xXxXxXxXxXxXxXxX', ohh: '..X...X...X...X.', perc: '', bass: '...X..X...X.....' } },
+    chordNotes: [57, 60, 67, 71],
+    p: { kick: 'X...X...X...X...', snare: '....X.......X...', chh: 'xXxXxXxXxXxXxXxX', ohh: '..X...X...X...X.', perc: '', bass: '...X..X...X.....', chord: '..X.......X..x..' } },
 
   { id: 'techno', name: 'Techno', hue: 200, bpm: 130, range: '125–140', swing: 50, fav: true, kit: 'techno',
     spotify: 'Oliver Huntemann, Shlømo, Eva808',
@@ -381,7 +391,8 @@ const GENRES = [
     refs: 'MJ Cole, Artful Dodger, Todd Edwards',
     src: 'Elektronauts UKG thread; Attack: Rolling 2-Step (60–65% swing); Producers Classroom',
     build: [['kick', '2-step kick: 1 and 3-and only'], ['snare', 'Snare on 2 and 4'], ['chh', 'Even 16th hats, heavily swung'], ['ohh', 'Offbeat open hats'], ['perc', 'Skippy rimshots'], ['bass', 'Bass']],
-    p: { kick: 'X.........X.....', snare: '....X.......X...', chh: '.x.x.x.x.x.x.x.x', ohh: '..X...X...X...X.', perc: '...x.....x....x.', bass: 'X......X..X.....' } },
+    chordNotes: [65, 68, 72, 75],
+    p: { kick: 'X.........X.....', snare: '....X.......X...', chh: '.x.x.x.x.x.x.x.x', ohh: '..X...X...X...X.', perc: '...x.....x....x.', bass: 'X......X..X.....', chord: '...X..X...X.....' } },
 
   { id: 'ukfunky', name: 'UK Funky', hue: 140, bpm: 130, range: '126–132', swing: 58, kit: 'funky',
     labels: { perc: 'Toms / Congas' },
@@ -466,11 +477,11 @@ const VARIANTS = {
   ],
   giegling: [
     { name: 'Broken micro-house', note: 'The kick skips beat 3 and lands on the and of 3 instead. Still house, but it stumbles in a way that keeps you listening.', p: { kick: 'X...X.....X.X...', snare: '....x..x....x...' } },
-    { name: 'Jazz ride', note: 'The open hat becomes a jazz ride ("ding, ding-a ding") and the closed hat is a foot pedal on 2 and 4. More swing, like a sampled jazz record.', swing: 66, p: { ohh: 'X..xX..xX..xX..x', chh: '....x.......x...' } },
+    { name: 'Jazz ride', note: 'The hats become a jazz ride ("ding, ding-a ding"): every hit is a long open hat. More swing, like a sampled jazz record.', swing: 66, p: { ohh: 'X..xX..xX..xX..x', chh: '' } },
     { name: 'Click storm', note: 'Dense, very quiet clicks fill every gap. In micro-house the texture is the groove; keep them low in the mix.', p: { perc: 'x.xx.x.xx.x.x.xx' } },
   ],
   deephouse: [
-    { name: 'Snap shuffle', note: 'Quiet snaps (or rimshots) on the offbeat 16ths, Kerri Chandler style. T5 is free on the Cycles, so put a short PERC there.', p: { perc: '...x..x....x..x.' } },
+    { name: 'Snap shuffle', note: 'Quiet snaps (or rimshots) on the offbeat 16ths, Kerri Chandler style. T4 PERC is free in this groove, so this costs nothing on the Cycles.', p: { perc: '...x..x....x..x.' } },
     { name: 'Clap pickup', note: 'An extra soft clap just before beat 3 gives the backbeat a little skip without losing the steadiness.', p: { snare: '....X..x....X...' } },
     { name: 'Walking bass', note: 'A busier, syncopated bassline. Lock different NOTEs per trig (hold trig + LEVEL/DATA) to walk A → C → D under the chords.', p: { bass: '..XX..X...X..x.x' } },
   ],
@@ -552,7 +563,7 @@ const VARIANTS = {
 // `smp` = sample names from samples/ (all CC0: Versilian Community Sample Library and Sonic Pi's freesound set),
 // `rule` = 'alt' (alternate per hit) or 'vel' (accent → first, soft → second), plus `rate`, `cut` (seconds).
 // If a sample can't load (e.g. opened as file://), the synth version plays instead.
-// Every kit overrides parts of BASE. Voices: kick, snare, chh, ohh, perc, bass, plus master tone.
+// Every kit overrides parts of BASE. Voices: kick, snare, chh + ohh (both on the Hats row), perc, bass, chord, plus master tone.
 
 const SAMPLE_NAMES = ['conga', 'tumba', 'bongo_hi', 'bongo_lo', 'shaker_dn', 'shaker_up', 'clap1', 'clap2',
   'clave', 'wood', 'hat_closed', 'hat_open', 'tamb',
@@ -567,6 +578,7 @@ const BASE = {
   ohh:   { mode: 'noise', hp: 7000, dec: 0.35, vol: 0.3 },
   perc:  { mode: 'rim', f: 900, dec: 0.06, vol: 0.45 },                               // mode: rim | conga | bongo | tom | click | tamb
   bass:  { wave: 'sine', f: 49, dec: 0.7, glide: 0, lp: 0, wobble: 0, vol: 0.7 },
+  chord: { wave: 'triangle', lp: 2200, dec: 0.4, vol: 0.09 },                          // 4-note stab, 2 detuned oscillators per note
   master: { lp: 16000, drive: 0 },
 };
 
@@ -597,6 +609,7 @@ const KITS = {
     ohh: { hp: 5500, dec: 0.18, vol: 0.22, smp: ['ride_via'], cut: 0.6, rate: 0.9 },
     perc: { mode: 'click', f: 2400, dec: 0.012, vol: 0.35, smp: ['wood'], rate: 1.3 },
     bass: { f: 41, dec: 0.4, vol: 0.55 },
+    chord: { wave: 'sine', lp: 1200, dec: 0.7, vol: 0.12 },
     master: { lp: 4800, drive: 0.45 } },
   deep: {
     desc: '909-style kick, real claps, short open hat, a swung shaker, finger snaps, dusty top end',
@@ -647,6 +660,7 @@ const KITS = {
     ohh: { mode: 'metal', dec: 0.14, vol: 0.25, smp: ['hat_cats'], cut: 0.2 },
     perc: { mode: 'rim', f: 1000, dec: 0.05, vol: 0.5 },
     bass: { f: 49, dec: 0.5 },
+    chord: { wave: 'square', lp: 2600, dec: 0.22, vol: 0.06 },
     master: { lp: 13000, drive: 0.15 } },
   funky: {
     desc: 'Tight kick, clap, bright hats, real congas',
@@ -797,6 +811,7 @@ const Engine = (() => {
   const noise = (t, dur) => { const s = ctx.createBufferSource(); s.buffer = noiseBuf; s.playbackRate.value = 0.9 + Math.random() * 0.2; s.start(t); s.stop(t + dur); return s; };
   const osc = (type, f, t, dur) => { const o = ctx.createOscillator(); o.type = type; o.frequency.setValueAtTime(f, t); o.start(t); o.stop(t + dur); return o; };
 
+  let chordNotes = [57, 60, 64, 67];
   const V = {
     kick(t, v, p) {
       const o = osc('sine', p.f0, t, p.dec + 0.05), g = gain();
@@ -864,6 +879,14 @@ const Engine = (() => {
         noise(t, 0.03).connect(filt('bandpass', 2500, 1.5)).connect(ng).connect(bus);
       }
     },
+    chord(t, v, p, notes) {
+      const g = gain(), f = filt('lowpass', p.lp * 2.5, 0.7);
+      f.frequency.exponentialRampToValueAtTime(p.lp, t + 0.15);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v * p.vol, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + p.dec);
+      notes.forEach(n => [-7, 7].forEach(cents => { const o = osc(p.wave, 440 * Math.pow(2, (n - 69) / 12), t, p.dec + 0.05); o.detune.value = cents; o.connect(f); }));
+      f.connect(g).connect(bus);
+    },
     bass(t, v, p, stepDur) {
       const o = osc(p.wave, p.f * (p.glide ? Math.pow(2, p.glide / 12) : 1.4), t, p.dec + 0.1), g = gain();
       o.frequency.exponentialRampToValueAtTime(p.f, t + (p.glide ? 0.12 : 0.06));
@@ -884,7 +907,10 @@ const Engine = (() => {
   return {
     init,
     setKit(id) { kit = mergeKit(id); applyMaster(); return kit; },
+    setChord(notes) { chordNotes = notes || [57, 60, 64, 67]; },
     play(track, val, t, stepDur) {
+      // The Hats row holds closed (1–3) and open hats (4 = open, 5 = soft open), like one METAL track on the Cycles.
+      if (track === 'hat') { if (val >= 4) { track = 'ohh'; val = val === 4 ? 2 : 1; } else track = 'chh'; }
       const v = val === 2 ? 1 : 0.45;
       const hits = val === 3 ? 3 : 1;
       for (let i = 0; i < hits; i++) {
@@ -895,6 +921,7 @@ const Engine = (() => {
         if (track === 'chh') V.hat(tt, vv, kit.chh, false);
         else if (track === 'ohh') V.hat(tt, vv, kit.ohh, true);
         else if (track === 'bass') V.bass(tt, vv, kit.bass, stepDur);
+        else if (track === 'chord') V.chord(tt, vv, kit.chord, chordNotes);
         else V[track](tt, vv, kit[track]);
       }
     },
@@ -1037,16 +1064,18 @@ const MC = (() => {
         r.knobs = [['pitch', sgn(Math.round((k.tone - 185) / 9))], ['decay', clamp(k.dec * 250)], ['color', 55], ['sweep', 25]];
         if (k.dec > 0.3) r.tips.push('Big gated snare: add REVERB SEND ≈ 60 and a bigger REVERB SIZE.');
       }
-    } else if (tid === 'chh' || tid === 'ohh') {
-      if (k.mode === 'shaker') {
-        r.machine = 'PERC';
-        r.knobs = [['pitch', '+20'], ['decay', 22], ['color', 110], ['shape', 100]];
-        r.tips.push('Shaker: PERC with very high COLOR and SHAPE turns into noise. Alternate soft/loud velocities to fake the up/down stroke.');
+    } else if (tid === 'hat') {
+      const c = { ...BASE.chh, ...(kit.chh || {}) }, o = { ...BASE.ohh, ...(kit.ohh || {}) };
+      r.machine = 'METAL';
+      r.openDecay = Math.max(40, clamp(o.dec * 220));
+      if (c.mode === 'shaker') {
+        r.knobs = [['pitch', '+24'], ['decay', 12], ['shape', 110], ['color', 90]];
+        r.tips.push('Shaker on METAL: shortest DECAY and very high SHAPE push it into noise. Alternate soft/loud velocities to fake the up/down stroke.');
       } else {
-        r.machine = 'METAL';
-        r.knobs = [['pitch', tid === 'chh' ? '+20' : '+16'], ['decay', clamp(k.dec * (tid === 'chh' ? 500 : 220))], ['shape', k.mode === 'metal' ? 60 : 35], ['sweep', 40]];
+        r.knobs = [['pitch', '+20'], ['decay', clamp(c.dec * 500)], ['shape', c.mode === 'metal' ? 60 : 35], ['sweep', 40]];
         r.tips.push('METAL wants a very high PITCH (manual tip). Turn COLOR and SWEEP for different cymbal tunings.');
       }
+      r.tips.push(`Open hats live on this track too: they are the same trig with DECAY locked to ≈ ${r.openDecay} (see the trig step).`);
     } else if (tid === 'perc') {
       const mode = k.mode;
       if (mode === 'tamb') { r.machine = 'METAL'; r.knobs = [['pitch', '+22'], ['decay', 25], ['shape', 90]]; r.tips.push('Tambourine is closer to METAL than PERC.'); }
@@ -1057,6 +1086,11 @@ const MC = (() => {
         r.knobs = [['pitch', sgn(semis(k.f, 250))], ['decay', clamp(k.dec * 250)], ['shape', 12], ['color', 30]];
         r.tips.push(`${mode === 'tom' ? 'Toms' : 'Hand drums'}: low SHAPE, then play with COLOR for the ringing body (manual tip). For high/low ${mode === 'bongo' ? 'bongo' : 'conga'} hits, hold a trig and turn PITCH to lock a different tuning.`);
       }
+    } else if (tid === 'chord') {
+      r.machine = 'CHORD';
+      r.knobs = [['decay', clamp(k.dec * 120)], ['shape', 'minor 7'], ['color', 40], ['contour', 50], ['sweep', 30]];
+      r.tips.push('SHAPE picks unison or a chord type (manual appendix C): turn it until the screen shows a minor 7 or 9. COLOR changes the interval mix, CONTOUR is the filter envelope.');
+      r.tips.push('Short DECAY = stab, long DECAY = pad. Set the root per trig with NOTE (hold trig + LEVEL/DATA).');
     } else if (tid === 'bass') {
       r.machine = 'TONE';
       const decay = ['decay', clamp(k.dec * 80)];
@@ -1092,61 +1126,73 @@ const MC = (() => {
     S('Swing and nudge', [['swing'], ['hold:trig8', 'swing']], 'SWING is per track, 50–80% (same numbers as this app). Hold [TRACK] while turning to set every track at once. Hold a trig and turn SWING to nudge just that step early or late.'),
     S('Chance and conditions', [['chance'], ['hold:trig9', 'chance']], 'CHANCE sets the probability that the track\'s trigs play. Hold a trig and turn CHANCE for a trig condition: 1:2 (every other bar), FILL (only during a fill), etc.'),
     S('Perform: mute, fill, change all', [['func', 't3'], ['page'], ['track', 'decay']], '[FUNC] + [T3] mutes track 3. Hold [PAGE] while playing for a fill. Hold [TRACK] and turn a knob to move that parameter on all tracks.'),
+    S('Copy & paste trigs', [['hold:trig3', 'record'], ['hold:trig7', 'stop']], 'In grid recording: hold a trig and press [RECORD] to copy it, <b>with all its locks</b> (velocity, open-hat decay, retrig). Hold the target trig and press [STOP] to paste. Hold several trigs to copy a whole figure. Press the same keys again to undo.', { trigs: '..O...O.........' }),
+    S('Copy tracks, presets and patterns', [['func', 'record'], ['pattern', 'trig2'], ['func', 'stop']], '<b>Pattern</b> (grid recording off): [FUNC] + [RECORD] copies the whole pattern, pick another slot with [PATTERN] + [TRIG], then [FUNC] + [STOP] pastes. <b>Track</b>: the same keys with grid recording on copy only the active track. <b>Sound only</b>: [TRACK] + [RECORD] copies the active track\'s preset, select another track, [TRACK] + [STOP] pastes it. [FUNC] + [PLAY] clears. The clipboard holds one thing at a time.'),
     S('Save your work', [['func', 'settings'], ['settings']], '[FUNC] + [SETTINGS] = temporary save (snapshot you can go back to with [FUNC] + [PATTERN]). To keep it for good: [SETTINGS] → PATTERN → SAVE.'),
   ];
 
   const POS = ['', 'first', 'second', 'third', 'fourth'];
   const stepWords = arr => arr.map(i => i + 1).join(', ');
 
+  const DEFAULT = ['KICK', 'SNARE', 'METAL', 'PERC', 'TONE', 'CHORD'];   // machines on T1–T6 in a fresh pattern
   function genreSteps(g, pattern, labelOf, TRACKS, kitId, bpm, swing) {
     const out = [];
-    out.push(S('Start a fresh pattern', [['pattern', 't1'], ['pattern', 'trig1']], `Pick an empty slot: [PATTERN] + [T1] (bank A), then [PATTERN] + a free [TRIG]. Everything below programs <b>${g.name}</b> as it is on the grid right now, including your edits.`, { sec: 'Setup' }));
+    const changes = TRACKS.map((tr, i) => pattern[tr.id].some(v => v) && recipe(kitId, tr.id).machine !== DEFAULT[i] ? `T${i + 1}` : null).filter(Boolean);
+    out.push(S('Start a fresh pattern', [['pattern', 't1'], ['pattern', 'trig1']], `Pick an empty slot: [PATTERN] + [T1] (bank A), then [PATTERN] + a free [TRIG]. A fresh pattern already has KICK, SNARE, METAL, PERC, TONE, CHORD on T1–T6, the same order as the grid rows. ${changes.length ? `In this groove only <b>${changes.join(', ')}</b> needs a different machine; that step is flagged.` : 'This groove needs <b>no machine changes</b>.'} Everything below programs <b>${g.name}</b> as it is on the grid right now, including your edits.`, { sec: 'Setup' }));
     out.push(S(`Tempo: ${bpm} BPM`, [['tempo'], ['level'], ['back']], `[TEMPO], turn LEVEL/DATA to <b>${bpm}</b>, [BACK].`, { sec: 'Setup', screen: `BPM ${bpm}.0` }));
     out.push(S('Grid recording on', [['record']], 'Press [RECORD]. It lights red and stays on for all the tracks below.', { sec: 'Setup', screen: 'GRID REC' }));
     TRACKS.forEach((tr, i) => {
       const p = pattern[tr.id];
       if (!p.some(v => v)) return;
       const n = i + 1, t = 't' + n, name = labelOf(tr.id), r = recipe(kitId, tr.id), sec = name;
-      const acc = [], soft = [], roll = [];
-      p.forEach((v, s) => (v === 2 ? acc : v === 1 ? soft : v === 3 ? roll : null)?.push(s));
-      out.push(S(`T${n} · ${name}: load ${r.machine}`, [['track', t], ['machines'], ['level'], ['back']],
-        `[TRACK] + [T${n}], then [MACHINES] and turn LEVEL/DATA to <b>${r.machine}</b>. [BACK] to close.`, { sec, screen: r.machine }));
-      out.push(S(`T${n} · ${name}: dial in the sound`, [r.knobs.map(([k]) => k)],
-        `<ul class="knobs">${r.knobs.map(([k, v]) => `<li><b>${NAME(k)}</b> ${v}</li>`).join('')}</ul>${r.tips.map(x => `<p>${x}</p>`).join('')}`,
-        { sec, values: Object.fromEntries(r.knobs) }));
+      const soft = [], roll = [], open = [];
+      p.forEach((v, s) => { if (v === 1 || v === 5) soft.push(s); if (v === 3) roll.push(s); if (v >= 4) open.push(s); });
+      const changed = r.machine !== DEFAULT[i];
+      if (changed) out.push(S(`Change machine: T${n} ${DEFAULT[i]} → ${r.machine}`, [['track', t], ['machines'], ['level'], ['back']],
+        `<p class="flag">Differs from the fresh-pattern default.</p>[TRACK] + [T${n}], then [MACHINES] and turn LEVEL/DATA from ${DEFAULT[i]} to <b>${r.machine}</b>. [BACK] to close.`, { sec, screen: r.machine }));
+      out.push(S(`T${n} · ${name}: dial in the sound`, [['track', t], r.knobs.map(([k]) => k)],
+        `<p class="mline">${changed ? `Machine: <b>${r.machine}</b> (changed in the step before)` : `Machine: <b>${r.machine}</b> · default, nothing to change`}</p>
+        <ul class="knobs">${r.knobs.map(([k, v]) => `<li><b>${NAME(k)}</b> ${v}</li>`).join('')}</ul>${r.tips.map(x => `<p>${x}</p>`).join('')}${tr.id === 'chord' && g.harmony ? `<p>${g.harmony}</p>` : ''}`,
+        { sec, values: Object.fromEntries(r.knobs.filter(([, v]) => String(v).length < 7)), screen: r.machine, track: t }));
       const all = p.map((v, s) => v ? s : -1).filter(s => s >= 0);
       let txt = `Tap trig keys <b>${stepWords(all)}</b>.`;
-      if (soft.length) txt += `<p>Soft hits on <b>${stepWords(soft)}</b>: hold each one and turn LEVEL/DATA → VEL ≈ 70 (press LEVEL/DATA to get from NOTE to VEL). Holding several trigs at once sets them together.</p>`;
+      if (open.length) txt += `<p>Open hats on <b>${stepWords(open)}</b>: hold step ${open[0] + 1} and turn DECAY to ≈ ${r.openDecay}. That parameter lock makes the hit ring open; the next closed hat cuts it off, just like a real hi-hat.${open.length > 1 ? ` <b>Copy/paste the rest:</b> hold step ${open[0] + 1} + [RECORD], then hold step ${open.slice(1).map(x => x + 1).join(', then ')} + [STOP] each.` : ''}</p>`;
+      if (soft.length) txt += `<p>Soft hits on <b>${stepWords(soft)}</b>: hold them all at once and turn LEVEL/DATA → VEL ≈ 70 (press LEVEL/DATA to get from NOTE to VEL). Or set one and copy it: hold trig + [RECORD], hold target + [STOP].</p>`;
       if (roll.length) txt += `<p>Rolls on <b>${stepWords(roll)}</b>: hold the trig, press [RETRIG], set ON and RTE 1/32 (or 1/24 for a triplet roll).</p>`;
       out.push(S(`T${n} · ${name}: place the trigs`, [all.map(s => 'trig' + (s + 1))], txt, { sec, trigs: p, track: t }));
     });
-    if (g.harmony && !pattern.perc.some(v => v)) {
-      out.push(S('Optional: chords on T5', [['track', 't5'], ['machines'], ['level']],
-        `T5 is free in this groove. Load <b>CHORD</b> there. SHAPE picks unison or a chord type (manual appendix C), COLOR changes the interval mix, CONTOUR is the filter envelope. ${g.harmony}`, { sec: 'Chords', screen: 'CHORD' }));
-    }
     out.push(S(swing > 50 ? `Swing: ${swing}% on every track` : 'Swing: leave it at 50%', [['hold:track', 'swing']],
       swing > 50 ? `Hold [TRACK] and turn SWING to <b>${swing}%</b>: CONTROL ALL sets it on every track at once. Swing only moves the even 16ths, the same as in this app.`
         : 'This groove is straight. SWING stays at its default 50%.', { sec: 'Finish', values: { swing: swing + '%' } }));
     out.push(S('Listen', [['record'], ['play']], 'Press [RECORD] to leave grid recording, then [PLAY]. Use [FUNC] + [T1–6] to mute tracks and hear how the layers stack, like the build-up view above.', { sec: 'Finish' }));
     out.push(S('Save it', [['func', 'settings'], ['settings']], '[FUNC] + [SETTINGS] for a quick snapshot. [SETTINGS] → PATTERN → SAVE to keep it in the project.', { sec: 'Finish' }));
+    out.push(S('Next pattern: a variant', [['func', 'record'], ['pattern', 'trig2'], ['func', 'stop']],
+      'Copy this pattern to the next slot and only change what differs: with grid recording off, [FUNC] + [RECORD], then [PATTERN] + [TRIG 2], then [FUNC] + [STOP]. Pick a "Spice it up" variant above and program just the dotted steps. Switching between the two slots while playing is an instant arrangement.', { sec: 'Finish' }));
     return out;
   }
 
-  return { svg, INFO, NAME, isKnob, BASICS, genreSteps, hlOf, recipe, C };
+  return { svg, INFO, NAME, isKnob, BASICS, genreSteps, hlOf, recipe, C, DEFAULT };
 })();
 </script>
 <script>
+// Rows follow the Model:Cycles factory order: T1 KICK, T2 SNARE, T3 METAL, T4 PERC, T5 TONE, T6 CHORD.
 const TRACKS = [
   { id: 'kick',  name: 'Kick' },
   { id: 'snare', name: 'Snare / Clap' },
-  { id: 'chh',   name: 'Closed hat' },
-  { id: 'ohh',   name: 'Open hat' },
+  { id: 'hat',   name: 'Hats' },
   { id: 'perc',  name: 'Perc / Rim' },
   { id: 'bass',  name: 'Bass / 808' },
+  { id: 'chord', name: 'Chords' },
 ];
 const STEPS = 16;
-const VAL = { '.': 0, 'x': 1, 'X': 2, 'r': 3 };
+const VAL = { '.': 0, 'x': 1, 'X': 2, 'r': 3, 'O': 4, 'o': 5 };   // 4/5 = open hat (Hats row only)
 const parse = s => Array.from({ length: STEPS }, (_, i) => VAL[(s || '')[i]] || 0);
+// Genre data keeps closed (chh) and open (ohh) hats apart; the grid merges them into one Hats row. Open wins on a shared step.
+const mergeHats = (c, o) => c.map((v, i) => o[i] ? (o[i] === 1 ? 5 : 4) : v);
+function norm(raw) {
+  return { kick: parse(raw.kick), snare: parse(raw.snare), hat: mergeHats(parse(raw.chh), parse(raw.ohh)),
+           perc: parse(raw.perc), bass: parse(raw.bass), chord: parse(raw.chord) };
+}
 GENRES.sort((a, b) => (b.fav ? 1 : 0) - (a.fav ? 1 : 0));
 
 // ---------- storage (guarded) ----------
@@ -1188,11 +1234,20 @@ function draw() {
 // ---------- build-up mode: layers enter one by one ----------
 const BARS_PER_LAYER = 2, HOLD_BARS = 4;
 let buildMode = false, layers = [], cursorBar = 0;   // cursorBar = bar shown in the timeline
-const labelOf = id => (genre.labels && genre.labels[id]) || TRACKS.find(t => t.id === id).name;
+const labelOf = id => {
+  const L = genre.labels || {};
+  if (id === 'chh' || id === 'ohh') id = 'hat';
+  if (id === 'hat') return L.chh ? `${L.chh} + open hat` : 'Hats';
+  return L[id] || TRACKS.find(t => t.id === id).name;
+};
 const hasHits = id => pattern[id] && pattern[id].some(v => v);
 function computeLayers() {
-  const list = (genre.build || []).filter(([id]) => hasHits(id)).map(([id, note]) => ({ id, note }));
-  ['kick', 'snare', 'chh', 'ohh', 'perc', 'bass'].forEach(id => {
+  const list = [];
+  (genre.build || []).forEach(([id, note]) => {
+    if (id === 'chh' || id === 'ohh') id = 'hat';
+    if (hasHits(id) && !list.some(l => l.id === id)) list.push({ id, note });
+  });
+  TRACKS.map(t => t.id).forEach(id => {
     if (hasHits(id) && !list.some(l => l.id === id)) list.push({ id, note: `${labelOf(id)} comes in` });
   });
   layers = list;
@@ -1338,7 +1393,8 @@ TRACKS.forEach((tr, r) => {
     c.className = 'cell' + (Math.floor(s / 4) % 2 === 0 ? ' beat' : '');
     c.setAttribute('aria-label', `${tr.name} step ${s + 1}`);
     c.onclick = () => {
-      const v = (pattern[tr.id][s] + 1) % 4;
+      const cur = pattern[tr.id][s];
+      const v = tr.id === 'hat' ? (cur >= 4 ? 0 : cur + 1) : (cur + 1) % 4;   // Hats: soft → accent → roll → open → off
       pattern[tr.id][s] = v; paintCell(r, s);
       if (v && !playing) { const ctx = Engine.init(); Engine.play(tr.id, v, ctx.currentTime, stepDur()); }
       mcRefresh();
@@ -1354,14 +1410,14 @@ TRACKS.forEach((tr, r) => {
 });
 function paintCell(r, s) {
   const c = cells[r][s], v = pattern[TRACKS[r].id][s];
-  c.classList.remove('v1', 'v2', 'v3'); if (v) c.classList.add('v' + v);
+  c.classList.remove('v1', 'v2', 'v3', 'v4', 'v5'); if (v) c.classList.add('v' + v);
   c.classList.toggle('diff', !!orig[TRACKS[r].id] && orig[TRACKS[r].id][s] !== v);
 }
 function render() { TRACKS.forEach((_, r) => { for (let s = 0; s < STEPS; s++) paintCell(r, s); }); }
 function renderNames() {
   TRACKS.forEach((tr, r) => {
-    const label = (genre.labels && genre.labels[tr.id]) || tr.name;
-    nameEls[r].innerHTML = `<b>${label}</b><small>T${r + 1} · ${MC.recipe(kitId, tr.id).machine}</small>`;
+    const label = labelOf(tr.id), m = MC.recipe(kitId, tr.id).machine, swap = m !== MC.DEFAULT[r];
+    nameEls[r].innerHTML = `<b>${label}</b><small${swap ? ' class="swap" title="Differs from the Cycles default ' + MC.DEFAULT[r] + '"' : ''}>T${r + 1} · ${m}${swap ? ' ⇄' : ''}</small>`;
     name2Els[r].innerHTML = `<b>${label}</b><small>T${r + 1}</small>`;
   });
 }
@@ -1373,7 +1429,7 @@ swingEl.oninput = () => { swingOut.textContent = swingEl.value + '%'; mcRefresh(
 const orig = {};          // the genre's original pattern, to mark what a variant or your edits changed
 let variant = -1;         // -1 = original, 0–2 = VARIANTS[genre.id][i]
 function loadOriginal() {
-  TRACKS.forEach(tr => pattern[tr.id] = parse(genre.p[tr.id]));
+  Object.assign(pattern, norm(genre.p));
   bpmEl.value = genre.bpm; swingEl.value = genre.swing;
 }
 function renderVariants(note) {
@@ -1386,7 +1442,7 @@ function applyVariant(i) {
   variant = i;
   loadOriginal();
   const v = VARIANTS[genre.id]?.[i];
-  if (v) { Object.entries(v.p).forEach(([t, p]) => pattern[t] = parse(p)); if (v.swing) swingEl.value = v.swing; }
+  if (v) { Object.assign(pattern, norm({ ...genre.p, ...v.p })); if (v.swing) swingEl.value = v.swing; }
   bpmEl.oninput(); swingEl.oninput(); render(); renderVariants();
   if (buildMode) refreshBuild();
   mcIdx = 0; mcRefresh();
@@ -1395,7 +1451,7 @@ document.getElementById('variants').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
   applyVariant(+b.dataset.i);
   const v = VARIANTS[genre.id]?.[+b.dataset.i];
-  say(v ? `${v.name}: ${Object.keys(v.p).map(labelOf).join(', ')} changed${v.swing ? `, swing ${v.swing}%` : ''}.` : `Back to the original ${genre.name} pattern.`);
+  say(v ? `${v.name}: ${[...new Set(Object.keys(v.p).map(labelOf))].join(', ')} changed${v.swing ? `, swing ${v.swing}%` : ''}.` : `Back to the original ${genre.name} pattern.`);
 };
 function selectGenre(id) {
   genre = GENRES.find(g => g.id === id) || GENRES[0];
@@ -1403,9 +1459,15 @@ function selectGenre(id) {
   nav.querySelectorAll('.chip').forEach(b => b.classList.toggle('active', b.dataset.id === genre.id));
   nav.querySelector('.chip.active')?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   const mine = store().mine[genre.id];
-  TRACKS.forEach(tr => orig[tr.id] = parse(genre.p[tr.id]));
+  Object.assign(orig, norm(genre.p));
+  Engine.setChord(genre.chordNotes);
   variant = mine ? -2 : -1;   // -2 = your saved version (no chip selected)
-  if (mine) { TRACKS.forEach(tr => pattern[tr.id] = mine.p[tr.id].slice()); bpmEl.value = mine.bpm; swingEl.value = mine.swing; }
+  if (mine) {
+    const mp = mine.p, blank = () => Array(STEPS).fill(0);
+    if (mp.chh) { mp.hat = mergeHats(mp.chh, mp.ohh || blank()); }   // versions saved before the hat rows were merged
+    TRACKS.forEach(tr => pattern[tr.id] = (mp[tr.id] || blank()).slice());
+    bpmEl.value = mine.bpm; swingEl.value = mine.swing;
+  }
   else loadOriginal();
   mcIdx = 0;
   bpmEl.oninput(); swingEl.oninput(); render();
