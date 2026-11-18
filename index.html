@@ -76,6 +76,15 @@
   .cell.v3 { background: repeating-linear-gradient(90deg, var(--on) 0 3px, transparent 3px 6px); border-color: var(--on); }
   .cell.head { outline: 2px solid #fff; outline-offset: 1px; }
   .cell.head.v1, .cell.head.v2, .cell.head.v3 { box-shadow: 0 0 14px var(--glow); }
+  .cell.diff { position: relative; }
+  .cell.diff::after { content: ''; position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px #111; }
+  .variants { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; }
+  .variants .lbl { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-right: 4px; }
+  .variants button { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+  .variants button:hover { color: var(--text); }
+  .variants button.on { color: #111; background: var(--on); border-color: var(--on); font-weight: 600; }
+  .vnote { color: #c9cdd4; font-size: 13px; margin: 0 0 14px; min-height: 1.4em; max-width: 75ch; }
+  .vnote b { color: var(--on); }
   .row-muted { opacity: .35; }
   .row-pending { opacity: .15; }
   #buildBtn.on { background: hsl(var(--hue) 90% 60% / .18); border-color: var(--on); color: var(--on); }
@@ -96,6 +105,7 @@
   .arr-cell.on.now { background: var(--on); }
 
   .legend { display: flex; flex-wrap: wrap; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 12px; align-items: center; }
+  .legend i.dotkey { width: 7px; height: 7px; border-radius: 50%; background: #fff; border: 0; vertical-align: 1px; }
   .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; border: 1px solid var(--line); }
   .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
   .msg { color: var(--muted); font-size: 13px; }
@@ -185,11 +195,14 @@
         <span class="hint">Click any bar in the timeline to jump there · <kbd>←</kbd> <kbd>→</kbd></span>
       </div>
     </div>
+    <div class="variants" id="variants"></div>
+    <p class="vnote" id="vnote"></p>
     <div class="grid-scroll"><div class="grid" id="grid"></div></div>
     <div class="legend">
       <span><i style="background:var(--on)"></i>Accent</span>
       <span><i style="background:hsl(var(--hue) 90% 60% / .42)"></i>Soft / ghost</span>
       <span><i style="background:repeating-linear-gradient(90deg,var(--on) 0 3px,transparent 3px 6px)"></i>Roll (3 hits)</span>
+      <span><i class="dotkey"></i>Changed from the original</span>
       <span>Tap a track name to mute it</span>
     </div>
     <div class="actions">
@@ -401,6 +414,101 @@ const GENRES = [
     src: 'Producers Classroom; genre convention',
     p: { kick: 'X......x.XX.....', snare: '....X.......X...', chh: 'x.x.x.x.x.x.x.x.', ohh: '..............X.', perc: '', bass: 'X.........X.....' } },
 ];
+</script>
+<script>
+// ===== variants: three ways to spice up each genre. `p` only lists the tracks that change. =====
+const VARIANTS = {
+  organic: [
+    { name: 'Conga conversation', note: 'Congas answer each other across the bar instead of repeating. Accents on the offbeats pull against the steady kick.', p: { perc: '..X..x.X..X.xX.x' } },
+    { name: 'Ghost-kick push', note: 'Two soft kicks (before beat 3 and on the last 8th) make the four-on-the-floor roll forward without getting busier.', p: { kick: 'X...X..xX...X.x.' } },
+    { name: 'Bar-end fill', note: 'Congas pile up and roll into the next bar. On the Cycles, give this trig a 1:4 condition so the fill only plays every 4th bar.', p: { perc: '...X..x...X.xXxr', chh: 'xXxxxXxxxXxXxXxr' } },
+  ],
+  downtempo: [
+    { name: 'Half-time float', note: 'Kick on 1 only, backbeat on 3. The same tempo suddenly feels half as fast: classic for breakdowns before the melody returns.', p: { kick: 'X...............', snare: '........X.......', bass: 'X.........X.....' } },
+    { name: 'Tresillo bongos', note: 'Bongos play the 3-3-2 tresillo twice per bar. It is the Afro-Latin pulse under a lot of Ninze / MONKYMAN-style tracks.', p: { perc: 'X..X..X.X..X..X.' } },
+    { name: 'Deeper shuffle', note: 'More swing (64%) plus ghost kicks: it starts to lean and sway. Push swing until it feels drunk, then back off a notch.', swing: 64, p: { kick: 'X......xX.x...x.' } },
+  ],
+  giegling: [
+    { name: 'Broken micro-house', note: 'The kick skips beat 3 and lands on the and of 3 instead. Still house, but it stumbles in a way that keeps you listening.', p: { kick: 'X...X.....X.X...', snare: '....x..x....x...' } },
+    { name: 'Jazz ride', note: 'The open hat becomes a jazz ride ("ding, ding-a ding") and the closed hat is a foot pedal on 2 and 4. More swing, like a sampled jazz record.', swing: 66, p: { ohh: 'X..xX..xX..xX..x', chh: '....x.......x...' } },
+    { name: 'Click storm', note: 'Dense, very quiet clicks fill every gap. In micro-house the texture is the groove; keep them low in the mix.', p: { perc: 'x.xx.x.xx.x.x.xx' } },
+  ],
+  deephouse: [
+    { name: 'Rim shuffle', note: 'Quiet rimshots on the offbeat 16ths, Kerri Chandler style. T5 is free on the Cycles, so put a short PERC there.', p: { perc: '...x..x....x..x.' } },
+    { name: 'Clap pickup', note: 'An extra soft clap just before beat 3 gives the backbeat a little skip without losing the steadiness.', p: { snare: '....X..x....X...' } },
+    { name: 'Walking bass', note: 'A busier, syncopated bassline. Lock different NOTEs per trig (hold trig + LEVEL/DATA) to walk A → C → D under the chords.', p: { bass: '..XX..X...X..x.x' } },
+  ],
+  techno: [
+    { name: 'Kick roll fill', note: 'The last beat becomes a kick roll into the next bar. Use it every 8 bars: on the Cycles set the trig condition to 1:8.', p: { kick: 'X...X...X...X.Xr' } },
+    { name: '3-against-4 perc', note: 'A perc hit every 3 steps drifts against the 4/4 kick and lines up again every 3 bars: the hypnotic trick behind a lot of loop techno.', p: { perc: 'X..X..X..X..X..X' } },
+    { name: 'Stripped', note: 'Only kick, rumble and offbeat hat. Less really is more: listen how much space the rumble suddenly has.', p: { chh: '', snare: '', perc: '' } },
+  ],
+  breaks: [
+    { name: 'Amen-style kick', note: 'Double kick at the start and on the and of 3. This is the kick shape of the Amen break, the most sampled drum loop ever.', p: { kick: 'X.X.......XX....' } },
+    { name: 'Funky 16th hats', note: 'Sixteenth hats with accents on the offbeats. The accents, not the notes, make it funky.', p: { chh: 'xxXxxxXxXxXxxxXx' } },
+    { name: 'Tambourine lift', note: 'Tambourine on the backbeat and an open hat on the and of 2 and 4. Adds air and energy for a drop.', p: { perc: '....X.......X...', ohh: '......X.......X.' } },
+  ],
+  reggaeton: [
+    { name: 'Perreo hats', note: 'Busier hats with gaps on the beat: the typical perreo shuffle. Keep them soft so the dembow snare still leads.', p: { chh: 'x.xxx.xxx.xxx.xx' } },
+    { name: 'Ghost dembow', note: 'Soft snares between the dembow hits fill the 3-3-2 out. Classic producer move to make the loop breathe.', p: { snare: '...X..X.x..X..Xx' } },
+    { name: 'Dreamy half kick', note: 'Kick only on 1 and 3. Lighter and more floaty, closer to DJ Python\'s deep reggaeton.', p: { kick: 'X.......X.......' } },
+  ],
+  synthwave: [
+    { name: 'Four on the floor', note: 'Kick on every beat turns the ballad beat into outrun / Italo-disco drive.', p: { kick: 'X...X...X...X...' } },
+    { name: 'Snare fill', note: 'The last beat becomes a snare run that rolls into the next bar: the 80s tom/snare fill.', p: { snare: '....X.......Xxxr' } },
+    { name: 'Gallop bass', note: 'An 8th plus two 16ths, over and over: the galloping bass of 80s soundtracks. Lock octave jumps with NOTE.', p: { bass: 'X.xXX.xXX.xXX.xX' } },
+  ],
+  ukg: [
+    { name: 'Skippy kick', note: 'An extra soft kick after beat 3 makes the 2-step skip. Swing does the rest.', p: { kick: 'X.........X..x..' } },
+    { name: 'Snare ghosts', note: 'Soft snares around the backbeat. Garage drums live on these little ghost notes.', p: { snare: '....X..x....X.x.' } },
+    { name: 'Speed garage', note: 'Four-on-the-floor kick and an offbeat bass: the late-90s speed garage cousin of 2-step.', p: { kick: 'X...X...X...X...', bass: '..X...X...X...X.' } },
+  ],
+  ukfunky: [
+    { name: 'Soca kick', note: 'The kick plays the tresillo twice. Straight from soca: it\'s what makes UK Funky bounce.', p: { kick: 'X..X..X.X..X..X.' } },
+    { name: 'Tom run', note: 'Percussion rolls up into the next bar. Put a 1:4 condition on the end so it only runs every 4 bars.', p: { perc: '..x.x..x.x..xXXX' } },
+    { name: 'Swing it', note: 'More swing (64%) and more 16th hats. Funky sits right between house and garage: swing moves it toward garage.', swing: 64, p: { chh: 'x.Xxx.Xxx.Xxx.Xx' } },
+  ],
+  gqom: [
+    { name: 'Full 3-3-2', note: 'The 3-3-2 kick plays in both halves of the bar. Even more broken, even more Durban.', p: { kick: 'X..X..X.X..X..X.' } },
+    { name: 'Sub hits', note: 'A sub bass doubles the first kicks. Gqom often has no bassline at all, so a few low hits feel huge.', p: { bass: 'X..X..X.........' } },
+    { name: 'Busy toms', note: 'The toms gallop. In gqom the toms are the lead instrument: push them hard with VOLUME+DIST.', p: { perc: 'X.XX.XX.X.XX.X.X' } },
+  ],
+  dubstep: [
+    { name: 'Rolling hats', note: 'Triplet rolls on the hats add tension without touching the half-time feel.', p: { chh: 'x.x.x.xrx.x.x.xr' } },
+    { name: 'Half-step kick', note: 'A second kick on the and of 2 makes it stagger toward the snare.', p: { kick: 'X.....X...x.....' } },
+    { name: 'Triplet wobble', note: 'Rolls on the bass give a triplet wobble rhythm. On the Cycles: retrig at 1/24 on those trigs.', p: { bass: 'XrX.X.rXX..rX.r.' } },
+  ],
+  dnb: [
+    { name: 'Rolling 16ths', note: '16th hats with offbeat accents make the classic "rolling" DnB.', p: { chh: 'xxXxxxXxxxXxxxXx' } },
+    { name: 'Ghost snares', note: 'Soft snares between the backbeats: the jungle DNA hidden inside clean DnB.', p: { snare: '....X..x.x..X..x' } },
+    { name: 'Halftime', note: 'Snare only on beat 3. Same 174 BPM, but it feels like 87: the halftime style of Noisia and co.', p: { snare: '........X.......', kick: 'X.....X...X.....' } },
+  ],
+  jungle: [
+    { name: 'Snare roll', note: 'The bar ends in a snare roll. Chopped-break rolls like this are the signature of jungle.', p: { snare: '....X..x.x..Xrrr' } },
+    { name: 'Ragga bass', note: 'A bouncier, syncopated sub. Jungle bass often comes from reggae soundsystem culture.', p: { bass: 'X..X......X..X..' } },
+    { name: 'Swung break', note: 'Some swing (58%) and 16th hats: looser, closer to a sampled "Think" break than to programming.', swing: 58, p: { chh: 'XxxxXxxxXxxxXxxx' } },
+  ],
+  footwork: [
+    { name: 'Rolled kicks', note: 'Some kicks become triplet rolls. Footwork producers love stuttering kicks that blur the grid.', p: { kick: 'XrX..X.rX..X.r..' } },
+    { name: 'Hat stutter', note: 'Hats come in with rolls on the and of 2 and 4. Adds speed without more kicks.', p: { chh: 'x.x.xrx.x.x.xrx.' } },
+    { name: 'Clap pile-up', note: 'Extra claps stack up toward the end of the bar, like a chopped vocal sample firing off.', p: { snare: '....x...X...x.Xx' } },
+  ],
+  trap: [
+    { name: 'Hat flow', note: 'Rolls inside the bar, not only at the end. Varying the hat rhythm is how trap producers write "melody" with hats.', p: { chh: 'X.xrX.x.XrxrX.rr' } },
+    { name: '808 bounce', note: 'Extra 808 hits at the end of the bar. Lock higher NOTEs on them for a slide feel.', p: { bass: 'X......X..X..x.x' } },
+    { name: 'Snare pickup', note: 'A soft clap just before the next bar leads the ear around the loop.', p: { snare: '........X.....x.' } },
+  ],
+  drill: [
+    { name: 'Rim counter', note: 'A rim pattern answers the hats. Drill is all about these off-grid counter rhythms.', p: { perc: '..x.....x..x....' } },
+    { name: '808 runs', note: 'A busier, sliding 808. On the Cycles fake the slide with PITCH locks on the following trigs.', p: { bass: 'X..X...X..X..X.X' } },
+    { name: 'Hat triplets', note: 'Triplet rolls break the 3-3-2 hat spacing open in the middle of the bar.', p: { chh: 'X..x..X.xrrX..xr' } },
+  ],
+  boombap: [
+    { name: 'Dilla drunk', note: 'Heavy swing (66%) and a lazier kick. Dilla went further by nudging single hits late: on the Cycles hold a trig and turn SWING.', swing: 66, p: { kick: 'X.....x..X.x....', snare: '....X.......X..x' } },
+    { name: 'Ghost snares', note: 'Soft snares around the backbeat, like a drummer\'s left hand.', p: { snare: '....X..x....X.x.' } },
+    { name: 'Rim offbeats', note: 'A rimshot on every offbeat 8th fills the space between hats. Common on 90s East Coast beats.', p: { perc: '..x...x...x...x.' } },
+  ],
+};
 </script>
 <script>
 // ===== kits.js =====
@@ -1184,6 +1292,7 @@ TRACKS.forEach((tr, r) => {
 function paintCell(r, s) {
   const c = cells[r][s], v = pattern[TRACKS[r].id][s];
   c.classList.remove('v1', 'v2', 'v3'); if (v) c.classList.add('v' + v);
+  c.classList.toggle('diff', !!orig[TRACKS[r].id] && orig[TRACKS[r].id][s] !== v);
 }
 function render() { TRACKS.forEach((_, r) => { for (let s = 0; s < STEPS; s++) paintCell(r, s); }); }
 function renderNames() {
@@ -1197,20 +1306,46 @@ const bpmOut = document.getElementById('bpmOut'), swingOut = document.getElement
 bpmEl.oninput = () => { bpmOut.textContent = bpmEl.value; mcRefresh(); };
 swingEl.oninput = () => { swingOut.textContent = swingEl.value + '%'; mcRefresh(); };
 
+const orig = {};          // the genre's original pattern, to mark what a variant or your edits changed
+let variant = -1;         // -1 = original, 0–2 = VARIANTS[genre.id][i]
 function loadOriginal() {
   TRACKS.forEach(tr => pattern[tr.id] = parse(genre.p[tr.id]));
   bpmEl.value = genre.bpm; swingEl.value = genre.swing;
 }
+function renderVariants(note) {
+  const vs = VARIANTS[genre.id] || [];
+  document.getElementById('variants').innerHTML = '<span class="lbl">Spice it up</span>' +
+    ['Original', ...vs.map(v => v.name)].map((n, i) => `<button data-i="${i - 1}" class="${i - 1 === variant ? 'on' : ''}">${n}</button>`).join('');
+  document.getElementById('vnote').innerHTML = note ?? (variant >= 0 ? vs[variant].note : 'The basic pattern. Pick a variant to hear one idea that makes it more interesting; dots mark the changed steps.');
+}
+function applyVariant(i) {
+  variant = i;
+  loadOriginal();
+  const v = VARIANTS[genre.id]?.[i];
+  if (v) { Object.entries(v.p).forEach(([t, p]) => pattern[t] = parse(p)); if (v.swing) swingEl.value = v.swing; }
+  bpmEl.oninput(); swingEl.oninput(); render(); renderVariants();
+  if (buildMode) refreshBuild();
+  mcIdx = 0; mcRefresh();
+}
+document.getElementById('variants').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  applyVariant(+b.dataset.i);
+  const v = VARIANTS[genre.id]?.[+b.dataset.i];
+  say(v ? `${v.name}: ${Object.keys(v.p).map(labelOf).join(', ')} changed${v.swing ? `, swing ${v.swing}%` : ''}.` : `Back to the original ${genre.name} pattern.`);
+};
 function selectGenre(id) {
   genre = GENRES.find(g => g.id === id) || GENRES[0];
   document.documentElement.style.setProperty('--hue', genre.hue);
   nav.querySelectorAll('.chip').forEach(b => b.classList.toggle('active', b.dataset.id === genre.id));
   nav.querySelector('.chip.active')?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   const mine = store().mine[genre.id];
+  TRACKS.forEach(tr => orig[tr.id] = parse(genre.p[tr.id]));
+  variant = mine ? -2 : -1;   // -2 = your saved version (no chip selected)
   if (mine) { TRACKS.forEach(tr => pattern[tr.id] = mine.p[tr.id].slice()); bpmEl.value = mine.bpm; swingEl.value = mine.swing; }
   else loadOriginal();
   mcIdx = 0;
   bpmEl.oninput(); swingEl.oninput(); render();
+  renderVariants(mine ? 'Showing your saved version. Pick Original or a variant to load it instead (your save stays until you overwrite it).' : undefined);
   document.getElementById('info').innerHTML = infoHTML(genre, !!mine);
   setKit(genre.kit);
   if (buildMode) { cursorBar = 0; if (playing) { bar = 0; } refreshBuild(); }
@@ -1259,7 +1394,8 @@ mcSvg.addEventListener('click', e => {
 });
 function mcRefresh() {
   if (!mcSvg) return;
-  mcSteps = mcMode === 'genre' ? MC.genreSteps(genre, pattern, labelOf, TRACKS, kitId, +bpmEl.value, +swingEl.value) : MC.BASICS;
+  const shown = variant >= 0 ? { ...genre, name: `${genre.name} · ${VARIANTS[genre.id][variant].name}` } : genre;
+  mcSteps = mcMode === 'genre' ? MC.genreSteps(shown, pattern, labelOf, TRACKS, kitId, +bpmEl.value, +swingEl.value) : MC.BASICS;
   mcIdx = Math.max(0, Math.min(mcIdx, mcSteps.length - 1));
   mcShow();
 }
@@ -1289,7 +1425,8 @@ function mcShow() {
   document.getElementById('mcSeq').innerHTML = st.seq.map(grp =>
     grp.length > 3 && grp.every(t => t.startsWith('trig')) ? `<kbd>TRIG ${grp.map(t => t.slice(4)).join(' · ')}</kbd>`
       : grp.map(tok).join('<span class="plus">+</span>')).join('<span class="arrow">→</span>');
-  document.getElementById('mcKicker').textContent = mcMode === 'genre' ? `${genre.name} · ${st.sec}` : 'Basics';
+  const vname = variant >= 0 ? ` · ${VARIANTS[genre.id][variant].name}` : '';
+  document.getElementById('mcKicker').textContent = mcMode === 'genre' ? `${genre.name}${vname} · ${st.sec}` : 'Basics';
   document.getElementById('mcTitle').textContent = st.title;
   document.getElementById('mcText').innerHTML = st.text;
   document.getElementById('mcCount').textContent = `Step ${mcIdx + 1} of ${mcSteps.length}`;
