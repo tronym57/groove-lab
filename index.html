@@ -226,6 +226,14 @@
   </section>
 </div>
 
+<script>
+// Never fail silently: show script errors on the page.
+window.addEventListener('error', e => {
+  const d = document.getElementById('err') || document.body.insertBefore(Object.assign(document.createElement('div'), { id: 'err' }), document.body.firstChild);
+  d.style.cssText = 'background:#5a1d1d;color:#fff;padding:10px 16px;font:13px system-ui';
+  d.textContent = `Something broke: ${e.message} (${(e.filename || '').split('/').pop()}:${e.lineno}). Try a hard reload (Cmd+Shift+R).`;
+});
+</script>
 <script src="genres.js"></script>
 <script src="kits.js"></script>
 <script src="cycles.js"></script>
@@ -476,6 +484,7 @@ function selectGenre(id) {
   say('');
 }
 
+const firstSentence = t => { const i = t.indexOf('. '); return i < 0 ? t : t.slice(0, i + 1); };
 // Genre header: name + one-line summary visible; details on demand. Each fact appears once.
 function infoHTML(g, mine) {
   const spot = g.fav ? (g.spotify || '').split(',').map(x => x.trim()).filter(Boolean) : [];
@@ -483,7 +492,7 @@ function infoHTML(g, mine) {
   spot.forEach(sp => { if (!artists.some(a => a.n.includes(sp))) artists.push({ n: sp, you: true }); });
   return `
     <h2>${g.name}</h2>
-    <p class="tag">${g.about.split(/(?<=\.)\s/)[0]}</p>
+    <p class="tag">${firstSentence(g.about)}</p>
     <div class="facts">
       <span class="fact">Typical <b>${g.range}</b> BPM</span>
       ${g.fav ? '<span class="fact you" title="From your Spotify and your picks">● In your listening</span>' : ''}
