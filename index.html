@@ -64,6 +64,14 @@
 
   .grid-scroll { overflow-x: auto; }
   .grid { display: grid; grid-template-columns: 112px repeat(16, minmax(26px, 1fr)); gap: 5px; min-width: 600px; }
+  .card.fs { position: fixed; inset: 0; z-index: 50; margin: 0; border: 0; border-radius: 0; overflow-y: auto;
+             padding: max(14px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom)); }
+  body.fs-on { overflow: hidden; }
+  .name2 { display: none; }
+  .grid.split { grid-template-columns: 70px repeat(8, 1fr); min-width: 0; gap: 6px; }
+  .grid.split .name2 { display: flex; }
+  .grid.split .name b { font-size: 12px; }
+  .grid.split .nums.half2 { padding-top: 12px; }
   .name { display: flex; flex-direction: column; justify-content: center; cursor: pointer; user-select: none; line-height: 1.2; }
   .name b { font-size: 13px; } .name small { color: var(--muted); font-size: 10px; letter-spacing: .04em; }
   .name.muted b { color: var(--muted); text-decoration: line-through; }
@@ -177,13 +185,14 @@
 
   <section class="card info" id="info"></section>
 
-  <section class="card">
+  <section class="card" id="playCard">
     <div class="transport">
       <button class="btn" id="play">▶ Play</button>
       <label class="ctl">BPM <input id="bpm" type="range" min="60" max="180"><output id="bpmOut"></output></label>
       <label class="ctl">Swing <input id="swing" type="range" min="50" max="80"><output id="swingOut"></output></label>
       <label class="ctl">Kit <select id="kit"></select></label>
       <button class="btn" id="buildBtn" title="Layers enter one at a time, every 2 bars">Build-up: off</button>
+      <button class="btn" id="fsBtn" title="Show only the sequencer. On a phone in portrait, steps 1–8 and 9–16 are stacked">⛶ Fullscreen</button>
     </div>
     <div style="height:16px"></div>
     <div class="arr" id="arr" hidden>
@@ -1273,10 +1282,10 @@ function setKit(id) {
 }
 
 const grid = document.getElementById('grid');
-const cells = [], nameEls = [];
+const cells = [], nameEls = [], name2Els = [], numEls = [];
 grid.appendChild(document.createElement('div'));
 for (let s = 0; s < STEPS; s++) {
-  const n = document.createElement('div');
+  const n = document.createElement('div'); numEls.push(n);
   n.className = 'nums' + (s % 4 === 0 ? ' q' : '');
   n.textContent = s % 4 === 0 ? (s / 4 + 1) : s + 1;
   grid.appendChild(n);
@@ -1286,7 +1295,7 @@ TRACKS.forEach((tr, r) => {
   name.className = 'name'; name.title = 'Tap to mute / unmute';
   name.onclick = () => {
     muted[tr.id] = !muted[tr.id];
-    name.classList.toggle('muted', muted[tr.id]);
+    name.classList.toggle('muted', muted[tr.id]); name2Els[r].classList.toggle('muted', muted[tr.id]);
     cells[r].forEach(c => c.classList.toggle('row-muted', muted[tr.id]));
     say(`${name.querySelector('b').textContent} ${muted[tr.id] ? 'muted' : 'unmuted'}.`);
   };
@@ -1305,6 +1314,12 @@ TRACKS.forEach((tr, r) => {
     grid.appendChild(c); cells[r].push(c);
   }
 });
+// Second set of row labels, only shown when the grid is split into steps 1–8 / 9–16.
+TRACKS.forEach((tr, r) => {
+  const n = document.createElement('div');
+  n.className = 'name name2'; n.onclick = () => nameEls[r].click();
+  grid.appendChild(n); name2Els[r] = n;
+});
 function paintCell(r, s) {
   const c = cells[r][s], v = pattern[TRACKS[r].id][s];
   c.classList.remove('v1', 'v2', 'v3'); if (v) c.classList.add('v' + v);
@@ -1315,6 +1330,7 @@ function renderNames() {
   TRACKS.forEach((tr, r) => {
     const label = (genre.labels && genre.labels[tr.id]) || tr.name;
     nameEls[r].innerHTML = `<b>${label}</b><small>T${r + 1} · ${MC.recipe(kitId, tr.id).machine}</small>`;
+    name2Els[r].innerHTML = `<b>${label}</b><small>T${r + 1}</small>`;
   });
 }
 
@@ -1480,6 +1496,35 @@ document.getElementById('clearBtn').onclick = () => {
   TRACKS.forEach(t => pattern[t.id].fill(0)); render(); say('Cleared. Not saved until you tap Save.');
 };
 playBtn.onclick = togglePlay;
+
+// ---------- fullscreen sequencer ----------
+const playCard = document.getElementById('playCard'), fsBtn = document.getElementById('fsBtn');
+const narrowPortrait = matchMedia('(orientation: portrait) and (max-width: 700px)');
+function layoutGrid() {
+  const split = playCard.classList.contains('fs') && narrowPortrait.matches;
+  grid.classList.toggle('split', split);
+  const place = (el, row, col) => { el.style.gridRow = split ? row : ''; el.style.gridColumn = split ? col : ''; };
+  place(grid.children[0], 1, 1);
+  numEls.forEach((n, s) => { place(n, s < 8 ? 1 : 8, 2 + s % 8); n.classList.toggle('half2', s >= 8); });
+  nameEls.forEach((n, r) => place(n, 2 + r, 1));
+  name2Els.forEach((n, r) => place(n, 9 + r, 1));
+  cells.forEach((row, r) => row.forEach((c, s) => place(c, 2 + r + (s < 8 ? 0 : 7), 2 + s % 8)));
+}
+function setFs(on) {
+  playCard.classList.toggle('fs', on); document.body.classList.toggle('fs-on', on);
+  fsBtn.textContent = on ? '✕ Exit fullscreen' : '⛶ Fullscreen';
+  try {
+    if (on && !document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+    if (!on && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  } catch {}
+  layoutGrid();
+  if (on) playCard.scrollTop = 0;
+  say(on ? (grid.classList.contains('split') ? 'Fullscreen: steps 1–8 on top, 9–16 below.' : 'Fullscreen on. Esc to exit.') : 'Fullscreen off.');
+}
+fsBtn.onclick = () => setFs(!playCard.classList.contains('fs'));
+narrowPortrait.addEventListener('change', layoutGrid);
+document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && playCard.classList.contains('fs')) setFs(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && playCard.classList.contains('fs')) setFs(false); });
 document.addEventListener('keydown', e => {
   if (e.code === 'Space' && !['INPUT', 'SELECT'].includes(e.target.tagName)) { e.preventDefault(); togglePlay(); }
 });
