@@ -119,6 +119,11 @@
   .variants button.on { color: #111; background: var(--on); border-color: var(--on); font-weight: 600; }
   .vnote { color: #c9cdd4; font-size: 13px; margin: 0 0 14px; min-height: 1.4em; max-width: 75ch; }
   .vnote b { color: var(--on); }
+  .vnote:empty { display: none; }
+  .steptext .lead { font-size: 15px; line-height: 1.5; margin-bottom: 10px; }
+  .steptext dl.sm { font-size: 13px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .steptext .tips { margin-top: 10px; font-size: 13px; color: #c9cdd4; }
+  .steptext .tips summary { cursor: pointer; color: var(--muted); font-weight: 600; }
   .row-muted { opacity: .35; }
   .row-pending { opacity: .15; }
   #buildBtn.on { background: hsl(var(--hue) 90% 60% / .18); border-color: var(--on); color: var(--on); }
@@ -137,6 +142,52 @@
   .arr-cell.on { background: hsl(var(--hue) 90% 60% / .5); }
   .arr-cell.now { outline: 1px solid #fff; outline-offset: 1px; }
   .arr-cell.on.now { background: var(--on); }
+  .arr-grid { gap: 2px; grid-template-columns: 112px repeat(var(--cols), minmax(3px, 1fr)); }
+  .arr-cell { height: 12px; border-radius: 2px; }
+  .arr-cell.first { box-shadow: -2px 0 0 var(--bg); }
+  .arr-grid .sec { font-size: 10px; font-weight: 700; color: var(--muted); background: #23272e; border-radius: 4px; padding: 3px 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; margin-bottom: 2px; }
+  .arr-grid .sec.peak { background: hsl(var(--hue) 90% 60% / .22); color: var(--text); }
+  .arr-grid .sec.low { background: #1b1e24; border: 1px dashed var(--line); }
+  .arr-grid .sec.cur { outline: 1px solid var(--on); color: var(--text); }
+  .chgs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; font-weight: 400; }
+  .chg { font-size: 12px; font-weight: 700; border-radius: 6px; padding: 2px 8px; }
+  .chg.add { background: hsl(140 60% 40% / .25); color: #7be39a; }
+  .chg.rem { background: hsl(0 70% 50% / .22); color: #ff8f8f; }
+  .chgs .enter { color: var(--muted); font-size: 13px; }
+  .arr-cap { font-weight: 600; font-size: 15px; }
+  .views button.on, .tabs button.on { color: var(--text); }
+  .st h2 { margin: 0 0 8px; font-size: 22px; letter-spacing: -.01em; }
+  .st h3 { margin: 0 0 8px; font-size: 17px; }
+  .st .lead { color: #c9cdd4; margin: 0 0 14px; max-width: 70ch; line-height: 1.5; }
+  .st .lead b { color: var(--text); }
+  .map { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 10px; }
+  .map th { text-align: left; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 0 8px 6px 0; }
+  .map td { padding: 8px 8px 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  .map td:nth-child(2) { font-weight: 700; color: var(--on); white-space: nowrap; }
+  .map td:first-child { color: var(--muted); white-space: nowrap; }
+  dl.sm { display: grid; grid-template-columns: max-content 1fr; gap: 8px 14px; margin: 0; font-size: 14px; line-height: 1.5; }
+  dl.sm dt { font-weight: 700; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; padding-top: 2px; }
+  dl.sm dd { margin: 0; }
+  .moves { margin: 0; padding-left: 20px; line-height: 1.5; font-size: 14px; }
+  .moves li { margin-bottom: 8px; }
+  .key { display: inline-block; font-size: 12px; font-weight: 700; background: #262a31; border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+  .formtabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .fstrip { display: flex; gap: 2px; margin: 6px 0 4px; }
+  .fstrip button { font: inherit; font-size: 11px; font-weight: 700; color: var(--muted); background: #23272e; border: 0; border-radius: 4px; padding: 10px 4px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .fstrip button.peak { background: hsl(var(--hue) 90% 60% / .3); color: var(--text); }
+  .fstrip button.low { background: #1b1e24; outline: 1px dashed var(--line); outline-offset: -1px; }
+  .fstrip button:hover { color: var(--text); } .fstrip button:active { transform: scale(.96); }
+  .fmeta { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .ftable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ftable td { padding: 8px 6px 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  .ftable td.n { font-weight: 700; white-space: nowrap; }
+  .ftable td.b { color: var(--muted); white-space: nowrap; }
+  .ftable .chg { font-size: 11px; margin: 0 4px 4px 0; display: inline-block; }
+  .ftable .why { color: #c9cdd4; margin-top: 2px; }
+  .ftable button { padding: 5px 10px; }
+  .fhear { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+  .fhear a { color: var(--on); }
+  @media (max-width: 560px) { dl.sm { grid-template-columns: 1fr; gap: 2px 0; } dl.sm dd { margin-bottom: 8px; } .ftable td.b { display: none; } }
 
   .legend { display: flex; flex-wrap: wrap; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 12px; align-items: center; }
   .legend i.dotkey { width: 7px; height: 7px; border-radius: 50%; background: #fff; border: 0; vertical-align: 1px; }
@@ -174,7 +225,7 @@
   .mcsvg .rollf { fill: hsl(var(--hue) 90% 55%); }
   .mcsvg .ctl.t4 .face { fill: #f4f5f6; stroke: hsl(var(--hue) 90% 38%); stroke-width: 4; }
   .mcsvg .ctl.t5 .face { fill: #e3e5e8; stroke: hsl(var(--hue) 90% 55%); stroke-width: 3; }
-  .steptext .flag { display: inline-block; margin: 0 0 8px; padding: 2px 8px; border-radius: 6px; background: #5a3a12; color: #ffc27a; font-size: 12px; font-weight: 700; }
+  .steptext .flag { display: inline-block; margin: 0 6px 4px 0; padding: 2px 8px; border-radius: 6px; background: #5a3a12; color: #ffc27a; font-size: 12px; font-weight: 700; }
   .steptext .mline { margin: 0 0 8px; color: var(--muted); font-size: 13px; } .steptext .mline b { color: var(--text); }
   .mcsvg .ctl.active .face { stroke: #e0372b; stroke-width: 3; }
   .mcsvg .ctl.sel .face { stroke: #111; stroke-width: 2.5; }
@@ -195,7 +246,7 @@
   .seq kbd.knob::before { content: 'turn '; color: var(--muted); font-weight: 400; }
   .steptext { color: #c9cdd4; font-size: 14px; max-width: 70ch; }
   .steptext p { margin: 6px 0 0; }
-  .steptext ul.knobs { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0 0 6px; }
+  .steptext ul.knobs { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 8px 0 6px; }
   .steptext ul.knobs li { background: #262a31; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-variant-numeric: tabular-nums; }
   .steptext ul.knobs b { color: var(--muted); font-size: 11px; margin-right: 6px; }
   .stepnav { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
@@ -208,7 +259,11 @@
 <div class="wrap">
   <header>
     <h1>Groove Lab</h1>
-    <span class="hint"><kbd>Space</kbd> play/stop · tap a step: soft → accent → roll → off (Hats: + open)</span>
+    <div class="tabs views" role="tablist">
+      <button id="viewGrooves" class="on" role="tab">Grooves</button>
+      <button id="viewStructure" role="tab">Song structure</button>
+    </div>
+    <span class="hint grooves-only"><kbd>Space</kbd> play/stop · tap a step: soft → accent → roll → off (Hats: + open)</span>
   </header>
 
   <nav class="genres" id="genres"></nav>
@@ -226,16 +281,17 @@
     </div>
     <div class="transport tsub">
       <label class="ctl">Kit <select id="kit"></select></label>
-      <button class="btn" id="buildBtn" title="Layers enter one at a time, every 2 bars">Build-up: off</button>
+      <button class="btn" id="buildBtn" title="Play the groove as a full track: sections add and remove parts">Arrange: off</button>
     </div>
     <div style="height:16px"></div>
     <div class="arr" id="arr" hidden>
       <div class="arr-cap" id="arrCap"></div>
       <div class="arr-grid" id="arrGrid"></div>
       <div class="arr-nav">
-        <button class="btn" id="prevLayer">◀ Previous layer</button>
-        <button class="btn" id="nextLayer">Next layer ▶</button>
-        <span class="hint">Click any bar in the timeline to jump there · <kbd>←</kbd> <kbd>→</kbd></span>
+        <button class="btn" id="prevLayer">◀ Section</button>
+        <button class="btn" id="nextLayer">Section ▶</button>
+        <button class="btn" id="arrLen" title="Switch between a quick demo and real section lengths"></button>
+        <span class="hint">Tap any bar to jump · <kbd>←</kbd> <kbd>→</kbd> · <a href="#" id="toStructure">How tracks are built →</a></span>
       </div>
     </div>
     <div class="variants" id="variants"></div>
@@ -256,6 +312,65 @@
       <span class="msg" id="msg"></span>
     </div>
   </section>
+
+  <div id="structure" hidden>
+    <section class="card st">
+      <h2>How electronic tracks are built</h2>
+      <p class="lead">Club tracks rarely have verses and choruses. They are built from <b>energy sections</b> that add and take away parts, always in blocks of 8, 16 or 32 bars. On this app and on the Cycles, <b>1 bar = 16 steps = one pattern</b>.</p>
+      <table class="map">
+        <thead><tr><th>Songwriting</th><th>Electronic</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td>Intro</td><td>DJ intro</td><td>Drums only, entering one by one, so a DJ can mix in</td></tr>
+          <tr><td>Verse</td><td>Groove</td><td>The full rhythm, but the top layer is held back</td></tr>
+          <tr><td>Pre-chorus</td><td>Build-up</td><td>Kick out, snare roll gets denser, tension rises</td></tr>
+          <tr><td>Chorus</td><td>Drop / main</td><td>Everything at once: the payoff</td></tr>
+          <tr><td>Bridge</td><td>Breakdown</td><td>Kick and bass removed, chords get the space</td></tr>
+          <tr><td>Outro</td><td>DJ outro</td><td>Mirror of the intro: parts leave, drums stay last</td></tr>
+        </tbody>
+      </table>
+      <p class="hint">Rap beats, synthwave and reggaeton keep the song form (verse / hook) because they carry a vocal.</p>
+    </section>
+
+    <section class="card st">
+      <h3>Count in phrases</h3>
+      <dl class="sm">
+        <dt>4 bars</dt><dd>The smallest unit. A loop that repeats 4 times feels complete.</dd>
+        <dt>8 bars</dt><dd>One phrase. Small changes happen here: a new hat, a fill.</dd>
+        <dt>16–32 bars</dt><dd>One section. Big changes happen here: kick out, drop.</dd>
+        <dt>Where</dt><dd>Changes land on bar <b>9, 17, 33, 65</b>: the first bar of a new block. Never on bar 7 or 13.</dd>
+        <dt>Signal</dt><dd>A fill in the last bar of a block tells the listener something is about to change.</dd>
+      </dl>
+    </section>
+
+    <section class="card st">
+      <h3>Tension by removal</h3>
+      <p class="lead">Taking a part away is as strong as adding one. The drop works because the kick was missing.</p>
+      <ol class="moves">
+        <li><b>Kick out.</b> The strongest move. 8–32 bars without kick make its return feel huge. <span class="key">[FUNC] + [T1]</span></li>
+        <li><b>Bass out, kick stays.</b> The track gets light and thin. Good for the last 8 bars of a groove section. <span class="key">[FUNC] + [T5]</span></li>
+        <li><b>Clap out in the groove.</b> Save the backbeat for the drop so it has something new. <span class="key">[FUNC] + [T2]</span></li>
+        <li><b>Down to one element.</b> Just hats or percussion for 4–8 bars before the build.</li>
+        <li><b>One beat of silence.</b> Mute everything on the last beat before the drop. The gap makes the hit land.</li>
+      </ol>
+    </section>
+
+    <section class="card st">
+      <h3>Five track shapes</h3>
+      <p class="lead">Pick a shape, tap a section to hear it. Bars are drawn to scale.</p>
+      <div class="formtabs" id="formTabs"></div>
+      <div id="formBody"></div>
+    </section>
+
+    <section class="card st">
+      <h3>On the Model:Cycles</h3>
+      <dl class="sm">
+        <dt>Live</dt><dd>Play one pattern and arrange with mutes: <span class="key">[FUNC] + [T1–6]</span>. Mutes stay when you change patterns.</dd>
+        <dt>Fills</dt><dd>Hold a trig in grid recording and turn <b>CHANCE</b> to set the condition <b>FILL</b>. Those trigs only play while you hold <span class="key">[PAGE]</span>. <span class="key">[TRACK] + [PAGE]</span> latches it.</dd>
+        <dt>Sections</dt><dd>One pattern per section: copy A01 to A02 (<span class="key">[FUNC] + [RECORD]</span>, then <span class="key">[FUNC] + [STOP]</span>), then clear the tracks the section does not use.</dd>
+        <dt>Chain</dt><dd>Hold <span class="key">[PATTERN]</span>, press the trig keys in order (press one twice to repeat it). Up to 64 patterns; the chain loops.</dd>
+      </dl>
+    </section>
+  </div>
 
   <section class="card mc" id="mc">
     <div class="mc-head">
@@ -1113,22 +1228,42 @@ const MC = (() => {
   const S = (title, seq, text, extra = {}) => ({ title, seq, text, ...extra });
   const hlOf = seq => [...new Set(seq.flat().map(t => t.replace(/^hold:/, '')))];
 
+  // Each step: a one-line lead (text), optional `more` rows [label, html] and optional `tips` (folded away).
   const BASICS = [
-    S('The layout', [['t1', 't2', 't3', 't4', 't5', 't6']], 'Six tracks, one sound each. Each track runs one of six FM machines: KICK, SNARE, METAL, PERC, TONE, CHORD. The 12 knobs always edit the <b>active</b> track (the red pad). The 16 trig keys are the 16 steps, exactly like the grid above.'),
-    S('Pick a pattern slot', [['pattern', 't1'], ['pattern', 'trig1']], '[PATTERN] + [T1] chooses bank A, then [PATTERN] + [TRIG 1] loads pattern A01. Pick an empty slot so you start from scratch.'),
-    S('Set the tempo', [['tempo'], ['level'], ['back']], 'Press [TEMPO] and turn LEVEL/DATA to the BPM. [BACK] closes the menu. Tap tempo: [FUNC] + [TEMPO].'),
-    S('Choose a track and machine', [['track', 't1'], ['machines'], ['level'], ['back']], '[TRACK] + [T1] selects track 1 without playing it (pressing just the pad plays the sound). [MACHINES] opens the machine list; turn LEVEL/DATA to choose; [BACK] to leave.'),
-    S('Shape the sound', [['pitch'], ['decay'], ['color', 'shape', 'sweep', 'contour']], 'PITCH and DECAY work the same on every machine. COLOR, SHAPE, SWEEP and CONTOUR change meaning per machine (e.g. on KICK, SWEEP is the pitch-drop depth; on TONE, SHAPE is the FM amount). Changed too much? Press [BACK] within ~3 s to undo.'),
-    S('Grid record: place trigs', [['record'], ['trig1', 'trig5', 'trig9', 'trig13'], ['play']], '[RECORD] turns red = grid recording. Tap trig keys to place hits (tap again to remove). [PLAY] to listen. [RECORD] again to leave.', { trigs: 'X...X...X...X...' }),
-    S('Soft hits: velocity', [['hold:trig3', 'level']], 'Hold a trig and turn LEVEL/DATA: the TRIG NOTE menu opens. Press LEVEL/DATA to switch between NOTE, VEL and LEN, set VEL ≈ 60–80 for a ghost note. This is the grid\'s "soft" state.', { trigs: '..x.............' }),
-    S('Parameter locks', [['hold:trig5', 'decay']], 'Hold a trig and turn any knob: that value now only applies to this step (the trig key blinks). Clear a step\'s locks: hold it and press [PLAY]. Lock trig without sound: [FUNC] + [TRIG].'),
-    S('Rolls: retrig a step', [['hold:trig16', 'retrig'], ['level']], 'Hold a trig and press [RETRIG]: the TRIG REPEAT menu. Set it ON, RTE 1/32 for doubles or 1/24 for triplet rolls. The FDE parameter fades the roll in or out. This is the grid\'s "roll" state.', { trigs: '...............r' }),
-    S('Swing and nudge', [['swing'], ['hold:trig8', 'swing']], 'SWING is per track, 50–80% (same numbers as this app). Hold [TRACK] while turning to set every track at once. Hold a trig and turn SWING to nudge just that step early or late.'),
-    S('Chance and conditions', [['chance'], ['hold:trig9', 'chance']], 'CHANCE sets the probability that the track\'s trigs play. Hold a trig and turn CHANCE for a trig condition: 1:2 (every other bar), FILL (only during a fill), etc.'),
-    S('Perform: mute, fill, change all', [['func', 't3'], ['page'], ['track', 'decay']], '[FUNC] + [T3] mutes track 3. Hold [PAGE] while playing for a fill. Hold [TRACK] and turn a knob to move that parameter on all tracks.'),
-    S('Copy & paste trigs', [['hold:trig3', 'record'], ['hold:trig7', 'stop']], 'In grid recording: hold a trig and press [RECORD] to copy it, <b>with all its locks</b> (velocity, open-hat decay, retrig). Hold the target trig and press [STOP] to paste. Hold several trigs to copy a whole figure. Press the same keys again to undo.', { trigs: '..O...O.........' }),
-    S('Copy tracks, presets and patterns', [['func', 'record'], ['pattern', 'trig2'], ['func', 'stop']], '<b>Pattern</b> (grid recording off): [FUNC] + [RECORD] copies the whole pattern, pick another slot with [PATTERN] + [TRIG], then [FUNC] + [STOP] pastes. <b>Track</b>: the same keys with grid recording on copy only the active track. <b>Sound only</b>: [TRACK] + [RECORD] copies the active track\'s preset, select another track, [TRACK] + [STOP] pastes it. [FUNC] + [PLAY] clears. The clipboard holds one thing at a time.'),
-    S('Save your work', [['func', 'settings'], ['settings']], '[FUNC] + [SETTINGS] = temporary save (snapshot you can go back to with [FUNC] + [PATTERN]). To keep it for good: [SETTINGS] → PATTERN → SAVE.'),
+    S('The layout', [['t1', 't2', 't3', 't4', 't5', 't6']], 'Six tracks, one sound each. The 12 knobs edit the <b>active</b> track (the red pad).', { more: [
+      ['Tracks', 'T1 KICK · T2 SNARE · T3 METAL · T4 PERC · T5 TONE · T6 CHORD'],
+      ['Steps', 'The 16 trig keys are the 16 steps, exactly like the grid above.'] ] }),
+    S('Pick a pattern slot', [['pattern', 't1'], ['pattern', 'trig1']], 'Choose an empty slot so you start from scratch.', { more: [
+      ['Bank', '[PATTERN] + [T1] = bank A'], ['Pattern', '[PATTERN] + [TRIG 1] = pattern A01'] ] }),
+    S('Set the tempo', [['tempo'], ['level'], ['back']], '[TEMPO], turn LEVEL/DATA to the BPM, [BACK].', { more: [['Tap tempo', '[FUNC] + [TEMPO]']] }),
+    S('Choose a track and machine', [['track', 't1'], ['machines'], ['level'], ['back']], '[TRACK] + [T1] selects track 1 without playing it.', { more: [
+      ['Machine', '[MACHINES], turn LEVEL/DATA, [BACK]'], ['Note', 'Pressing just the pad plays the sound instead.'] ] }),
+    S('Shape the sound', [['pitch'], ['decay'], ['color', 'shape', 'sweep', 'contour']], 'PITCH and DECAY work the same everywhere; the other four change per machine.', { more: [
+      ['Example', 'On KICK, SWEEP is the pitch-drop depth. On TONE, SHAPE is the FM amount.'], ['Undo', 'Press [BACK] within ~3 s.'] ] }),
+    S('Grid record: place trigs', [['record'], ['trig1', 'trig5', 'trig9', 'trig13'], ['play']], '[RECORD] turns red = grid recording. Tap trig keys to place hits.', { trigs: 'X...X...X...X...', more: [
+      ['Remove', 'Tap the trig again.'], ['Listen', '[PLAY]. [RECORD] again to leave grid recording.'] ] }),
+    S('Soft hits: velocity', [['hold:trig3', 'level']], 'Hold a trig and turn LEVEL/DATA to set its velocity. This is the grid\'s "soft" state.', { trigs: '..x.............', more: [
+      ['Menu', 'Press LEVEL/DATA to switch NOTE → VEL → LEN.'], ['Ghost note', 'VEL ≈ 60–80'] ] }),
+    S('Parameter locks', [['hold:trig5', 'decay']], 'Hold a trig and turn any knob: that value applies only to this step.', { more: [
+      ['Clear', 'Hold the trig and press [PLAY].'], ['Silent lock', '[FUNC] + [TRIG] places a lock trig without sound.'] ] }),
+    S('Rolls: retrig a step', [['hold:trig16', 'retrig'], ['level']], 'Hold a trig and press [RETRIG], set it ON. This is the grid\'s "roll" state.', { trigs: '...............r', more: [
+      ['Rate', 'RTE 1/32 for doubles, 1/24 for triplet rolls'], ['Fade', 'FDE fades the roll in or out.'] ] }),
+    S('Swing and nudge', [['swing'], ['hold:trig8', 'swing']], 'SWING is per track, 50–80% (same numbers as this app).', { more: [
+      ['All tracks', 'Hold [TRACK] while turning.'], ['One step', 'Hold a trig and turn SWING to nudge it.'] ] }),
+    S('Chance and conditions', [['chance'], ['hold:trig9', 'chance']], 'CHANCE sets how likely the track\'s trigs play.', { more: [
+      ['Conditions', 'Hold a trig and turn CHANCE: 1:2 = every other bar, FILL = only during a fill.'] ] }),
+    S('Perform: mute, fill, change all', [['func', 't3'], ['page'], ['track', 'decay']], 'Three live moves while the pattern plays.', { more: [
+      ['Mute', '[FUNC] + [T3] mutes track 3.'], ['Fill', 'Hold [PAGE]. [TRACK] + [PAGE] latches it.'], ['All tracks', 'Hold [TRACK] and turn a knob.'] ] }),
+    S('Chain patterns', [['hold:pattern', 'trig1', 'trig2', 'trig3']], 'Hold [PATTERN], press the trig keys in the order they should play.', { more: [
+      ['Repeat', 'Press the same trig again to play a pattern twice.'], ['Length', 'Up to 64 patterns; the chain loops.'], ['Other banks', 'Press [T1–6], then [TRIG], while holding [PATTERN].'],
+      ['Use', 'One pattern per section (intro, groove, drop…) turns a loop into a track. See Song structure at the top.'] ] }),
+    S('Copy & paste trigs', [['hold:trig3', 'record'], ['hold:trig7', 'stop']], 'Hold a trig + [RECORD] copies it, hold the target + [STOP] pastes.', { trigs: '..O...O.........', more: [
+      ['Includes', 'All its locks: velocity, open-hat decay, retrig.'], ['Several', 'Hold several trigs to copy a whole figure.'], ['Undo', 'Press the same keys again.'] ] }),
+    S('Copy tracks, presets and patterns', [['func', 'record'], ['pattern', 'trig2'], ['func', 'stop']], '[FUNC] + [RECORD] copies, [FUNC] + [STOP] pastes, [FUNC] + [PLAY] clears.', { more: [
+      ['Pattern', 'Grid recording <b>off</b>. Copy, pick a slot with [PATTERN] + [TRIG], paste.'], ['Track', 'Same keys with grid recording <b>on</b>: only the active track.'],
+      ['Sound', '[TRACK] + [RECORD] copies the preset, select another track, [TRACK] + [STOP].'], ['Clipboard', 'Holds one thing at a time.'] ] }),
+    S('Save your work', [['func', 'settings'], ['settings']], '[FUNC] + [SETTINGS] = quick snapshot.', { more: [
+      ['Go back', '[FUNC] + [PATTERN] returns to the snapshot.'], ['Keep for good', '[SETTINGS] → PATTERN → SAVE'] ] }),
   ];
 
   const POS = ['', 'first', 'second', 'third', 'fourth'];
@@ -1138,7 +1273,9 @@ const MC = (() => {
   function genreSteps(g, pattern, labelOf, TRACKS, kitId, bpm, swing) {
     const out = [];
     const changes = TRACKS.map((tr, i) => pattern[tr.id].some(v => v) && recipe(kitId, tr.id).machine !== DEFAULT[i] ? `T${i + 1}` : null).filter(Boolean);
-    out.push(S('Start a fresh pattern', [['pattern', 't1'], ['pattern', 'trig1']], `Pick an empty slot: [PATTERN] + [T1] (bank A), then [PATTERN] + a free [TRIG]. A fresh pattern already has KICK, SNARE, METAL, PERC, TONE, CHORD on T1–T6, the same order as the grid rows. ${changes.length ? `In this groove only <b>${changes.join(', ')}</b> needs a different machine; that step is flagged.` : 'This groove needs <b>no machine changes</b>.'} Everything below programs <b>${g.name}</b> as it is on the grid right now, including your edits.`, { sec: 'Setup' }));
+    out.push(S('Start a fresh pattern', [['pattern', 't1'], ['pattern', 'trig1']], '[PATTERN] + [T1] (bank A), then [PATTERN] + a free [TRIG].', { sec: 'Setup', more: [
+      ['Machines', `A fresh pattern has KICK, SNARE, METAL, PERC, TONE, CHORD on T1–T6, the same order as the grid. ${changes.length ? `Only <b>${changes.join(', ')}</b> needs a different machine (flagged).` : '<b>No machine changes</b> needed.'}`],
+      ['Source', `Programs <b>${g.name}</b> as it is on the grid now, including your edits.`] ] }));
     out.push(S(`Tempo: ${bpm} BPM`, [['tempo'], ['level'], ['back']], `[TEMPO], turn LEVEL/DATA to <b>${bpm}</b>, [BACK].`, { sec: 'Setup', screen: `BPM ${bpm}.0` }));
     out.push(S('Grid recording on', [['record']], 'Press [RECORD]. It lights red and stays on for all the tracks below.', { sec: 'Setup', screen: 'GRID REC' }));
     TRACKS.forEach((tr, i) => {
@@ -1149,25 +1286,28 @@ const MC = (() => {
       p.forEach((v, s) => { if (v === 1 || v === 5) soft.push(s); if (v === 3) roll.push(s); if (v >= 4) open.push(s); });
       const changed = r.machine !== DEFAULT[i];
       if (changed) out.push(S(`Change machine: T${n} ${DEFAULT[i]} → ${r.machine}`, [['track', t], ['machines'], ['level'], ['back']],
-        `<p class="flag">Differs from the fresh-pattern default.</p>[TRACK] + [T${n}], then [MACHINES] and turn LEVEL/DATA from ${DEFAULT[i]} to <b>${r.machine}</b>. [BACK] to close.`, { sec, screen: r.machine }));
+        `<span class="flag">Differs from the default</span> [TRACK] + [T${n}], [MACHINES], turn LEVEL/DATA to <b>${r.machine}</b>, [BACK].`, { sec, screen: r.machine }));
+      const tips = [...r.tips]; if (tr.id === 'chord' && g.harmony) tips.push(g.harmony);
       out.push(S(`T${n} · ${name}: dial in the sound`, [['track', t], r.knobs.map(([k]) => k)],
-        `<p class="mline">${changed ? `Machine: <b>${r.machine}</b> (changed in the step before)` : `Machine: <b>${r.machine}</b> · default, nothing to change`}</p>
-        <ul class="knobs">${r.knobs.map(([k, v]) => `<li><b>${NAME(k)}</b> ${v}</li>`).join('')}</ul>${r.tips.map(x => `<p>${x}</p>`).join('')}${tr.id === 'chord' && g.harmony ? `<p>${g.harmony}</p>` : ''}`,
-        { sec, values: Object.fromEntries(r.knobs.filter(([, v]) => String(v).length < 7)), screen: r.machine, track: t }));
-      const all = p.map((v, s) => v ? s : -1).filter(s => s >= 0);
-      let txt = `Tap trig keys <b>${stepWords(all)}</b>.`;
-      if (open.length) txt += `<p>Open hats on <b>${stepWords(open)}</b>: hold step ${open[0] + 1} and turn DECAY to ≈ ${r.openDecay}. That parameter lock makes the hit ring open; the next closed hat cuts it off, just like a real hi-hat.${open.length > 1 ? ` <b>Copy/paste the rest:</b> hold step ${open[0] + 1} + [RECORD], then ${open.slice(1).map(x => `hold step ${x + 1} + [STOP]`).join(', ')}.` : ''}</p>`;
-      if (soft.length) txt += `<p>Soft hits on <b>${stepWords(soft)}</b>: hold them all at once and turn LEVEL/DATA → VEL ≈ 70 (press LEVEL/DATA to get from NOTE to VEL). Or set one and copy it: hold trig + [RECORD], hold target + [STOP].</p>`;
-      if (roll.length) txt += `<p>Rolls on <b>${stepWords(roll)}</b>: hold the trig, press [RETRIG], set ON and RTE 1/32 (or 1/24 for a triplet roll).</p>`;
-      out.push(S(`T${n} · ${name}: place the trigs`, [all.map(s => 'trig' + (s + 1))], txt, { sec, trigs: p, track: t }));
+        `[TRACK] + [T${n}], then set the knobs. Machine <b>${r.machine}</b>${changed ? '' : ' (default)'}.<ul class="knobs">${r.knobs.map(([k, v]) => `<li><b>${NAME(k)}</b> ${v}</li>`).join('')}</ul>`,
+        { sec, tips, values: Object.fromEntries(r.knobs.filter(([, v]) => String(v).length < 7)), screen: r.machine, track: t }));
+      const all = p.map((v, s) => v ? s : -1).filter(s => s >= 0), more = [];
+      if (open.length) more.push(['Open hats', `Steps <b>${stepWords(open)}</b>: hold step ${open[0] + 1} and turn DECAY to ≈ ${r.openDecay}. The next closed hat cuts it off.`]);
+      if (open.length > 1) more.push(['Copy', `Hold step ${open[0] + 1} + [RECORD], then ${open.slice(1).map(x => `hold ${x + 1} + [STOP]`).join(', ')}.`]);
+      if (soft.length) more.push(['Soft', `Steps <b>${stepWords(soft)}</b>: hold them together, turn LEVEL/DATA → VEL ≈ 70.`]);
+      if (roll.length) more.push(['Rolls', `Steps <b>${stepWords(roll)}</b>: hold the trig, [RETRIG], ON, RTE 1/32 (1/24 = triplet).`]);
+      out.push(S(`T${n} · ${name}: place the trigs`, [all.map(s => 'trig' + (s + 1))], `Tap trig keys <b>${stepWords(all)}</b>.`, { sec, trigs: p, track: t, more }));
     });
     out.push(S(swing > 50 ? `Swing: ${swing}% on every track` : 'Swing: leave it at 50%', [['hold:track', 'swing']],
-      swing > 50 ? `Hold [TRACK] and turn SWING to <b>${swing}%</b>: CONTROL ALL sets it on every track at once. Swing only moves the even 16ths, the same as in this app.`
-        : 'This groove is straight. SWING stays at its default 50%.', { sec: 'Finish', values: { swing: swing + '%' } }));
-    out.push(S('Listen', [['record'], ['play']], 'Press [RECORD] to leave grid recording, then [PLAY]. Use [FUNC] + [T1–6] to mute tracks and hear how the layers stack, like the build-up view above.', { sec: 'Finish' }));
-    out.push(S('Save it', [['func', 'settings'], ['settings']], '[FUNC] + [SETTINGS] for a quick snapshot. [SETTINGS] → PATTERN → SAVE to keep it in the project.', { sec: 'Finish' }));
-    out.push(S('Next pattern: a variant', [['func', 'record'], ['pattern', 'trig2'], ['func', 'stop']],
-      'Copy this pattern to the next slot and only change what differs: with grid recording off, [FUNC] + [RECORD], then [PATTERN] + [TRIG 2], then [FUNC] + [STOP]. Pick a "Spice it up" variant above and program just the dotted steps. Switching between the two slots while playing is an instant arrangement.', { sec: 'Finish' }));
+      swing > 50 ? `Hold [TRACK] and turn SWING to <b>${swing}%</b>: sets every track at once.` : 'This groove is straight. SWING stays at 50%.',
+      { sec: 'Finish', values: { swing: swing + '%' }, tips: swing > 50 ? ['Swing only moves the even 16ths, the same as in this app.'] : [] }));
+    out.push(S('Listen', [['record'], ['play']], '[RECORD] to leave grid recording, then [PLAY].', { sec: 'Finish', more: [
+      ['Arrange', '[FUNC] + [T1–6] mutes tracks: take the kick out for a breakdown, bring it back for the drop.'] ] }));
+    out.push(S('Save it', [['func', 'settings'], ['settings']], '[FUNC] + [SETTINGS] for a quick snapshot.', { sec: 'Finish', more: [['Keep', '[SETTINGS] → PATTERN → SAVE']] }));
+    out.push(S('Next pattern: a variant', [['func', 'record'], ['pattern', 'trig2'], ['func', 'stop']], 'Copy this pattern to the next slot and change only what differs.', { sec: 'Finish', more: [
+      ['Copy', 'Grid recording off: [FUNC] + [RECORD], [PATTERN] + [TRIG 2], [FUNC] + [STOP].'],
+      ['Change', 'Pick a "Spice it up" variant above and program just the dotted steps.'],
+      ['Chain', 'Hold [PATTERN] and press [TRIG 1], [TRIG 2] to play them in turn.'] ] }));
     return out;
   }
 
@@ -1215,7 +1355,13 @@ function schedule() {
   while (nextTime < ctx.currentTime + 0.1) {
     const d = stepDur();
     const t = nextTime + (step % 2 ? (2 * +swingEl.value / 100 - 1) * d : 0);
-    TRACKS.forEach(tr => { const v = pattern[tr.id][step]; if (v && !muted[tr.id] && layerOn(tr.id, bar)) Engine.play(tr.id, v, t, d); });
+    const fill = fillAt(bar);
+    TRACKS.forEach(tr => {
+      if (muted[tr.id]) return;
+      if (tr.id === 'snare' && fill) { if (fill[step]) Engine.play('snare', fill[step], t, d); return; }   // build-up roll
+      const v = pattern[tr.id][step];
+      if (v && layerOn(tr.id, bar)) Engine.play(tr.id, v, t, d);
+    });
     queue.push({ step, bar, t });
     nextTime += d; step = (step + 1) % STEPS;
     if (step === 0) bar++;
@@ -1231,9 +1377,64 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-// ---------- build-up mode: layers enter one by one ----------
-const BARS_PER_LAYER = 2, HOLD_BARS = 4;
-let buildMode = false, layers = [], cursorBar = 0;   // cursorBar = bar shown in the timeline
+// ---------- arrangement mode: the groove played as a full track, sections add AND remove parts ----------
+// Section fields: bars (real length), on (tracks playing), build (enter one by one), strip (leave one by one),
+// fill (snare roll in the last 2 bars), song (the songwriting equivalent).
+const ALL = ['kick', 'snare', 'hat', 'perc', 'bass', 'chord'];
+const FORMS = {
+  club: { name: 'Club track', who: 'House, techno, garage, breaks', sections: [
+    { name: 'Intro', song: 'Intro', bars: 32, on: ['kick', 'hat', 'perc'], build: true, note: 'Drums only, entering one by one, so a DJ can mix the track in. Nothing melodic yet.' },
+    { name: 'Groove', song: 'Verse', bars: 32, on: ['kick', 'snare', 'hat', 'perc', 'bass'], note: 'Bass and clap complete the groove: the main idea, but not the top layer yet.' },
+    { name: 'Breakdown', song: 'Bridge', bars: 16, on: ['hat', 'perc', 'chord'], note: 'Kick and bass are taken out. The low end disappears and the chords get the space.' },
+    { name: 'Build-up', song: 'Pre-chorus', bars: 8, on: ['snare', 'hat', 'chord'], fill: true, note: 'Tension: a snare roll gets denser toward the drop. The kick is still waiting.' },
+    { name: 'Drop', song: 'Chorus', bars: 32, on: ALL, note: 'Everything at once. The kick returns after 24 bars away: that is the payoff.' },
+    { name: 'Outro', song: 'Outro', bars: 32, on: ['kick', 'hat'], strip: true, note: 'Mirror of the intro: chords and bass leave first, drums last, so the next track can be mixed in.' },
+  ] },
+  slow: { name: 'Long-form club track', who: 'Organic house, downtempo', sections: [
+    { name: 'Intro', song: 'Intro', bars: 32, on: ['perc', 'hat', 'kick'], build: true, note: 'Percussion first, the kick last. Slow genres take their time to set the mood.' },
+    { name: 'Groove', song: 'Verse', bars: 32, on: ['kick', 'snare', 'hat', 'perc', 'bass'], note: 'The full rhythm section. Melodies usually start here, one at a time.' },
+    { name: 'Breakdown', song: 'Bridge', bars: 32, on: ['perc', 'hat', 'chord'], note: 'A long melodic breakdown: the percussion keeps moving while kick and bass rest. Organic house lives on these.' },
+    { name: 'Build-up', song: 'Pre-chorus', bars: 16, on: ['perc', 'hat', 'snare', 'chord'], fill: true, note: 'A slow build with a roll at the end. Longer than in techno: the release feels bigger.' },
+    { name: 'Main', song: 'Chorus', bars: 32, on: ALL, note: 'Everything together: the emotional peak of the track.' },
+    { name: 'Outro', song: 'Outro', bars: 32, on: ['kick', 'perc'], strip: true, note: 'Parts leave one by one until only kick and percussion are left for the next mix.' },
+  ] },
+  bass: { name: 'Bass-music track', who: 'Drum & bass, jungle, dubstep', sections: [
+    { name: 'Intro', song: 'Intro', bars: 24, on: ['hat', 'perc', 'chord'], build: true, note: 'Atmosphere first: hats and pads, no kick. Everything is timed so the drop lands on bar 33.' },
+    { name: 'Build-up', song: 'Pre-chorus', bars: 8, on: ['snare', 'hat', 'chord'], fill: true, note: 'The roll before the drop. In DnB and dubstep the drop is the chorus.' },
+    { name: 'Drop 1', song: 'Chorus', bars: 32, on: ALL, note: 'Kick, snare and bass hit together for the first time.' },
+    { name: 'Breakdown', song: 'Bridge', bars: 16, on: ['hat', 'chord'], note: 'Back to the atmosphere: a breather between the two drops.' },
+    { name: 'Build-up', song: 'Pre-chorus', bars: 8, on: ['snare', 'hat', 'chord'], fill: true, note: 'Second build: often shorter or with a twist to surprise.' },
+    { name: 'Drop 2', song: 'Chorus', bars: 32, on: ALL, note: 'Same energy, usually with variations. Try a "Spice it up" variant here.' },
+    { name: 'Outro', song: 'Outro', bars: 16, on: ['kick', 'hat'], strip: true, note: 'Strip it back for the DJ.' },
+  ] },
+  rap: { name: 'Rap beat', who: 'Trap, drill, boom bap', sections: [
+    { name: 'Intro', song: 'Intro', bars: 4, on: ['chord', 'hat'], note: 'A few bars of the loop before the vocal comes in.' },
+    { name: 'Hook', song: 'Chorus', bars: 8, on: ALL, note: 'The hook is the chorus: the full beat.' },
+    { name: 'Verse 1', song: 'Verse', bars: 16, on: ['kick', 'snare', 'hat', 'bass'], note: 'The beat thins so the rap is clear: the chords drop out.' },
+    { name: 'Hook', song: 'Chorus', bars: 8, on: ALL, note: 'Full beat again.' },
+    { name: 'Verse 2', song: 'Verse', bars: 16, on: ['kick', 'snare', 'hat', 'bass', 'perc'], note: 'Second verse, slightly different from the first (here: perc instead of chords).' },
+    { name: 'Hook', song: 'Chorus', bars: 8, on: ALL, note: 'Last hook.' },
+    { name: 'Outro', song: 'Outro', bars: 4, on: ['chord'], strip: true, note: 'The beat falls away and the loop fades.' },
+  ] },
+  song: { name: 'Song form', who: 'Synthwave, deep reggaeton', sections: [
+    { name: 'Intro', song: 'Intro', bars: 8, on: ['chord', 'hat'], note: 'Chords and hats set the mood.' },
+    { name: 'Verse', song: 'Verse', bars: 16, on: ['kick', 'snare', 'hat', 'bass'], note: 'Drums and bass carry the verse; the chords step back.' },
+    { name: 'Pre-chorus', song: 'Pre-chorus', bars: 8, on: ['kick', 'snare', 'hat', 'bass', 'chord'], fill: true, note: 'Chords return and a fill lifts into the chorus.' },
+    { name: 'Chorus', song: 'Chorus', bars: 16, on: ALL, note: 'Everything: the part people remember.' },
+    { name: 'Verse', song: 'Verse', bars: 16, on: ['kick', 'snare', 'hat', 'bass'], note: 'Back down for verse 2.' },
+    { name: 'Pre-chorus', song: 'Pre-chorus', bars: 8, on: ['kick', 'snare', 'hat', 'bass', 'chord'], fill: true, note: 'Same lift as before.' },
+    { name: 'Chorus', song: 'Chorus', bars: 16, on: ALL, note: 'Second chorus.' },
+    { name: 'Bridge', song: 'Bridge', bars: 8, on: ['chord', 'perc'], note: 'Something different: drums out, only chords and a little percussion.' },
+    { name: 'Chorus', song: 'Chorus', bars: 16, on: ALL, note: 'Final chorus, the biggest moment.' },
+    { name: 'Outro', song: 'Outro', bars: 8, on: ['chord'], strip: true, note: 'Fade on the chords.' },
+  ] },
+};
+const FORM_OF = { organic: 'slow', downtempo: 'slow', dnb: 'bass', jungle: 'bass', dubstep: 'bass',
+  trap: 'rap', drill: 'rap', boombap: 'rap', synthwave: 'song', reggaeton: 'song' };   // everything else: club
+const formOf = id => FORMS[FORM_OF[id] || 'club'];
+const EXIT_ORDER = ['chord', 'bass', 'snare', 'perc', 'hat', 'kick'];
+
+let buildMode = false, cursorBar = 0, shortDemo = true, plan = null;
 const labelOf = id => {
   const L = genre.labels || {};
   if (id === 'chh' || id === 'ohh') id = 'hat';
@@ -1241,48 +1442,67 @@ const labelOf = id => {
   return L[id] || TRACKS.find(t => t.id === id).name;
 };
 const hasHits = id => pattern[id] && pattern[id].some(v => v);
-function computeLayers() {
-  const list = [];
-  (genre.build || []).forEach(([id, note]) => {
-    if (id === 'chh' || id === 'ohh') id = 'hat';
-    if (hasHits(id) && !list.some(l => l.id === id)) list.push({ id, note });
+function planArrangement() {
+  const form = formOf(genre.id), notes = {}, entry = [];
+  (genre.build || []).forEach(([id, n]) => { if (id === 'chh' || id === 'ohh') id = 'hat'; if (!notes[id]) { notes[id] = n; entry.push(id); } });
+  TRACKS.forEach(t => { if (!entry.includes(t.id)) entry.push(t.id); });
+  const secs = [], bars = [];
+  let prev = new Set();
+  form.sections.forEach(sec => {
+    const len = shortDemo ? Math.max(2, Math.round(sec.bars / 4)) : sec.bars, start = bars.length;
+    let target = sec.on.filter(hasHits);
+    if (!target.length) target = ['chord', 'perc', 'hat', 'kick'].filter(hasHits).slice(0, 1);
+    for (let b = 0; b < len; b++) {
+      let set;
+      if (sec.build) { const order = entry.filter(id => target.includes(id)); set = order.slice(0, Math.min(order.length, Math.floor(b / (len / order.length)) + 1)); }
+      else if (sec.strip) { const leaving = EXIT_ORDER.filter(id => prev.has(id) && !target.includes(id)); const k = Math.min(leaving.length, Math.floor(b / (len / (leaving.length + 1)))); set = [...prev].filter(id => !leaving.slice(0, k).includes(id)); }
+      else set = target;
+      bars.push({ sec: secs.length, inSec: b, active: new Set(set) });
+    }
+    secs.push({ ...sec, start, len });
+    prev = bars[bars.length - 1].active;
   });
-  TRACKS.map(t => t.id).forEach(id => {
-    if (hasHits(id) && !list.some(l => l.id === id)) list.push({ id, note: `${labelOf(id)} comes in` });
-  });
-  layers = list;
+  plan = { form, secs, bars, notes };
 }
-const totalBars = () => layers.length * BARS_PER_LAYER + HOLD_BARS;
-function layerOn(id, b) {
-  if (!buildMode) return true;
-  const i = layers.findIndex(l => l.id === id);
-  return i < 0 || (b % totalBars()) >= i * BARS_PER_LAYER;
+const totalBars = () => plan.bars.length;
+function layerOn(id, b) { return !buildMode || plan.bars[b % totalBars()].active.has(id); }
+const FILL = [parse('x.x.x.x.x.x.x.x.'), parse('XxXxXxXxrrrrrrrr')];
+function fillAt(b) {
+  if (!buildMode) return null;
+  const x = plan.bars[b % totalBars()], sec = plan.secs[x.sec];
+  if (!sec.fill) return null;
+  const left = sec.len - x.inSec;
+  return left === 2 ? FILL[0] : left === 1 ? FILL[1] : null;
 }
 function renderArrangement() {
-  computeLayers();
-  const g = document.getElementById('arrGrid'), n = totalBars();
+  planArrangement();
+  const g = document.getElementById('arrGrid'), n = totalBars(), rows = TRACKS.filter(t => hasHits(t.id));
   g.style.setProperty('--cols', n);
-  let html = '<div></div>' + Array.from({ length: n }, (_, b) => `<div class="bar" data-bar="${b}">${b % 2 === 0 ? b + 1 : ''}</div>`).join('');
-  layers.forEach((l, i) => {
-    html += `<div class="lbl">${labelOf(l.id)}</div>`;
-    for (let b = 0; b < n; b++) html += `<div class="arr-cell${b >= i * BARS_PER_LAYER ? ' on' : ''}" data-bar="${b}"></div>`;
+  let html = `<div style="grid-row:1;grid-column:1"></div>`;
+  plan.secs.forEach((s, i) => html += `<div class="sec${s.song === 'Chorus' ? ' peak' : s.song === 'Bridge' ? ' low' : ''}" style="grid-row:1;grid-column:${s.start + 2} / span ${s.len}" data-bar="${s.start}" title="${s.name}">${s.name}</div>`);
+  rows.forEach((t, ri) => {
+    html += `<div class="lbl" style="grid-row:${ri + 2};grid-column:1">${labelOf(t.id)}</div>`;
+    plan.bars.forEach((x, b) => html += `<div class="arr-cell${x.active.has(t.id) ? ' on' : ''}${x.inSec === 0 && b ? ' first' : ''}" data-bar="${b}" style="grid-row:${ri + 2};grid-column:${b + 2}"></div>`);
   });
   g.innerHTML = html;
+  document.getElementById('arrLen').textContent = shortDemo ? 'Short demo (¼ length)' : 'Real length';
 }
 function showBuild(b) {
-  const n = totalBars(), pos = b % n;
+  const n = totalBars(), pos = ((b % n) + n) % n, x = plan.bars[pos], sec = plan.secs[x.sec];
   cursorBar = pos;
-  const idx = Math.min(layers.length - 1, Math.floor(pos / BARS_PER_LAYER));
-  const cap = document.getElementById('arrCap');
-  if (pos < layers.length * BARS_PER_LAYER) {
-    const l = layers[idx];
-    cap.innerHTML = `<small>Bars ${idx * 2 + 1}–${idx * 2 + 2} · layer ${idx + 1} of ${layers.length} · ${idx === 0 ? 'starts' : '+'} ${labelOf(l.id)}</small>${l.note}`;
-  } else {
-    cap.innerHTML = `<small>Bars ${layers.length * 2 + 1}–${n} · full groove</small>Everything together, then it starts again from the first layer`;
-  }
+  // what changed most recently in this section (or when it started)
+  let k = pos; while (k > sec.start && plan.bars[k - 1].active.size === plan.bars[k].active.size && [...plan.bars[k].active].every(id => plan.bars[k - 1].active.has(id))) k--;
+  const before = k > 0 ? plan.bars[k - 1].active : new Set(), now = plan.bars[k].active;
+  const added = [...now].filter(id => !before.has(id)), removed = [...before].filter(id => !now.has(id));
+  const real = shortDemo ? ` (in a real track: ${sec.bars} bars)` : '';
+  const chips = [...added.map(id => `<span class="chg add" title="${plan.notes[id] || ''}">+ ${labelOf(id)}</span>`), ...removed.map(id => `<span class="chg rem">− ${labelOf(id)}</span>`)].join('');
+  const entering = sec.build && added.length === 1 && plan.notes[added[0]] ? `<span class="enter">${plan.notes[added[0]]}</span>` : '';
+  document.getElementById('arrCap').innerHTML = `<small>${sec.name} · like a ${sec.song.toLowerCase()} · bar ${pos - sec.start + 1} of ${sec.len}${real}</small>${sec.note}
+    ${chips || entering ? `<div class="chgs">${chips}${entering}</div>` : ''}`;
   document.querySelectorAll('.arr-cell').forEach(c => c.classList.toggle('now', +c.dataset.bar === pos));
+  document.querySelectorAll('#arrGrid .sec').forEach(c => c.classList.toggle('cur', +c.dataset.bar === sec.start));
   TRACKS.forEach((tr, r) => {
-    const on = layerOn(tr.id, b);
+    const on = layerOn(tr.id, pos);
     nameEls[r].classList.toggle('row-pending', !on);
     cells[r].forEach(c => c.classList.toggle('row-pending', !on));
   });
@@ -1292,10 +1512,9 @@ function clearBuild() {
   document.querySelectorAll('.arr-cell.now').forEach(c => c.classList.remove('now'));
 }
 function refreshBuild() {
-  const arr = document.getElementById('arr');
-  arr.hidden = !buildMode;
+  document.getElementById('arr').hidden = !buildMode;
   const btn = document.getElementById('buildBtn');
-  btn.textContent = `Build-up: ${buildMode ? 'on' : 'off'}`; btn.classList.toggle('on', buildMode);
+  btn.textContent = `Arrange: ${buildMode ? 'on' : 'off'}`; btn.classList.toggle('on', buildMode);
   if (!buildMode) { clearBuild(); return; }
   renderArrangement();
   showBuild(playing ? bar : cursorBar);
@@ -1307,22 +1526,93 @@ function jumpTo(b) {
   if (playing) { bar = b; step = 0; queue.length = 0; nextTime = Engine.ctx.currentTime + 0.05; }
   showBuild(b);
 }
-const layerStart = pos => Math.floor(pos / BARS_PER_LAYER) * BARS_PER_LAYER;
+const secIndex = () => plan.bars[cursorBar].sec;
 document.getElementById('arrGrid').onclick = e => { const el = e.target.closest('[data-bar]'); if (el) jumpTo(+el.dataset.bar); };
-document.getElementById('nextLayer').onclick = () => jumpTo(layerStart(cursorBar) + BARS_PER_LAYER);
-document.getElementById('prevLayer').onclick = () => jumpTo(layerStart(cursorBar) - BARS_PER_LAYER);
+document.getElementById('nextLayer').onclick = () => jumpTo(plan.secs[(secIndex() + 1) % plan.secs.length].start);
+document.getElementById('prevLayer').onclick = () => { const i = secIndex(), s = plan.secs[i]; jumpTo(cursorBar > s.start ? s.start : plan.secs[(i - 1 + plan.secs.length) % plan.secs.length].start); };
+document.getElementById('arrLen').onclick = () => {
+  const frac = (cursorBar - plan.secs[secIndex()].start) / plan.secs[secIndex()].len, si = secIndex();
+  shortDemo = !shortDemo; renderArrangement();
+  jumpTo(plan.secs[si].start + Math.floor(frac * plan.secs[si].len));
+  say(shortDemo ? 'Short demo: every section at a quarter of its real length.' : 'Real length: sections as long as in a real track.');
+};
 document.addEventListener('keydown', e => {
   if (!buildMode || ['INPUT', 'SELECT'].includes(e.target.tagName)) return;
   if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('nextLayer').click(); }
   if (e.key === 'ArrowLeft') { e.preventDefault(); document.getElementById('prevLayer').click(); }
 });
-document.getElementById('buildBtn').onclick = () => {
-  buildMode = !buildMode;
-  cursorBar = 0;
+function setArrange(on) {
+  buildMode = on; cursorBar = 0;
   if (buildMode && playing) { bar = 0; step = 0; nextTime = Engine.ctx.currentTime + 0.05; queue.length = 0; }
   refreshBuild();
-  say(buildMode ? 'Build-up on: one new layer every 2 bars.' : 'Build-up off: all tracks play.');
+}
+document.getElementById('buildBtn').onclick = () => {
+  setArrange(!buildMode);
+  say(buildMode ? `Arrange on: ${genre.name} as a ${plan.form.name.toLowerCase()}. Watch what gets added and what gets taken away.` : 'Arrange off: the loop plays with all tracks.');
 };
+// ---------- Song structure view ----------
+const FORM_EXAMPLE = { club: 'deephouse', slow: 'organic', bass: 'dnb', rap: 'trap', song: 'synthwave' };
+let formShown = null, hearWith = {};
+const formKey = id => FORM_OF[id] || 'club';
+function setView(v) {
+  const st = v === 'structure';
+  ['genres', 'info', 'playCard', 'mc'].forEach(id => document.getElementById(id).hidden = st);
+  document.querySelectorAll('.grooves-only').forEach(el => el.hidden = st);
+  document.getElementById('structure').hidden = !st;
+  document.getElementById('viewGrooves').classList.toggle('on', !st);
+  document.getElementById('viewStructure').classList.toggle('on', st);
+  if (st) { formShown = formShown || formKey(genre.id); renderStructure(); }
+  window.scrollTo(0, 0);
+}
+document.getElementById('viewGrooves').onclick = () => setView('grooves');
+document.getElementById('viewStructure').onclick = () => setView('structure');
+document.getElementById('toStructure').onclick = e => { e.preventDefault(); formShown = formKey(genre.id); setView('structure'); };
+function renderStructure() {
+  const el = document.getElementById('formBody');
+  if (!el || document.getElementById('structure').hidden) return;
+  const key = formShown || formKey(genre.id), form = FORMS[key];
+  const members = GENRES.filter(g => formKey(g.id) === key);
+  if (!hearWith[key]) hearWith[key] = members.some(g => g.id === genre.id) ? genre.id : FORM_EXAMPLE[key];
+  const g = GENRES.find(x => x.id === hearWith[key]);
+  document.getElementById('formTabs').innerHTML = Object.entries(FORMS).map(([k, f]) =>
+    `<button class="chip${k === key ? ' active' : ''}" data-form="${k}">${f.name}</button>`).join('');
+  const total = form.sections.reduce((a, s) => a + s.bars, 0), mins = total * 4 / g.bpm;
+  let prev = [];
+  const rows = form.sections.map((s, i) => {
+    const add = s.on.filter(id => !prev.includes(id)), rem = prev.filter(id => !s.on.includes(id));
+    prev = s.on;
+    const nm = id => TRACKS.find(t => t.id === id).name;
+    const chips = [...add.map(id => `<span class="chg add">+ ${nm(id)}</span>`), ...rem.map(id => `<span class="chg rem">− ${nm(id)}</span>`)].join('');
+    return `<tr><td class="n">${s.name}<div class="hint">like a ${s.song.toLowerCase()}</div></td><td class="b">${s.bars} bars</td>
+      <td>${chips}${s.fill ? '<span class="chg add">+ snare roll</span>' : ''}<div class="why">${s.note}</div></td>
+      <td><button class="btn" data-sec="${i}" aria-label="Play ${s.name}">▶</button></td></tr>`;
+  }).join('');
+  const cls = s => s.song === 'Chorus' ? ' peak' : s.song === 'Bridge' ? ' low' : '';
+  el.innerHTML = `
+    <p class="hint" style="margin:0 0 6px">${form.who}</p>
+    <div class="fstrip">${form.sections.map((s, i) => `<button class="${cls(s).trim()}" style="flex:${s.bars}" data-sec="${i}" title="${s.name}, ${s.bars} bars">${s.name}</button>`).join('')}</div>
+    <div class="fmeta">${total} bars · about ${Math.floor(mins)}:${String(Math.round((mins % 1) * 60)).padStart(2, '0')} min at ${g.bpm} BPM</div>
+    <table class="ftable"><tbody>${rows}</tbody></table>
+    <div class="fhear">Hear it with
+      <select id="hearSel">${members.map(m => `<option value="${m.id}"${m.id === g.id ? ' selected' : ''}>${m.name}</option>`).join('')}</select>
+      · Study it in real tracks: ${g.refs.split(',').slice(0, 3).map(a => a.replace(/\s*\(.*\)/, '').trim()).map(a => `<a href="https://open.spotify.com/search/${encodeURIComponent(a)}" target="_blank" rel="noopener">${a}</a>`).join(', ')}
+    </div>
+    <p class="hint">Listening tip: count bars from the first kick and notice where things change. It is almost always on bar 17, 33 or 65.</p>`;
+}
+document.getElementById('formTabs').onclick = e => { const b = e.target.closest('[data-form]'); if (b) { formShown = b.dataset.form; renderStructure(); } };
+document.getElementById('formBody').onchange = e => { if (e.target.id === 'hearSel') { hearWith[formShown] = e.target.value; renderStructure(); } };
+document.getElementById('formBody').onclick = e => {
+  const b = e.target.closest('[data-sec]'); if (!b) return;
+  const key = formShown, i = +b.dataset.sec, id = hearWith[key];
+  setView('grooves');
+  if (genre.id !== id) selectGenre(id);
+  if (!buildMode) setArrange(true);
+  jumpTo(plan.secs[i].start);
+  if (!playing) togglePlay();
+  say(`Playing the ${FORMS[key].sections[i].name.toLowerCase()} of ${genre.name} as a ${FORMS[key].name.toLowerCase()}.`);
+  document.getElementById('playCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 function setHead(s) {
   if (headStep >= 0) cells.forEach(r => r[headStep].classList.remove('head'));
   headStep = s;
@@ -1436,7 +1726,7 @@ function renderVariants(note) {
   const vs = VARIANTS[genre.id] || [];
   document.getElementById('variants').innerHTML = '<span class="lbl">Spice it up</span>' +
     ['Original', ...vs.map(v => v.name)].map((n, i) => `<button data-i="${i - 1}" class="${i - 1 === variant ? 'on' : ''}">${n}</button>`).join('');
-  document.getElementById('vnote').innerHTML = note ?? (variant >= 0 ? vs[variant].note : 'The basic pattern. Pick a variant to hear one idea that makes it more interesting; dots mark the changed steps.');
+  document.getElementById('vnote').innerHTML = note ?? (variant >= 0 ? vs[variant].note : '');
 }
 function applyVariant(i) {
   variant = i;
@@ -1475,6 +1765,7 @@ function selectGenre(id) {
   document.getElementById('info').innerHTML = infoHTML(genre, !!mine);
   setKit(genre.kit);
   if (buildMode) { cursorBar = 0; if (playing) { bar = 0; } refreshBuild(); }
+  renderStructure();
   const s = store(); s.last = genre.id; persist(s);
   say('');
 }
@@ -1554,7 +1845,9 @@ function mcShow() {
   const vname = variant >= 0 ? ` · ${VARIANTS[genre.id][variant].name}` : '';
   document.getElementById('mcKicker').textContent = mcMode === 'genre' ? `${genre.name}${vname} · ${st.sec}` : 'Basics';
   document.getElementById('mcTitle').textContent = st.title;
-  document.getElementById('mcText').innerHTML = st.text;
+  document.getElementById('mcText').innerHTML = `<div class="lead">${st.text}</div>`
+    + (st.more && st.more.length ? `<dl class="sm">${st.more.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>` : '')
+    + (st.tips && st.tips.length ? `<details class="tips"><summary>Why these settings</summary>${st.tips.map(t => `<p>${t}</p>`).join('')}</details>` : '');
   document.getElementById('mcCount').textContent = `Step ${mcIdx + 1} of ${mcSteps.length}`;
   document.getElementById('mcPrev').disabled = mcIdx === 0;
   document.getElementById('mcNext').disabled = mcIdx === mcSteps.length - 1;
