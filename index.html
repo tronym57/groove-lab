@@ -73,7 +73,7 @@
   .sliders label.ctl output { min-width: 40px; }
   .sliders label.ctl { flex: 1 1 170px; max-width: 300px; min-width: 0; } .sliders input[type=range] { flex: 1; min-width: 0; width: 0; }
   @media (max-width: 480px) { #play { min-width: 70px; padding: 8px 10px; } .tmain { gap: 10px; } .sliders label.ctl { gap: 6px; } #gName { width: auto; flex: 1; } .gsw { flex: 1; } .gsw .btn { padding: 5px 7px; }
-    #play { min-width: 48px; width: 48px; padding: 8px 0; font-size: 0; } #play::before { content: '▶'; font-size: 16px; } #play.on::before { content: '■'; } }
+    .tmain #play { min-width: 48px; width: 48px; padding: 8px 0; font-size: 0; } #play::before { content: '▶'; font-size: 16px; } #play.on::before { content: '■'; } }
   .ctl .lab { min-width: 40px; }
   #fsBtn { grid-area: fs; justify-self: end; width: 40px; height: 40px; padding: 0; font-size: 18px; line-height: 1; }
   .tsub { margin-top: 10px; }
@@ -99,7 +99,7 @@
     .card.fs .variants button { flex: none; padding: 3px 10px; }
     .card.fs .tsub { margin-top: 4px; } .card.fs .tsub .btn, .card.fs .tsub select { padding: 4px 10px; }
     .card.fs .grid { grid-template-columns: 116px repeat(16, minmax(20px, 1fr)); gap: 4px; min-width: 0; }
-    .card.fs .grid .cell { aspect-ratio: auto; height: clamp(18px, calc((100dvh - 196px) / 6), 40px); }
+    .card.fs .grid .cell { aspect-ratio: auto; height: clamp(18px, calc((100dvh - 230px) / 6), 40px); }
     .card.fs .name small { display: none; } .card.fs .name b { font-size: 12px; }
     .card.fs .nums { display: none; } .card.fs .grid > .spacer0 { display: none; }
     .card.fs .pkey { height: 22px; font-size: 11px; }
@@ -110,6 +110,7 @@
   .grid.split .name small { display: none; }
   .grid.split .name.name2 { display: flex; }
   .grid.split .name b { font-size: 12px; }
+  .grid.split .pkey { display: none; }
   .grid.split .nums.half2 { padding-top: 12px; }
   .name { display: flex; align-items: center; gap: 7px; user-select: none; line-height: 1.2; min-width: 0; }
   .name .nm { display: flex; flex-direction: column; justify-content: center; min-width: 0; flex: 1; cursor: pointer; border-radius: 6px; padding: 3px 4px; margin: -3px -4px; }
