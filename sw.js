@@ -1,7 +1,7 @@
-const CACHE = 'groove-lab-v3';
+const CACHE = 'groove-lab-v4';
 const SAMPLES = ['conga', 'tumba', 'bongo_hi', 'bongo_lo', 'shaker_dn', 'shaker_up', 'clap1', 'clap2',
   'clave', 'wood', 'hat_closed', 'hat_open', 'tamb'].map(n => `samples/${n}.wav`);
-const FILES = ['./', 'index.html', 'genres.js', 'kits.js', 'manifest.webmanifest', 'icon.svg', ...SAMPLES];
+const FILES = ['./', 'index.html', 'genres.js', 'kits.js', 'manifest.webmanifest', 'icon.svg', 'icon-180.png', 'icon-512.png', ...SAMPLES];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
