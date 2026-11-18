@@ -1,4 +1,4 @@
-const CACHE = 'groove-lab-v33';
+const CACHE = 'groove-lab-v34';
 const SAMPLES = ['conga', 'tumba', 'bongo_hi', 'bongo_lo', 'shaker_dn', 'shaker_up', 'clap1', 'clap2',
   'clave', 'wood', 'hat_closed', 'hat_open', 'tamb',
   'drum_snare_hard', 'drum_snare_soft', 'sn_dolf', 'sn_dub', 'sn_zome', 'elec_hi_snare', 'elec_mid_snare',
