@@ -1156,7 +1156,7 @@ const MC = (() => {
         { sec, values: Object.fromEntries(r.knobs.filter(([, v]) => String(v).length < 7)), screen: r.machine, track: t }));
       const all = p.map((v, s) => v ? s : -1).filter(s => s >= 0);
       let txt = `Tap trig keys <b>${stepWords(all)}</b>.`;
-      if (open.length) txt += `<p>Open hats on <b>${stepWords(open)}</b>: hold step ${open[0] + 1} and turn DECAY to ≈ ${r.openDecay}. That parameter lock makes the hit ring open; the next closed hat cuts it off, just like a real hi-hat.${open.length > 1 ? ` <b>Copy/paste the rest:</b> hold step ${open[0] + 1} + [RECORD], then hold step ${open.slice(1).map(x => x + 1).join(', then ')} + [STOP] each.` : ''}</p>`;
+      if (open.length) txt += `<p>Open hats on <b>${stepWords(open)}</b>: hold step ${open[0] + 1} and turn DECAY to ≈ ${r.openDecay}. That parameter lock makes the hit ring open; the next closed hat cuts it off, just like a real hi-hat.${open.length > 1 ? ` <b>Copy/paste the rest:</b> hold step ${open[0] + 1} + [RECORD], then ${open.slice(1).map(x => `hold step ${x + 1} + [STOP]`).join(', ')}.` : ''}</p>`;
       if (soft.length) txt += `<p>Soft hits on <b>${stepWords(soft)}</b>: hold them all at once and turn LEVEL/DATA → VEL ≈ 70 (press LEVEL/DATA to get from NOTE to VEL). Or set one and copy it: hold trig + [RECORD], hold target + [STOP].</p>`;
       if (roll.length) txt += `<p>Rolls on <b>${stepWords(roll)}</b>: hold the trig, press [RETRIG], set ON and RTE 1/32 (or 1/24 for a triplet roll).</p>`;
       out.push(S(`T${n} · ${name}: place the trigs`, [all.map(s => 'trig' + (s + 1))], txt, { sec, trigs: p, track: t }));
