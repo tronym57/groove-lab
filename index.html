@@ -288,10 +288,47 @@
   .steptext ul.knobs { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 8px 0 6px; }
   .steptext ul.knobs li { background: #262a31; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-variant-numeric: tabular-nums; }
   .steptext ul.knobs b { color: var(--muted); font-size: 11px; margin-right: 6px; }
-  .stepnav { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
-  .stepnav .count { color: var(--muted); font-size: 12px; margin-left: auto; font-variant-numeric: tabular-nums; }
+  .stepnav { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .stepnav .count { color: var(--muted); font-size: 12px; margin: 0 auto; font-variant-numeric: tabular-nums; }
   .note { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
   kbd { background: #262a31; border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+
+  /* ---------- hierarchy: type scale ---------- */
+  body { line-height: 1.5; font-weight: 400; }
+  h1 { font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+  .info h2 { font-size: 38px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; }
+  .tag { font-size: 17px; font-weight: 400; line-height: 1.45; }
+  .st h2 { font-size: 30px; font-weight: 800; letter-spacing: -.025em; line-height: 1.1; }
+  .mc-head h3, .st h3 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+  .stepcard h4 { font-size: 19px; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
+  .arr-cap { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+  .ctl .lab, .seg .lab, .pagesel .lab, .variants .lbl, .stepcard small, .arr-cap small, dl.sm dt, .map th, .more dt {
+    font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  label.ctl output { font-size: 14px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--text); }
+  .name b { font-size: 14px; font-weight: 700; } .name small { font-size: 10px; font-weight: 600; letter-spacing: .06em; }
+  .steptext, .vnote, .st .lead { font-weight: 400; }
+  .hint, .legend, .note, .msg, .ctlinfo { font-weight: 400; }
+  .chip { font-weight: 600; }
+
+  /* ---------- hierarchy: buttons ----------
+     primary = the one main action (filled) · secondary = default .btn (surface) · ghost = tertiary (text only) */
+  button.btn { font-size: 14px; font-weight: 600; }
+  button.btn.primary, #play { background: var(--on); border-color: var(--on); color: #111; font-weight: 800; }
+  button.btn.primary:hover, #play:hover { filter: brightness(1.08); background: var(--on); }
+  button.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+  button.btn.ghost:hover { background: #23272e; color: var(--text); }
+  #play { font-size: 15px; padding: 9px 18px; }
+
+  /* ---------- length + pages ---------- */
+  .seg, .pagesel { display: inline-flex; align-items: center; gap: 2px; }
+  .seg .lab, .pagesel .lab { margin-right: 6px; }
+  .seg button, .pagesel button { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: #20242a; border: 1px solid var(--line); padding: 6px 10px; cursor: pointer; }
+  .seg button:first-of-type { border-radius: 8px 0 0 8px; } .seg button:last-of-type { border-radius: 0 8px 8px 0; }
+  .seg button.on { background: #2f343c; color: var(--text); border-color: #4a505b; }
+  .pagesel button { width: 34px; padding: 6px 0; border-radius: 8px; margin-left: 2px; position: relative; }
+  .pagesel button.on { background: hsl(var(--hue) 90% 60% / .18); color: var(--on); border-color: var(--on); }
+  .pagesel button.play::after { content: ''; position: absolute; top: 3px; right: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--on); box-shadow: 0 0 6px var(--glow); }
+  .seg button:active, .pagesel button:active { transform: scale(.95); }
 </style>
 </head>
 <body>
@@ -323,11 +360,13 @@
         <div class="ctl stepper"><span class="lab">BPM</span><button class="btn" id="bpmDown" aria-label="Slower">−</button><output id="bpmOut" class="lcd"></output><button class="btn" id="bpmUp" aria-label="Faster">+</button><input id="bpm" type="range" min="60" max="180" hidden></div>
         <label class="ctl"><span class="lab">Swing</span><input id="swing" type="range" min="50" max="80"><output id="swingOut"></output></label>
       </div>
-      <button class="btn icon" id="saveIcon" title="Save my version" aria-label="Save my version"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8V3M7 21v-7h10v7"/></svg></button>
-      <button class="btn" id="fsBtn" title="Fullscreen sequencer" aria-label="Fullscreen sequencer">⛶</button>
+      <button class="btn icon ghost" id="saveIcon" title="Save my version" aria-label="Save my version"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8V3M7 21v-7h10v7"/></svg></button>
+      <button class="btn ghost" id="fsBtn" title="Fullscreen sequencer" aria-label="Fullscreen sequencer">⛶</button>
     </div>
     <div class="transport tsub">
-      <label class="ctl">Kit <select id="kit"></select></label>
+      <label class="ctl"><span class="lab">Kit</span><select id="kit"></select></label>
+      <div class="seg" id="lenSeg" role="group" aria-label="Pattern length"><span class="lab">Length</span><button data-n="1">1 bar</button><button data-n="2">2 bars</button><button data-n="4">4 bars</button></div>
+      <div class="pagesel" id="pageSel" hidden><span class="lab">Page</span></div>
       <button class="btn" id="buildBtn" title="Play the groove as a full track: sections add and remove parts">Arrange: off</button>
     </div>
     <div style="height:16px"></div>
@@ -337,7 +376,7 @@
       <div class="arr-nav">
         <button class="btn" id="prevLayer">◀ Section</button>
         <button class="btn" id="nextLayer">Section ▶</button>
-        <button class="btn" id="arrLen" title="Switch between a quick demo and real section lengths"></button>
+        <button class="btn ghost" id="arrLen" title="Switch between a quick demo and real section lengths"></button>
         <span class="hint">Tap any bar to jump · <kbd>←</kbd> <kbd>→</kbd> · <a href="#" id="toStructure">How tracks are built →</a></span>
       </div>
     </div>
@@ -354,8 +393,8 @@
     </div>
     <div class="actions">
       <button class="btn" id="saveBtn">Save my version</button>
-      <button class="btn" id="resetBtn">Reset to original</button>
-      <button class="btn" id="clearBtn">Clear</button>
+      <button class="btn ghost" id="resetBtn">Reset to original</button>
+      <button class="btn ghost" id="clearBtn">Clear</button>
       <span class="msg" id="msg"></span>
     </div>
   </section>
@@ -363,7 +402,7 @@
   <div id="structure" hidden>
     <section class="card st">
       <h2>How electronic tracks are built</h2>
-      <p class="lead">Club tracks rarely have verses and choruses. They are built from <b>energy sections</b> that add and take away parts, always in blocks of 8, 16 or 32 bars. On this app and on the Cycles, <b>1 bar = 16 steps = one pattern</b>.</p>
+      <p class="lead">Club tracks rarely have verses and choruses. They are built from <b>energy sections</b> that add and take away parts, always in blocks of 8, 16 or 32 bars. On this app and on the Cycles, <b>1 bar = 16 steps = one page</b>; a pattern holds up to 4 pages.</p>
       <table class="map">
         <thead><tr><th>Songwriting</th><th>Electronic</th><th>What happens</th></tr></thead>
         <tbody>
@@ -431,15 +470,15 @@
     <div id="mcPanel"></div>
     <p class="ctlinfo" id="mcInfo">Tap any key or knob on the panel to see what it does.</p>
     <div class="stepcard">
+      <div class="stepnav">
+        <button class="btn ghost" id="mcPrev">◀ Back</button>
+        <span class="count" id="mcCount"></span>
+        <button class="btn primary" id="mcNext">Next ▶</button>
+      </div>
       <small id="mcKicker"></small>
       <h4 id="mcTitle"></h4>
       <div class="seq" id="mcSeq"></div>
       <div class="steptext" id="mcText"></div>
-      <div class="stepnav">
-        <button class="btn" id="mcPrev">◀ Back</button>
-        <button class="btn" id="mcNext">Next ▶</button>
-        <span class="count" id="mcCount"></span>
-      </div>
     </div>
     <p class="note">Panel drawn after the official manual (OS 1.13). Knob values are starting points that match this app's kit, not factory presets: tweak by ear.</p>
   </section>
@@ -1336,6 +1375,9 @@ const MC = (() => {
       ['Conditions', 'Hold a trig and turn CHANCE: 1:2 = every other bar, FILL = only during a fill.'] ] }),
     S('Perform: mute, fill, change all', [['func', 't3'], ['page'], ['track', 'decay']], 'Three live moves while the pattern plays.', { more: [
       ['Mute', '[FUNC] + [T3] mutes track 3.'], ['Fill', 'Hold [PAGE]. [TRACK] + [PAGE] latches it.'], ['All tracks', 'Hold [TRACK] and turn a knob.'] ] }),
+    S('Pages: longer patterns', [['func', 'page'], ['page']], 'One page = 16 steps. A pattern can have up to 4 pages (64 steps).', { more: [
+      ['Length', '[FUNC] + [PAGE] opens SCALE: set LEN to 32 or 64.'], ['Copies', 'New pages start as copies of the existing ones.'], ['Edit', '[PAGE] picks the page you see; the PATTERN PAGE LEDs show it.'],
+      ['Copy a page', 'In grid recording: [PAGE] + [RECORD], go to another page, [PAGE] + [STOP].'], ['Use', 'Keep pages 1–3 the same and change page 4: the classic A A A B phrase.'] ] }),
     S('Chain patterns', [['hold:pattern', 'trig1', 'trig2', 'trig3']], 'Hold [PATTERN], press the trig keys in the order they should play.', { more: [
       ['Repeat', 'Press the same trig again to play a pattern twice.'], ['Length', 'Up to 64 patterns; the chain loops.'], ['Other banks', 'Press [T1–6], then [TRIG], while holding [PATTERN].'],
       ['Use', 'One pattern per section (intro, groove, drop…) turns a loop into a track. See Song structure at the top.'] ] }),
@@ -1352,7 +1394,7 @@ const MC = (() => {
   const stepWords = arr => arr.map(i => i + 1).join(', ');
 
   const DEFAULT = ['KICK', 'SNARE', 'METAL', 'PERC', 'TONE', 'CHORD'];   // machines on T1–T6 in a fresh pattern
-  function genreSteps(g, pattern, labelOf, TRACKS, kitId, bpm, swing) {
+  function genreSteps(g, pattern, labelOf, TRACKS, kitId, bpm, swing, pages = [pattern]) {
     const out = [];
     const changes = TRACKS.map((tr, i) => pattern[tr.id].some(v => v) && recipe(kitId, tr.id).machine !== DEFAULT[i] ? `T${i + 1}` : null).filter(Boolean);
     out.push(S('Start a fresh pattern', [['pattern', 't1'], ['pattern', 'trig1']], '[PATTERN] + [T1] (bank A), then [PATTERN] + a free [TRIG].', { sec: 'Setup', more: [
@@ -1380,6 +1422,21 @@ const MC = (() => {
       if (roll.length) more.push(['Rolls', `Steps <b>${stepWords(roll)}</b>: hold the trig, [RETRIG], ON, RTE 1/32 (1/24 = triplet).`]);
       out.push(S(`T${n} · ${name}: place the trigs`, [all.map(s => 'trig' + (s + 1))], `Tap trig keys <b>${stepWords(all)}</b>.`, { sec, trigs: p, track: t, more }));
     });
+    if (pages.length > 1) {
+      const n = pages.length * 16;
+      out.push(S(`Make it ${pages.length} bars: LEN ${n}`, [['func', 'page'], ['level'], ['back']], `[FUNC] + [PAGE] opens SCALE. Set <b>LEN</b> to <b>${n}</b>, then [BACK].`, { sec: 'Pages', screen: `LEN ${n}`, more: [
+        ['Copies', 'The Cycles copies page 1 onto the new pages, so you only program what changes.'], ['Pages', 'The PATTERN PAGE LEDs show the page you edit; [PAGE] steps through them.'] ] }));
+      for (let p = 1; p < pages.length; p++) {
+        const rows = [];
+        TRACKS.forEach((tr, i) => {
+          const a = pattern[tr.id], b = pages[p][tr.id], add = [], rem = [], chg = [];
+          for (let s = 0; s < 16; s++) { if (!a[s] && b[s]) add.push(s); else if (a[s] && !b[s]) rem.push(s); else if (a[s] !== b[s]) chg.push(s); }
+          if (add.length || rem.length || chg.length) rows.push([`T${i + 1} ${labelOf(tr.id)}`, [add.length ? `add <b>${stepWords(add)}</b>` : '', rem.length ? `remove <b>${stepWords(rem)}</b>` : '', chg.length ? `new velocity or roll on <b>${stepWords(chg)}</b>` : ''].filter(Boolean).join(' · ')]);
+        });
+        out.push(S(`Page ${p + 1}: ${rows.length ? 'what changes' : 'same as page 1'}`, [['page']], rows.length ? `Press [PAGE] until LED ${p + 1} lights. Select each track with [TRACK] + [T], then tap:` : `Nothing to do: page ${p + 1} is the copy of page 1.`,
+          { sec: 'Pages', more: rows, tips: rows.length ? ['Tapping a lit trig removes it, tapping a dark one adds it. Set soft hits and rolls on new trigs the same way as on page 1.', 'Copy a whole page: [PAGE] + [RECORD], go to another page, [PAGE] + [STOP].'] : [] }));
+      }
+    }
     out.push(S(swing > 50 ? `Swing: ${swing}% on every track` : 'Swing: leave it at 50%', [['hold:track', 'swing']],
       swing > 50 ? `Hold [TRACK] and turn SWING to <b>${swing}%</b>: sets every track at once.` : 'This groove is straight. SWING stays at 50%.',
       { sec: 'Finish', values: { swing: swing + '%' }, tips: swing > 50 ? ['Swing only moves the even 16ths, the same as in this app.'] : [] }));
@@ -1428,6 +1485,15 @@ function persist(obj) { try { localStorage.setItem(KEY, JSON.stringify(obj)); re
 // ---------- state ----------
 let genre = GENRES[0], kitId = genre.kit;
 const pattern = {}, muted = {};
+// Pattern pages, like the Cycles' [PAGE]: 1, 2 or 4 bars of 16 steps. `pattern` always points at the page on screen.
+let pages = [], nPages = 1, viewPage = 0, playPage = 0, pageVar = [];
+const clonePage = pg => Object.fromEntries(TRACKS.map(t => [t.id, pg[t.id].slice()]));
+function bindPage() { TRACKS.forEach(t => pattern[t.id] = pages[viewPage][t.id]); }
+// After loading a whole pattern: page 1 is it, the other pages are copies (the Cycles copies trigs when you extend a pattern).
+function pagesFromPattern() {
+  const base = clonePage(pattern);
+  pages = Array.from({ length: nPages }, () => clonePage(base)); pageVar = Array(nPages).fill(variant); viewPage = 0; bindPage();
+}
 TRACKS.forEach(t => muted[t.id] = false);
 
 // ---------- scheduler ----------
@@ -1444,7 +1510,7 @@ function schedule() {
     TRACKS.forEach(tr => {
       if (muted[tr.id]) return;
       if (tr.id === 'snare' && fill) { if (fill[step]) Engine.play('snare', fill[step], t, d); return; }   // build-up roll
-      const v = pattern[tr.id][step];
+      const v = pages[bar % nPages][tr.id][step];
       if (v && layerOn(tr.id, bar)) Engine.play(tr.id, v, t, d);
     });
     queue.push({ step, bar, t });
@@ -1456,7 +1522,7 @@ function draw() {
   if (!playing) return;
   while (queue.length && queue[0].t <= Engine.ctx.currentTime) {
     const q = queue.shift();
-    setHead(q.step);
+    setHead(q.step, q.bar % nPages);
     if (buildMode && q.step === 0) showBuild(q.bar);
   }
   requestAnimationFrame(draw);
@@ -1716,10 +1782,11 @@ document.getElementById('formBody').onclick = e => {
   document.getElementById('playCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-function setHead(s) {
+function setHead(s, pg = playPage) {
   if (headStep >= 0) { cells.forEach(r => r[headStep].classList.remove('head')); pkeys[headStep].classList.remove('now'); }
   headStep = s;
-  if (s >= 0) { cells.forEach(r => r[s].classList.add('head')); pkeys[s].classList.add('now'); }
+  if (pg !== playPage) { playPage = pg; renderPageUI(); }
+  if (s >= 0 && pg === viewPage) { cells.forEach(r => r[s].classList.add('head')); pkeys[s].classList.add('now'); }
 }
 const playBtn = document.getElementById('play');
 function togglePlay() {
@@ -1729,10 +1796,10 @@ function togglePlay() {
     step = 0; bar = buildMode ? cursorBar : 0; nextTime = ctx.currentTime + 0.05; queue.length = 0;
     if (buildMode) { renderArrangement(); showBuild(bar); }
     timer = setInterval(schedule, 25); schedule(); draw();
-    playBtn.textContent = '■ Stop'; playBtn.classList.add('on');
+    playBtn.textContent = '■ Stop'; playBtn.classList.add('on'); renderPageUI();
     setTimeout(() => { if (playing && Engine.ctx.state !== 'running') say('No sound? The browser is blocking audio: tap Stop, then Play again. On iPhone, also check the volume.'); }, 600);
   } else {
-    clearInterval(timer); setHead(-1); playBtn.textContent = '▶ Play'; playBtn.classList.remove('on');
+    clearInterval(timer); setHead(-1, 0); renderPageUI(); playBtn.textContent = '▶ Play'; playBtn.classList.remove('on');
     if (buildMode) refreshBuild();
   }
 }
@@ -1870,6 +1937,7 @@ let variant = -1;         // -1 = original, 0–2 = VARIANTS[genre.id][i]
 function loadOriginal() {
   Object.assign(pattern, norm(genre.p));
   bpmEl.value = genre.bpm; swingEl.value = genre.swing;
+  pagesFromPattern();
 }
 function renderVariants(note) {
   const vs = VARIANTS[genre.id] || [];
@@ -1879,9 +1947,17 @@ function renderVariants(note) {
 }
 function applyVariant(i) {
   variant = i;
-  loadOriginal();
   const v = VARIANTS[genre.id]?.[i];
-  if (v) { Object.assign(pattern, norm({ ...genre.p, ...v.p })); if (v.swing) swingEl.value = v.swing; }
+  if (nPages > 1) {   // longer pattern: a variant only changes the page on screen (A A A B phrases)
+    const src = norm(v ? { ...genre.p, ...v.p } : genre.p);
+    TRACKS.forEach(t => pages[viewPage][t.id] = src[t.id]);
+    pageVar[viewPage] = i; bindPage();
+    if (v && v.swing) swingEl.value = v.swing;
+  } else {
+    loadOriginal();
+    if (v) { Object.assign(pattern, norm({ ...genre.p, ...v.p })); if (v.swing) swingEl.value = v.swing; pagesFromPattern(); }
+  }
+  renderPageUI();
   bpmEl.oninput(); swingEl.oninput(); render(); renderVariants();
   if (buildMode) refreshBuild();
   mcIdx = 0; mcRefresh();
@@ -1907,9 +1983,11 @@ function selectGenre(id) {
     if (mp.chh) { mp.hat = mergeHats(mp.chh, mp.ohh || blank()); }   // versions saved before the hat rows were merged
     TRACKS.forEach(tr => pattern[tr.id] = (mp[tr.id] || blank()).slice());
     bpmEl.value = mine.bpm; swingEl.value = mine.swing;
+    if (mine.pages) { nPages = mine.pages.length; pages = mine.pages.map(clonePage); pageVar = Array(nPages).fill(-2); viewPage = 0; bindPage(); }
+    else pagesFromPattern();
   }
   else loadOriginal();
-  mcIdx = 0;
+  mcIdx = 0; renderPageUI();
   bpmEl.oninput(); swingEl.oninput(); render();
   renderVariants(mine ? 'Showing your saved version. Pick Original or a variant to load it instead (your save stays until you overwrite it).' : undefined);
   document.getElementById('info').innerHTML = infoHTML(genre, !!mine);
@@ -1931,7 +2009,6 @@ function infoHTML(g, mine) {
     <p class="tag">${firstSentence(g.about)}</p>
     <div class="facts">
       <span class="fact">Typical <b>${g.range}</b> BPM</span>
-      ${g.fav ? '<span class="fact you" title="From your Spotify and your picks">● In your listening</span>' : ''}
       ${mine ? '<span class="fact saved">Your saved version</span>' : ''}
       <a class="fact" href="#mc">Program it on the Model:Cycles ↓</a>
     </div>
@@ -1962,7 +2039,7 @@ mcSvg.addEventListener('click', e => {
 function mcRefresh() {
   if (!mcSvg) return;
   const shown = variant >= 0 ? { ...genre, name: `${genre.name} · ${VARIANTS[genre.id][variant].name}` } : genre;
-  mcSteps = mcMode === 'genre' ? MC.genreSteps(shown, pattern, labelOf, TRACKS, kitId, +bpmEl.value, +swingEl.value) : MC.BASICS;
+  mcSteps = mcMode === 'genre' ? MC.genreSteps(shown, pages[0], labelOf, TRACKS, kitId, +bpmEl.value, +swingEl.value, pages) : MC.BASICS;
   mcIdx = Math.max(0, Math.min(mcIdx, mcSteps.length - 1));
   mcShow();
 }
@@ -2021,7 +2098,7 @@ document.getElementById('tabBasics').onclick = () => mcTab('basics');
 
 document.getElementById('saveBtn').onclick = () => {
   const s = store();
-  s.mine[genre.id] = { bpm: +bpmEl.value, swing: +swingEl.value, p: Object.fromEntries(TRACKS.map(t => [t.id, pattern[t.id].slice()])) };
+  s.mine[genre.id] = { bpm: +bpmEl.value, swing: +swingEl.value, p: clonePage(pages[0]), pages: pages.map(clonePage) };
   if (persist(s)) { selectGenre(genre.id); say(`Saved your ${genre.name} version.`); }
   else say('Could not save: browser storage is blocked.');
 };
@@ -2030,9 +2107,34 @@ document.getElementById('resetBtn').onclick = () => {
   selectGenre(genre.id); say(`Back to the original ${genre.name} pattern.`);
 };
 document.getElementById('clearBtn').onclick = () => {
-  TRACKS.forEach(t => pattern[t.id].fill(0)); render(); say('Cleared. Not saved until you tap Save.');
+  pages.forEach(pg => TRACKS.forEach(t => pg[t.id].fill(0))); render(); say(`Cleared${nPages > 1 ? ` all ${nPages} pages` : ''}. Not saved until you tap Save.`);
 };
 playBtn.onclick = togglePlay;
+
+// ---------- pattern length and pages ----------
+function renderPageUI() {
+  document.querySelectorAll('#lenSeg button').forEach(b => b.classList.toggle('on', +b.dataset.n === nPages));
+  const sel = document.getElementById('pageSel');
+  sel.hidden = nPages === 1;
+  sel.innerHTML = '<span class="lab">Page</span>' + pages.map((_, p) => {
+    const v = pageVar[p], name = v >= 0 ? VARIANTS[genre.id][v].name : v === -2 ? 'your version' : 'original';
+    return `<button data-p="${p}" class="${p === viewPage ? 'on' : ''}${playing && p === playPage ? ' play' : ''}" title="Page ${p + 1}: ${name}" aria-label="Show page ${p + 1}">${p + 1}</button>`;
+  }).join('');
+}
+function showPage(p) {
+  viewPage = p; variant = pageVar[p]; bindPage();
+  if (headStep >= 0) setHead(headStep);
+  render(); renderVariants(); renderPageUI(); mcRefresh();
+}
+function setLength(n) {
+  if (n === nPages) { say(`Already ${n} bar${n > 1 ? 's' : ''}.`); return; }
+  for (let p = nPages; p < n; p++) { pages[p] = clonePage(pages[p % nPages]); pageVar[p] = pageVar[p % nPages]; }
+  pages.length = n; pageVar.length = n; nPages = n;
+  showPage(n > 1 ? n - 1 : 0);
+  say(n > 1 ? `${n} bars (${n * 16} steps). Pages 2–${n} are copies of page 1, as on the Cycles. Now on page ${n}: pick a variant or tap steps to make it the turnaround.` : '1 bar: only page 1 plays.');
+}
+document.getElementById('lenSeg').onclick = e => { const b = e.target.closest('[data-n]'); if (b) setLength(+b.dataset.n); };
+document.getElementById('pageSel').onclick = e => { const b = e.target.closest('[data-p]'); if (b) { showPage(+b.dataset.p); say(`Page ${+b.dataset.p + 1} of ${nPages}${playing && +b.dataset.p !== playPage ? ' (the playhead shows when this page plays)' : ''}.`); } };
 
 // ---------- fullscreen sequencer ----------
 const playCard = document.getElementById('playCard'), fsBtn = document.getElementById('fsBtn');
